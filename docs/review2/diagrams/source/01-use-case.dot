@@ -1,0 +1,42 @@
+digraph UseCase {
+  graph [bgcolor="#F7FAF9", pad="0.4", nodesep="0.48", ranksep="0.58", splines=ortho, fontname="Arial", labelloc=t, labeljust=l, label=<<FONT POINT-SIZE="27" COLOR="#123C3A"><B>01  |  STRIDE USE CASE DIAGRAM</B></FONT><BR/><FONT POINT-SIZE="12" COLOR="#6D817F">Primary users and system responsibilities</FONT>>];
+  node [fontname="Arial", fontsize=10, color="#AFC7C2", fontcolor="#173B39", penwidth=1.3];
+  edge [fontname="Arial", fontsize=8, color="#6D8884", fontcolor="#607A77", penwidth=1.1, arrowsize=0.65];
+
+  patient [shape=box, style="rounded,filled", fillcolor="#DFF2ED", color="#62AA98", label="PATIENT"];
+  therapist [shape=box, style="rounded,filled", fillcolor="#EAE7FB", color="#9487D4", label="PHYSIOTHERAPIST"];
+  admin [shape=box, style="rounded,filled", fillcolor="#E9EFEE", color="#93AAA6", label="ADMINISTRATOR"];
+  mediaPipe [shape=box, style="rounded,filled,dashed", fillcolor="#E8ECFA", color="#8194D4", label="MEDIAPIPE"];
+
+  subgraph clusterStride {
+    label=<<FONT POINT-SIZE="12" COLOR="#0D766F"><B>STRIDE SYSTEM</B></FONT>>;
+    color="#75B8AA"; penwidth=1.5; style="rounded,dashed"; margin=22;
+    authenticate [shape=ellipse, style=filled, fillcolor="#FFFFFF", label="Authenticate user"];
+    managePatients [shape=ellipse, style=filled, fillcolor="#FFFFFF", label="Manage patients"];
+    managePlan [shape=ellipse, style=filled, fillcolor="#FFFFFF", label="Manage rehabilitation plan"];
+    guidedExercise [shape=ellipse, style=filled, fillcolor="#E3F4EF", color="#56A993", label="Perform guided exercise"];
+    analyse [shape=ellipse, style=filled, fillcolor="#E9EDFB", color="#8295D7", label="Analyse movement"];
+    review [shape=ellipse, style=filled, fillcolor="#EEEAFB", color="#9889D8", label="Review observations"];
+    progress [shape=ellipse, style=filled, fillcolor="#FFFFFF", label="View progress"];
+    manageUsers [shape=ellipse, style=filled, fillcolor="#FFFFFF", label="Manage users and roles"];
+
+    {rank=same; authenticate; managePatients; managePlan; guidedExercise}
+    {rank=same; analyse; review; progress; manageUsers}
+  }
+
+  patient -> authenticate [dir=none];
+  patient -> guidedExercise [dir=none];
+  patient -> progress [dir=none];
+  therapist -> authenticate [dir=none];
+  therapist -> managePatients [dir=none];
+  therapist -> managePlan [dir=none];
+  therapist -> review [dir=none];
+  therapist -> progress [dir=none];
+  admin -> authenticate [dir=none];
+  admin -> manageUsers [dir=none];
+  mediaPipe -> analyse [dir=none, style=dashed, color="#7386C5"];
+  guidedExercise -> analyse [style=dashed, dir=forward, arrowhead=vee, label="includes"];
+
+  {rank=source; patient; therapist}
+  {rank=sink; admin; mediaPipe}
+}

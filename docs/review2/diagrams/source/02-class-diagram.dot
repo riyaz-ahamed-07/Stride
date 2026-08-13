@@ -1,0 +1,27 @@
+digraph ClassDiagram {
+  graph [rankdir=LR, bgcolor="#F7FAF9", pad="0.4", nodesep="0.48", ranksep="0.62", splines=polyline, fontname="Arial", labelloc=t, labeljust=l, label=<<FONT POINT-SIZE="27" COLOR="#123C3A"><B>02  |  STRIDE CLASS DIAGRAM</B></FONT><BR/><FONT POINT-SIZE="12" COLOR="#6D817F">Core domain objects and their relationships</FONT>>];
+  node [shape=plain, fontname="Arial", fontsize=9];
+  edge [fontname="Arial", fontsize=8, color="#607B78", fontcolor="#56716E", penwidth=1.15, arrowsize=0.72];
+
+  user [label=<<TABLE BORDER="1" COLOR="#63A999" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#0D766F"><FONT COLOR="white" POINT-SIZE="12"><B>User</B></FONT></TD></TR><TR><TD ALIGN="LEFT">id<BR ALIGN="LEFT"/>fullName<BR ALIGN="LEFT"/>email<BR ALIGN="LEFT"/>role</TD></TR><HR/><TR><TD ALIGN="LEFT">authenticate()</TD></TR></TABLE>>];
+  patient [label=<<TABLE BORDER="1" COLOR="#63A999" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#DFF2ED"><B>Patient</B></TD></TR><TR><TD ALIGN="LEFT">dateOfBirth<BR ALIGN="LEFT"/>accessibilityNeeds</TD></TR><HR/><TR><TD ALIGN="LEFT">startSession()</TD></TR></TABLE>>];
+  therapist [label=<<TABLE BORDER="1" COLOR="#998CD5" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#EAE7FB"><B>Physiotherapist</B></TD></TR><TR><TD ALIGN="LEFT">speciality<BR ALIGN="LEFT"/>registrationRef</TD></TR><HR/><TR><TD ALIGN="LEFT">createPlan()<BR ALIGN="LEFT"/>reviewObservation()</TD></TR></TABLE>>];
+  plan [label=<<TABLE BORDER="1" COLOR="#63A999" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#DFF2ED"><B>RehabilitationPlan</B></TD></TR><TR><TD ALIGN="LEFT">title<BR ALIGN="LEFT"/>startDate<BR ALIGN="LEFT"/>status</TD></TR><HR/><TR><TD ALIGN="LEFT">addExercise()</TD></TR></TABLE>>];
+  exercise [label=<<TABLE BORDER="1" COLOR="#AFC4C0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#ECF2F1"><B>Exercise</B></TD></TR><TR><TD ALIGN="LEFT">name<BR ALIGN="LEFT"/>instructions<BR ALIGN="LEFT"/>safetyNotes</TD></TR></TABLE>>];
+  session [label=<<TABLE BORDER="1" COLOR="#8295D5" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#E8ECFA"><B>ExerciseSession</B></TD></TR><TR><TD ALIGN="LEFT">startedAt<BR ALIGN="LEFT"/>repetitions<BR ALIGN="LEFT"/>status</TD></TR><HR/><TR><TD ALIGN="LEFT">complete()</TD></TR></TABLE>>];
+  observation [label=<<TABLE BORDER="1" COLOR="#998CD5" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#EDE9FB"><B>MovementObservation</B></TD></TR><TR><TD ALIGN="LEFT">metric<BR ALIGN="LEFT"/>value<BR ALIGN="LEFT"/>confidence<BR ALIGN="LEFT"/>reviewStatus</TD></TR><HR/><TR><TD ALIGN="LEFT">approve()<BR ALIGN="LEFT"/>correct()</TD></TR></TABLE>>];
+  consent [label=<<TABLE BORDER="1" COLOR="#D4AA5C" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#FFF2D5"><B>ConsentRecord</B></TD></TR><TR><TD ALIGN="LEFT">purpose<BR ALIGN="LEFT"/>status<BR ALIGN="LEFT"/>grantedAt</TD></TR><HR/><TR><TD ALIGN="LEFT">revoke()</TD></TR></TABLE>>];
+
+  user -> patient [dir=back, arrowtail=empty, label="inherits"];
+  user -> therapist [dir=back, arrowtail=empty, label="inherits"];
+  therapist -> patient [dir=none, label="manages  0..*"];
+  therapist -> plan [dir=none, label="creates  0..*"];
+  patient -> plan [dir=none, label="has  0..*"];
+  plan -> exercise [dir=both, arrowtail=diamond, arrowhead=none, label="contains  1..*"];
+  patient -> session [dir=none, label="performs  0..*"];
+  exercise -> session [dir=none, label="used in  0..*"];
+  session -> observation [dir=both, arrowtail=diamond, arrowhead=none, label="produces  0..*"];
+  therapist -> observation [dir=none, label="reviews  0..*"];
+  patient -> consent [dir=none, label="grants  0..*"];
+
+}

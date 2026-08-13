@@ -8,7 +8,9 @@
   <strong>An AI-assisted tele-physiotherapy platform for therapist-led, measurable rehabilitation.</strong>
 </p>
 
-> **Faculty review:** [Review 1 - Planning and Feasibility](FIRST_REVIEW.md)
+> **Faculty reviews:** [Review 1 - Planning and Feasibility](FIRST_REVIEW.md) · [Review 2 - System Design](SECOND_REVIEW.md)
+
+> **Review 2 status:** system analysis, refined requirements, UML diagrams, ER model, database design, architecture, UI mockups, and initial module progress are documented in the dedicated Review 2 file.
 
 > **Review 1 status:** problem, scope, feasibility, proposed architecture, requirements, literature basis, technology choices, risks, schedule, and team responsibilities are defined below. Stride is currently a planned academic prototype, not a deployed medical device.
 
