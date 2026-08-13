@@ -1,0 +1,45 @@
+digraph Architecture {
+  graph [bgcolor="#F7FAF9", pad="0.4", nodesep="0.48", ranksep="0.70", splines=ortho, fontname="Arial", labelloc=t, labeljust=l, label=<<FONT POINT-SIZE="27" COLOR="#123C3A"><B>05  |  STRIDE SYSTEM ARCHITECTURE</B></FONT><BR/><FONT POINT-SIZE="12" COLOR="#6D817F">Mid-level view of presentation, analysis, application, and data layers</FONT>>];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10, margin="0.20,0.13", color="#AFC7C2", fillcolor="#FFFFFF", fontcolor="#173B39", penwidth=1.3];
+  edge [fontname="Arial", fontsize=8, color="#607B78", fontcolor="#56716E", penwidth=1.2, arrowsize=0.72];
+
+  users [label="Patient · Physiotherapist · Administrator", fillcolor="#E8F2F0", color="#8DACA6"];
+
+  subgraph clusterBrowser {
+    label=<<FONT POINT-SIZE="11" COLOR="#0D766F"><B>BROWSER</B></FONT>>;
+    style="rounded,filled"; color="#83BFAF"; fillcolor="#EAF6F3"; margin=18;
+    next [label="Next.js Web Interface", fillcolor="#FFFFFF", color="#54A58F", penwidth=1.6];
+    camera [label="Camera + Consent Gate", fillcolor="#FFF2D5", color="#D7AA52"];
+    mediaPipe [label="MediaPipe Pose + Hand", fillcolor="#E9EDFB", color="#8496D7"];
+    metrics [label="Skeleton · Angles · Repetitions", fillcolor="#E9EDFB", color="#8496D7"];
+    next -> camera [label="start exercise"];
+    camera -> mediaPipe [label="local frames", color="#7185C5"];
+    mediaPipe -> metrics [label="landmarks", color="#7185C5"];
+    metrics -> next [label="live feedback", style=dashed, color="#7185C5"];
+  }
+
+  subgraph clusterApplication {
+    label=<<FONT POINT-SIZE="11" COLOR="#355956"><B>APPLICATION</B></FONT>>;
+    style="rounded,filled"; color="#B2C9C4"; fillcolor="#F0F5F4"; margin=18;
+    api [label="FastAPI REST API", fillcolor="#FFFFFF", color="#4C9384", penwidth=1.6];
+    auth [label="Authentication + RBAC"];
+    rehab [label="Patients + Rehabilitation Plans"];
+    review [label="Sessions + Therapist Review"];
+    api -> auth;
+    api -> rehab;
+    api -> review;
+  }
+
+  database [shape=cylinder, label="PostgreSQL", fillcolor="#FFFFFF", color="#5C958A", penwidth=1.6];
+  privacy [shape=note, label="Raw video stays in browser\nOnly derived metrics are stored", fillcolor="#FFF7E6", color="#D7AD57", fontcolor="#765F33"];
+
+  users -> next [label="HTTPS"];
+  next -> api [label="JSON over HTTPS", color="#3F887A", penwidth=1.5];
+  metrics -> api [label="derived metrics only", color="#657ABD", penwidth=1.5];
+  auth -> database [label="users + roles"];
+  rehab -> database [label="plans + exercises"];
+  review -> database [label="summaries + decisions"];
+  mediaPipe -> privacy [style=dashed, arrowhead=none, color="#C18F39"];
+
+  {rank=same; users; next; api; database}
+}

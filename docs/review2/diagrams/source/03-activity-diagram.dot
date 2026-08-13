@@ -1,0 +1,37 @@
+digraph ActivityDiagram {
+  graph [bgcolor="#F7FAF9", pad="0.4", nodesep="0.40", ranksep="0.52", splines=ortho, fontname="Arial", labelloc=t, labeljust=l, label=<<FONT POINT-SIZE="27" COLOR="#123C3A"><B>03  |  GUIDED EXERCISE ACTIVITY</B></FONT><BR/><FONT POINT-SIZE="12" COLOR="#6D817F">Main movement-analysis and therapist-review flow</FONT>>];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=9, margin="0.16,0.10", color="#AFC7C2", fillcolor="#FFFFFF", fontcolor="#173B39", penwidth=1.2];
+  edge [fontname="Arial", fontsize=8, color="#68817E", fontcolor="#607A77", penwidth=1.15, arrowsize=0.7];
+
+  start [shape=circle, fixedsize=true, width=0.22, label="", fillcolor="#0D766F", color="#0D766F"];
+  select [label="Select assigned exercise", fillcolor="#E5F3F0", color="#6BB3A3"];
+  consent [shape=diamond, label="Camera consent?", fillcolor="#FFF2D5", color="#D9AA4E"];
+  camera [label="Check camera and framing", fillcolor="#E5F3F0", color="#6BB3A3"];
+  detect [label="Detect pose and hand landmarks", fillcolor="#E9EDFB", color="#8B9DDB"];
+  confidence [shape=diamond, label="Tracking reliable?", fillcolor="#FFF2D5", color="#D9AA4E"];
+  reposition [label="Guide patient to reposition", fillcolor="#FFF0EC", color="#DF8E78"];
+  metrics [label="Calculate movement metrics", fillcolor="#E9EDFB", color="#8B9DDB"];
+  feedback [label="Show skeleton and repetition count", fillcolor="#E5F3F0", color="#6BB3A3"];
+  complete [shape=diamond, label="Session complete?", fillcolor="#FFF2D5", color="#D9AA4E"];
+  summary [label="Store derived session summary", fillcolor="#EAF3F1", color="#80B2A8"];
+  review [label="Physiotherapist reviews observation", fillcolor="#EEEAFB", color="#9888D5"];
+  update [label="Approve or correct progress", fillcolor="#DFF3EA", color="#5FA58F"];
+  noCamera [label="Continue without analysis", fillcolor="#F1F5F4"];
+  finish [shape=doublecircle, fixedsize=true, width=0.25, label="", fillcolor="#0D766F", color="#0D766F"];
+
+  start -> select -> consent;
+  consent -> camera [label="Yes"];
+  consent -> noCamera [label="No"];
+  noCamera -> finish;
+  camera -> detect -> confidence;
+  confidence -> reposition [label="No"];
+  reposition -> camera [label="Retry", style=dashed, color="#D1836F"];
+  confidence -> metrics [label="Yes"];
+  metrics -> feedback -> complete;
+  complete -> detect [label="Continue", style=dashed];
+  complete -> summary [label="Done"];
+  summary -> review -> update -> finish;
+
+  {rank=same; camera; detect; confidence; metrics; feedback}
+  {rank=same; reposition; complete; summary; review; update}
+}

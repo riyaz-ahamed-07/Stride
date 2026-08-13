@@ -1,0 +1,25 @@
+digraph ERDiagram {
+  graph [bgcolor="#F7FAF9", pad="0.4", nodesep="0.46", ranksep="0.64", splines=polyline, fontname="Arial", labelloc=t, labeljust=l, label=<<FONT POINT-SIZE="27" COLOR="#123C3A"><B>04  |  STRIDE ER DIAGRAM</B></FONT><BR/><FONT POINT-SIZE="12" COLOR="#6D817F">Essential PostgreSQL entities and cardinalities</FONT>>];
+  node [shape=plain, fontname="Arial", fontsize=8.5];
+  edge [fontname="Arial", fontsize=8, color="#607B78", fontcolor="#56716E", penwidth=1.1, arrowsize=0.7];
+
+  users [label=<<TABLE BORDER="1" COLOR="#5FAE9C" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#0D766F"><FONT COLOR="white"><B>USERS</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/>email<BR ALIGN="LEFT"/>full_name<BR ALIGN="LEFT"/>role</TD></TR></TABLE>>];
+  plans [label=<<TABLE BORDER="1" COLOR="#67AF9E" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#DDF2ED"><B>REHABILITATION_PLANS</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/><B>FK</B> patient_id<BR ALIGN="LEFT"/><B>FK</B> therapist_id<BR ALIGN="LEFT"/>title · status</TD></TR></TABLE>>];
+  exercises [label=<<TABLE BORDER="1" COLOR="#9DBDB6" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#E5F0EE"><B>EXERCISES</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/>name<BR ALIGN="LEFT"/>instructions<BR ALIGN="LEFT"/>safety_notes</TD></TR></TABLE>>];
+  planExercises [label=<<TABLE BORDER="1" COLOR="#67AF9E" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#DDF2ED"><B>PLAN_EXERCISES</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/><B>FK</B> plan_id<BR ALIGN="LEFT"/><B>FK</B> exercise_id<BR ALIGN="LEFT"/>target_repetitions</TD></TR></TABLE>>];
+  sessions [label=<<TABLE BORDER="1" COLOR="#7E91D1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#E8ECFA"><B>EXERCISE_SESSIONS</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/><B>FK</B> plan_exercise_id<BR ALIGN="LEFT"/>started_at<BR ALIGN="LEFT"/>status</TD></TR></TABLE>>];
+  observations [label=<<TABLE BORDER="1" COLOR="#9B8AD8" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#EDE9FB"><B>MOVEMENT_OBSERVATIONS</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/><B>FK</B> session_id<BR ALIGN="LEFT"/>metric · value<BR ALIGN="LEFT"/>confidence · review_status</TD></TR></TABLE>>];
+  consents [label=<<TABLE BORDER="1" COLOR="#D4AA5C" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#FFF2D5"><B>CONSENT_RECORDS</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/><B>FK</B> patient_id<BR ALIGN="LEFT"/>purpose · status<BR ALIGN="LEFT"/>granted_at</TD></TR></TABLE>>];
+  appointments [label=<<TABLE BORDER="1" COLOR="#9DBDB6" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#FFFFFF"><TR><TD BGCOLOR="#E5F0EE"><B>APPOINTMENTS</B></TD></TR><TR><TD ALIGN="LEFT"><B>PK</B> id<BR ALIGN="LEFT"/><B>FK</B> patient_id<BR ALIGN="LEFT"/><B>FK</B> therapist_id<BR ALIGN="LEFT"/>scheduled_at · status</TD></TR></TABLE>>];
+
+  users -> plans [label="1 : many"];
+  users -> appointments [label="1 : many"];
+  users -> consents [label="1 : many"];
+  plans -> planExercises [label="1 : many", color="#4F9A88", penwidth=1.5];
+  exercises -> planExercises [label="1 : many"];
+  planExercises -> sessions [label="1 : many", color="#657ABD", penwidth=1.5];
+  sessions -> observations [label="1 : many", color="#7F70BF", penwidth=1.5];
+
+  {rank=same; users; plans; planExercises; sessions; observations}
+  {rank=same; appointments; consents; exercises}
+}
