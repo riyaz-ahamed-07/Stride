@@ -59,17 +59,14 @@ Stride is a therapist-led rehabilitation platform that connects exercise plannin
 
 ## 3. Use Case Diagram
 
-<p align="center">
-  <img src="docs/review2/diagrams/01-use-case.png" alt="Stride use case diagram" width="100%" />
-</p>
+<img width="1447" height="772" alt="diagram-export-8-18-2026-8_24_58-AM" src="https://github.com/user-attachments/assets/f75734f7-d117-470b-81bf-84c874304f0a" />
+
 
 The diagram keeps only the major user goals. The patient performs guided exercises and views progress; the physiotherapist manages care and reviews observations; the administrator controls access. MediaPipe participates only as the on-device movement-analysis engine.
 
 ## 4. Class Diagram
 
-<p align="center">
-  <img src="docs/review2/diagrams/02-class-diagram.png" alt="Stride class diagram" width="100%" />
-</p>
+
 
 The domain model separates identity, rehabilitation planning, exercise performance, consent, and clinical review.
 
@@ -125,9 +122,7 @@ The database model separates reusable exercise definitions from prescriptions an
 
 ## 8. System Architecture
 
-<p align="center">
-  <img src="docs/review2/diagrams/05-architecture.png" alt="Stride system architecture diagram" width="100%" />
-</p>
+<img width="1950" height="911" alt="diagram-export-8-18-2026-8_27_03-AM" src="https://github.com/user-attachments/assets/7b0fb61b-4759-4a2d-8168-91f0d1f75cce" />
 
 ### Layer responsibilities
 
