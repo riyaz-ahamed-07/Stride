@@ -59,13 +59,14 @@ Stride is a therapist-led rehabilitation platform that connects exercise plannin
 
 ## 3. Use Case Diagram
 
-<img width="1447" height="772" alt="diagram-export-8-18-2026-8_24_58-AM" src="https://github.com/user-attachments/assets/f75734f7-d117-470b-81bf-84c874304f0a" />
+<img width="1536" height="1024" alt="ChatGPT Image Aug 20, 2026, 01_37_27 AM" src="https://github.com/user-attachments/assets/68dccd85-1bba-4cc5-8d87-5b5d78dbacac" />
 
 
 The diagram keeps only the major user goals. The patient performs guided exercises and views progress; the physiotherapist manages care and reviews observations; the administrator controls access. MediaPipe participates only as the on-device movement-analysis engine.
 
 ## 4. Class Diagram
 
+<img width="1149" height="1369" alt="ChatGPT Image Aug 20, 2026, 01_36_03 AM" src="https://github.com/user-attachments/assets/89e2bf09-de41-4ffe-bb2e-5acc69ac205e" />
 
 
 The domain model separates identity, rehabilitation planning, exercise performance, consent, and clinical review.
@@ -80,17 +81,15 @@ The domain model separates identity, rehabilitation planning, exercise performan
 
 ## 5. Activity Diagram
 
-<p align="center">
-  <img src="docs/review2/diagrams/03-activity-diagram.png" alt="Stride guided exercise activity diagram" width="100%" />
-</p>
+<img width="1536" height="1024" alt="ChatGPT Image Aug 20, 2026, 01_32_32 AM" src="https://github.com/user-attachments/assets/4ff40873-25a4-4506-a936-bc97ea666587" />
+
 
 The activity begins when a patient selects an assigned exercise. Camera analysis is optional and consent-controlled. When tracking confidence is inadequate, the system pauses analysis and guides the patient to reposition. Reliable landmarks are converted into movement metrics and live feedback. When the session finishes, a derived summary is created and submitted for physiotherapist review.
 
 ## 6. ER Diagram
 
-<p align="center">
-  <img src="docs/review2/diagrams/04-er-diagram.png" alt="Stride database entity relationship diagram" width="100%" />
-</p>
+<img width="1232" height="717" alt="STRIDE-ER-DIAGRAM" src="https://github.com/user-attachments/assets/56789fc8-40f1-4062-8854-7c3149fb07ca" />
+
 
 The database model separates reusable exercise definitions from prescriptions and performed sessions. This avoids duplicating exercise instructions for every patient while allowing each rehabilitation plan to define its own targets.
 
