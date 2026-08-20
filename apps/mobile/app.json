@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Stride",
+    "slug": "stride-clinic",
+    "version": "0.3.0",
+    "orientation": "portrait",
+    "scheme": "stride",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#2563EB",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "clinic.stride.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Stride uses the camera for your video visit with the physiotherapist.",
+        "NSMicrophoneUsageDescription": "Stride uses the microphone for your video visit with the physiotherapist."
+      }
+    },
+    "android": {
+      "package": "clinic.stride.app",
+      "usesCleartextTraffic": true,
+      "adaptiveIcon": {
+        "backgroundColor": "#2563EB"
+      },
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS",
+        "INTERNET"
+      ]
+    },
+    "plugins": [
+      "expo-asset",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Stride uses the camera for your video visit with the physiotherapist.",
+          "microphonePermission": "Stride uses the microphone for your video visit with the physiotherapist.",
+          "recordAudioAndroid": true
+        }
+      ]
+    ]
+  }
+}
