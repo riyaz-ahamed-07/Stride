@@ -121,7 +121,7 @@ The database model separates reusable exercise definitions from prescriptions an
 
 ## 8. System Architecture
 
-<img width="1950" height="911" alt="diagram-export-8-18-2026-8_27_03-AM" src="https://github.com/user-attachments/assets/7b0fb61b-4759-4a2d-8168-91f0d1f75cce" />
+<img width="1536" height="1024" alt="ChatGPT Image Aug 20, 2026, 09_26_28 AM" src="https://github.com/user-attachments/assets/33c4c05e-9a26-442c-8435-44f3bbdf6c8c" />
 
 ### Layer responsibilities
 
