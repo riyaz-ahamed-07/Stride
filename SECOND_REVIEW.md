@@ -59,8 +59,7 @@ Stride is a therapist-led rehabilitation platform that connects exercise plannin
 
 ## 3. Use Case Diagram
 
-<img width="1536" height="1024" alt="ChatGPT Image Aug 20, 2026, 01_37_27 AM" src="https://github.com/user-attachments/assets/68dccd85-1bba-4cc5-8d87-5b5d78dbacac" />
-
+<img width="1536" height="1024" alt="USE CASE DIAGRAM" src="https://github.com/user-attachments/assets/fe44c6b0-e1e4-41b3-a79b-7d732afc1858" />
 
 The diagram keeps only the major user goals. The patient performs guided exercises and views progress; the physiotherapist manages care and reviews observations; the administrator controls access. MediaPipe participates only as the on-device movement-analysis engine.
 
@@ -81,8 +80,7 @@ The domain model separates identity, rehabilitation planning, exercise performan
 
 ## 5. Activity Diagram
 
-<img width="1536" height="1024" alt="ChatGPT Image Aug 20, 2026, 01_32_32 AM" src="https://github.com/user-attachments/assets/4ff40873-25a4-4506-a936-bc97ea666587" />
-
+<img width="1536" height="1024" alt="ChatGPT Image Aug 20, 2026, 11_37_52 AM" src="https://github.com/user-attachments/assets/62e148d4-3def-44d5-80a4-c7280cd8911e" />
 
 The activity begins when a patient selects an assigned exercise. Camera analysis is optional and consent-controlled. When tracking confidence is inadequate, the system pauses analysis and guides the patient to reposition. Reliable landmarks are converted into movement metrics and live feedback. When the session finishes, a derived summary is created and submitted for physiotherapist review.
 
