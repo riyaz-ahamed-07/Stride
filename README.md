@@ -8,7 +8,9 @@
   <strong>An AI-assisted tele-physiotherapy platform for therapist-led, measurable rehabilitation.</strong>
 </p>
 
-> **Faculty reviews:** [Review 1 - Planning and Feasibility](FIRST_REVIEW.md) · [Review 2 - System Design](SECOND_REVIEW.md)
+> **Faculty reviews:** [Review 1](FIRST_REVIEW.md) · [Review 2](SECOND_REVIEW.md) · [Review 3](THIRD_REVIEW.md)
+
+> **Review 3 status:** working authentication, patient/plan/session CRUD, FastAPI + website + React Native companion. Run the API at `apps/api` and the clinic site at `apps/web`. Dummy wireframes are not the product UI.
 
 > **Review 2 status:** system analysis, refined requirements, UML diagrams, ER model, database design, architecture, UI mockups, and initial module progress are documented in the dedicated Review 2 file.
 
