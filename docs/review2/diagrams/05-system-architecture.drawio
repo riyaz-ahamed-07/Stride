@@ -1,0 +1,189 @@
+<mxfile host="app.diagrams.net" agent="Stride" version="22.0.0">
+  <diagram name="Stride System Architecture" id="stride-sys-arch">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="STRIDE SYSTEM ARCHITECTURE" style="text;html=1;fontSize=22;fontStyle=1;fontColor=#1A1A1A;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="480" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Presentation · On-device analysis · Modular FastAPI · Data · Planned external services" style="text;html=1;fontSize=11;fontColor=#555555;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="46" width="560" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="clients" value="1  USER DEVICES / CLIENTS" style="swimlane;startSize=32;rounded=1;fillColor=#E8E8E8;strokeColor=#333333;strokeWidth=2;fontStyle=1;fontSize=13;fontColor=#1A1A1A;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="400" height="600" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="patient" value="Patient Browser (Next.js)" style="swimlane;startSize=28;rounded=1;fillColor=#F5F5F5;strokeColor=#444444;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="clients">
+          <mxGeometry x="16" y="44" width="368" height="320" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="oda" value="On-Device Movement Analysis" style="swimlane;startSize=26;rounded=1;fillColor=#EEEEEE;strokeColor=#555555;fontStyle=1;fontSize=11;html=1;" vertex="1" parent="patient">
+          <mxGeometry x="14" y="40" width="340" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cam" value="Camera and Consent Gate&#xa;opt-in required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;fontSize=11;align=center;" vertex="1" parent="oda">
+          <mxGeometry x="70" y="40" width="200" height="44" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="mp" value="MediaPipe Pose and&#xa;Hand Landmarker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;fontSize=11;align=center;" vertex="1" parent="oda">
+          <mxGeometry x="70" y="100" width="200" height="44" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="metrics" value="Metric Derivation&#xa;joint angles · reps · confidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#555555;fontSize=11;align=center;" vertex="1" parent="oda">
+          <mxGeometry x="50" y="160" width="240" height="44" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="privnote" value="Raw camera frames remain on device" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D0D0D0;strokeColor=#444444;fontColor=#1A1A1A;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="patient">
+          <mxGeometry x="34" y="272" width="300" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="physio" value="Physiotherapist Browser (Next.js)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="clients">
+          <mxGeometry x="16" y="390" width="368" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="admin" value="Administrator Browser (Next.js)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="clients">
+          <mxGeometry x="16" y="470" width="368" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="hub" value="HTTPS JSON&#xa;gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CFCFCF;strokeColor=#333333;strokeWidth=2;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="480" y="280" width="90" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="backend" value="2  STRIDE BACKEND — MODULAR FastAPI" style="swimlane;startSize=32;rounded=1;fillColor=#D0D0D0;strokeColor=#333333;strokeWidth=2;fontStyle=1;fontSize=13;fontColor=#1A1A1A;html=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="80" width="420" height="600" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="api" value="FastAPI REST API&#xa;identity · role · ownership checks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#333333;strokeWidth=2;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="backend">
+          <mxGeometry x="30" y="52" width="360" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="mods" value="Logical Modules  ·  modular monolith" style="swimlane;startSize=28;rounded=1;fillColor=#E0E0E0;strokeColor=#444444;fontStyle=1;fontSize=11;html=1;" vertex="1" parent="backend">
+          <mxGeometry x="30" y="150" width="360" height="410" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m_auth" value="Authentication and RBAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=12;align=center;" vertex="1" parent="mods">
+          <mxGeometry x="24" y="48" width="312" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m_rehab" value="Rehabilitation Workflow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=12;align=center;" vertex="1" parent="mods">
+          <mxGeometry x="24" y="132" width="312" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m_session" value="Session and Therapist Review" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=12;align=center;" vertex="1" parent="mods">
+          <mxGeometry x="24" y="216" width="312" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="m_consent" value="Consent and Audit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=12;align=center;" vertex="1" parent="mods">
+          <mxGeometry x="24" y="300" width="312" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="data" value="3  DATA LAYER" style="swimlane;startSize=32;rounded=1;fillColor=#B8B8B8;strokeColor=#333333;strokeWidth=2;fontStyle=1;fontSize=13;fontColor=#1A1A1A;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="80" width="340" height="240" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pg" value="PostgreSQL&#xa;&#xa;users / roles&#xa;appointments / plans&#xa;sessions / observations&#xa;consent / audit" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=14;fillColor=#F0F0F0;strokeColor=#333333;strokeWidth=2;fontSize=12;align=center;fontStyle=1;" vertex="1" parent="data">
+          <mxGeometry x="70" y="50" width="200" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ext" value="4  EXTERNAL SERVICES (PLANNED)" style="swimlane;startSize=32;rounded=1;dashed=1;dashPattern=8 8;fillColor=#F2F2F2;strokeColor=#777777;strokeWidth=2;fontStyle=1;fontSize=12;fontColor=#555555;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="360" width="340" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="livekit" value="LiveKit Video Rooms&#xa;(Planned)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;dashed=1;fontSize=12;align=center;" vertex="1" parent="ext">
+          <mxGeometry x="20" y="48" width="300" height="54" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="email" value="Email Notification Service&#xa;(Planned)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#777777;dashed=1;fontSize=12;align=center;" vertex="1" parent="ext">
+          <mxGeometry x="20" y="120" width="300" height="54" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend" value="LEGEND&#xa;━━━━━━━&#xa;Solid = application data path&#xa;Dashed = external / planned&#xa;Hub = shared HTTPS entry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#777777;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="590" width="340" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="privacy" value="5  PRIVACY &amp; DESIGN GUARANTEES" style="swimlane;startSize=32;rounded=1;fillColor=#A0A0A0;strokeColor=#333333;strokeWidth=2;fontStyle=1;fontSize=13;fontColor=#1A1A1A;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="720" width="1400" height="130" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="g1" value="No raw pose-analysis&#xa;video stored" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="privacy">
+          <mxGeometry x="40" y="50" width="400" height="58" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="g2" value="Server enforces identity, role,&#xa;ownership, and therapist–patient binding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="privacy">
+          <mxGeometry x="480" y="50" width="420" height="58" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="g3" value="Therapist approves / corrects AI observations&#xa;before progress is finalized" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#444444;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="privacy">
+          <mxGeometry x="940" y="50" width="420" height="58" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_cam_mp" edge="1" parent="oda" source="cam" target="mp" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#555555;fontSize=10;fontColor=#555555;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" value="local frames">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_mp_met" edge="1" parent="oda" source="mp" target="metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#555555;fontSize=10;fontColor=#555555;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" value="landmarks">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_met_hub" edge="1" parent="1" source="metrics" target="hub" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333;fontSize=10;fontColor=#333333;exitX=1;exitY=0.5;entryX=0;entryY=0.25;" value="derived metrics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_physio_hub" edge="1" parent="1" source="physio" target="hub" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333;fontSize=10;fontColor=#333333;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_admin_hub" edge="1" parent="1" source="admin" target="hub" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333;fontSize=10;fontColor=#333333;exitX=1;exitY=0.5;entryX=0;entryY=0.75;" value="">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_hub_api" edge="1" parent="1" source="hub" target="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333;fontSize=10;fontColor=#333333;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_api_mods" edge="1" parent="backend" source="api" target="mods" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333;fontSize=10;fontColor=#333333;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" value="protected ops">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_api_pg" edge="1" parent="1" source="api" target="pg" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333;fontSize=10;fontColor=#333333;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="owned records">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="164"/>
+              <mxPoint x="1060" y="210"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_mods_lk" edge="1" parent="1" source="m_session" target="livekit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#777777;dashed=1;dashPattern=8 8;fontSize=10;fontColor=#777777;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="room token">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="510"/>
+              <mxPoint x="1060" y="435"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_mods_email" edge="1" parent="1" source="m_consent" target="email" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#777777;dashed=1;dashPattern=8 8;fontSize=10;fontColor=#777777;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="reminders">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="594"/>
+              <mxPoint x="1080" y="507"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_patient_webrtc" edge="1" parent="1" source="patient" target="livekit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#777777;dashed=1;dashPattern=8 8;fontSize=10;fontColor=#777777;exitX=0.5;exitY=0;entryX=0.5;entryY=0;" value="WebRTC media (planned)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="60"/>
+              <mxPoint x="1270" y="60"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

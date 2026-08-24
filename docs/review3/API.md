@@ -22,6 +22,9 @@ Auth: `POST /auth/token` with form fields `username` (email) and `password`. Sen
 | PATCH | `/observations/{id}` | therapist, admin | Approve, correct, or reject |
 | GET/POST | `/consent` | patient | Camera-analysis consent |
 | GET/PATCH | `/admin/users` | administrator | Account status |
+| GET | `/video/room` | public (demo) | HTML WebRTC room page |
+| WS | `/video/ws` | public (demo) | SDP / ICE signaling |
+| GET | `/video/debug` | public (demo) | Active rooms (debug) |
 
 Demo password: `StrideClinic1!`  
 `kamala@stride.clinic` · `therapist@stride.clinic` · `admin@stride.clinic`
