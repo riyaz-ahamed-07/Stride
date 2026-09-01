@@ -1,0 +1,15 @@
+{
+  "id": "ex-pelvic-tilt",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "lumbar",
+  "tags": [
+    "phase1",
+    "spine",
+    "core",
+    "lumbar"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ex-walking-program",
+  "name": "Walking Program (Progressive)",
+  "instructions": "Walk on flat ground, add 5 minutes each week. Goal: progress from 10 to 30 minutes. Focus on gait stability.",
+  "audioCues": [
+    "Keep steady pace",
+    "Heel strike first",
+    "Natural arm swing"
+  ]
+}

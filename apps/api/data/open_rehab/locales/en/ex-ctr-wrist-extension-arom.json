@@ -1,0 +1,11 @@
+{
+  "id": "ex-ctr-wrist-extension-arom",
+  "name": "Wrist Extension AROM (gentle, no flexion)",
+  "instructions": "Rest forearm on table, hand hanging off edge. Gently extend wrist upward (dorsiflexion), hold 5s, return to neutral. NO wrist flexion in this phase.",
+  "audioCues": [
+    "Wrist up",
+    "Hold 5 seconds",
+    "Return to neutral",
+    "No bending down"
+  ]
+}

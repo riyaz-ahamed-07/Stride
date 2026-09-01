@@ -1,0 +1,14 @@
+{
+  "id": "ex-log-roll",
+  "version": "1.0",
+  "category": "functional",
+  "bodyRegion": "trunk",
+  "tags": [
+    "phase1",
+    "spine",
+    "functional",
+    "bed-mobility"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 5
+}

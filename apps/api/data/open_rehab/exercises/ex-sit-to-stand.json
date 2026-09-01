@@ -1,0 +1,13 @@
+{
+  "id": "ex-sit-to-stand",
+  "version": "1.0",
+  "category": "functional",
+  "bodyRegion": "knee",
+  "tags": [
+    "seated",
+    "standing",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

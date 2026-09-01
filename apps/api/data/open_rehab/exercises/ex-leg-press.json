@@ -1,0 +1,15 @@
+{
+  "id": "ex-leg-press",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "seated",
+    "equipment-machine"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "equipment": [
+    "leg_press"
+  ]
+}

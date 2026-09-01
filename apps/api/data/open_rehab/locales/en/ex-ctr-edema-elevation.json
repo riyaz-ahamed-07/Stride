@@ -1,0 +1,11 @@
+{
+  "id": "ex-ctr-edema-elevation",
+  "name": "Hand Elevation + Fist Pumps",
+  "instructions": "Elevate hand above heart level (rest on pillow), repeatedly make gentle fist and open to pump venous return and reduce swelling. Continue 1-2 minutes per set.",
+  "audioCues": [
+    "Hand up high",
+    "Gentle fist",
+    "Open",
+    "Keep going"
+  ]
+}

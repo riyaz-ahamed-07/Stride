@@ -1,0 +1,15 @@
+{
+  "id": "ex-terminal-knee-ext",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "phase1",
+    "knee",
+    "quad",
+    "extension"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

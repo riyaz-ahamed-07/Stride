@@ -1,0 +1,11 @@
+{
+  "id": "ex-aa-knee-flexion",
+  "name": "Active-Assisted Knee Flexion",
+  "instructions": "Sit on chair, use good foot to help push surgical foot back, increasing knee flexion.",
+  "audioCues": [
+    "Sit down",
+    "Use good foot to push",
+    "Slowly increase angle",
+    "Tight but not painful"
+  ]
+}

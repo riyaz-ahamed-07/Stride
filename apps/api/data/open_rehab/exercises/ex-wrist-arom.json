@@ -1,0 +1,13 @@
+{
+  "id": "ex-wrist-arom",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "wrist",
+  "tags": [
+    "phase1",
+    "wrist",
+    "rom"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

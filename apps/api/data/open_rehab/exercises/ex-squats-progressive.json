@@ -1,0 +1,19 @@
+{
+  "id": "ex-squats-progressive",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "contraindications": {
+    "phases": [
+      0,
+      1,
+      2
+    ]
+  }
+}

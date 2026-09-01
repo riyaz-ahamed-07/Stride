@@ -1,0 +1,10 @@
+{
+  "id": "ex-patellar-mob",
+  "name": "Patellar Mobilization",
+  "instructions": "Sit with knee relaxed straight, gently push kneecap up/down/left/right, 10 times each.",
+  "audioCues": [
+    "Relax your knee",
+    "Gently push kneecap",
+    "10 times each direction"
+  ]
+}

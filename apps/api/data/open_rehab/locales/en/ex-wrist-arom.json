@@ -1,0 +1,11 @@
+{
+  "id": "ex-wrist-arom",
+  "name": "Wrist Active ROM",
+  "instructions": "Forearm on table, hand over edge, slowly flex/extend wrist, ulnar/radial deviation, pronation/supination",
+  "audioCues": [
+    "Flex",
+    "Extend",
+    "Deviate",
+    "Rotate"
+  ]
+}

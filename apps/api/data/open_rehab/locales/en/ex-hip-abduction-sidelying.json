@@ -1,0 +1,10 @@
+{
+  "id": "ex-hip-abduction-sidelying",
+  "name": "Hip Abduction — Side-lying",
+  "instructions": "Lie on unaffected side, slowly lift top leg toward ceiling, hold 2s, lower slowly",
+  "audioCues": [
+    "Lift",
+    "Hold",
+    "Lower slowly"
+  ]
+}

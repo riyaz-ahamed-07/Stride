@@ -1,0 +1,12 @@
+{
+  "id": "ex-wall-slides",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "wall"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

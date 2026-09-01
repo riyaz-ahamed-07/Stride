@@ -1,0 +1,10 @@
+{
+  "id": "ex-ankle-dorsiflexion",
+  "name": "Ankle Dorsiflexion Stretch",
+  "instructions": "Seated, loop towel around forefoot, pull towel to dorsiflex ankle, feel calf stretch, hold 30s",
+  "audioCues": [
+    "Pull towel",
+    "Flex foot up",
+    "Hold stretch"
+  ]
+}

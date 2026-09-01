@@ -1,0 +1,13 @@
+{
+  "id": "ex-stair-climbing",
+  "version": "1.0",
+  "category": "functional",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "stairs"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 1,
+  "defaultHoldSec": 300
+}

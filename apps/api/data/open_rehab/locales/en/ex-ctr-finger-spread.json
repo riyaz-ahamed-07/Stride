@@ -1,0 +1,10 @@
+{
+  "id": "ex-ctr-finger-spread",
+  "name": "Finger Abduction/Adduction",
+  "instructions": "Palm down flat, spread fingers wide (abduction), hold 3s, then bring together (adduction). Trains intrinsic hand muscles, maintains finger dexterity.",
+  "audioCues": [
+    "Spread fingers",
+    "Hold 3 seconds",
+    "Bring together"
+  ]
+}

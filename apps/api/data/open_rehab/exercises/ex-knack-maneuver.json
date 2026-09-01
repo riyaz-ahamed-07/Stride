@@ -1,0 +1,13 @@
+{
+  "id": "ex-knack-maneuver",
+  "version": "1.0",
+  "category": "functional",
+  "bodyRegion": "pelvic-floor",
+  "tags": [
+    "standing",
+    "functional",
+    "no-equipment"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 5
+}

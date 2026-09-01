@@ -1,0 +1,12 @@
+{
+  "id": "ex-prone-knee-flex",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "knee",
+  "tags": [
+    "prone",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

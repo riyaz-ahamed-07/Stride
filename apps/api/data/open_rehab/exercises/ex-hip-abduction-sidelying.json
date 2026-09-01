@@ -1,0 +1,14 @@
+{
+  "id": "ex-hip-abduction-sidelying",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "hip",
+  "tags": [
+    "phase1",
+    "hip",
+    "strengthening"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 2
+}

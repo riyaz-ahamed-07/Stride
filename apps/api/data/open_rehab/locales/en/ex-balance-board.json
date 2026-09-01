@@ -1,0 +1,10 @@
+{
+  "id": "ex-balance-board",
+  "name": "Balance Board / BOSU",
+  "instructions": "Stand on balance board or BOSU, maintain balance 30s. Keep chair nearby for safety.",
+  "audioCues": [
+    "Step on",
+    "Keep balance",
+    "Hold 30 seconds"
+  ]
+}

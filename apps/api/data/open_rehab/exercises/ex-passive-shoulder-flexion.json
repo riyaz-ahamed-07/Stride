@@ -1,0 +1,13 @@
+{
+  "id": "ex-passive-shoulder-flexion",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "shoulder",
+  "tags": [
+    "phase1",
+    "shoulder",
+    "passive-rom"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

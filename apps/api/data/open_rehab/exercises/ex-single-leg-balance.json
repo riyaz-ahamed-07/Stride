@@ -1,0 +1,13 @@
+{
+  "id": "ex-single-leg-balance",
+  "version": "1.0",
+  "category": "balance",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 1,
+  "defaultHoldSec": 30
+}

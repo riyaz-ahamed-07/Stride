@@ -1,0 +1,11 @@
+{
+  "id": "ex-prone-knee-flex",
+  "name": "Prone Knee Flexion (Gravity)",
+  "instructions": "Lie face down, let surgical lower leg hang off bed edge, gravity assists knee flexion.",
+  "audioCues": [
+    "Lie face down",
+    "Relax lower leg",
+    "Let gravity assist",
+    "Slowly increase angle"
+  ]
+}

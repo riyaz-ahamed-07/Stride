@@ -1,0 +1,10 @@
+{
+  "id": "ex-grip-strengthening",
+  "name": "Grip Strengthening",
+  "instructions": "Squeeze a soft ball or towel firmly, hold 5s, release, repeat",
+  "audioCues": [
+    "Squeeze",
+    "Hold",
+    "Release"
+  ]
+}

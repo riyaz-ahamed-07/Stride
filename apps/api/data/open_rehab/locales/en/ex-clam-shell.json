@@ -1,0 +1,10 @@
+{
+  "id": "ex-clam-shell",
+  "name": "Clamshell",
+  "instructions": "Side-lying, knees bent 45°, feet together, open top knee like a clamshell without rotating pelvis, slowly close",
+  "audioCues": [
+    "Open",
+    "Keep pelvis stable",
+    "Close slowly"
+  ]
+}

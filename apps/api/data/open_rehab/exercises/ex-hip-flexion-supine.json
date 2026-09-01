@@ -1,0 +1,13 @@
+{
+  "id": "ex-hip-flexion-supine",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "hip",
+  "tags": [
+    "phase1",
+    "hip",
+    "rom"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

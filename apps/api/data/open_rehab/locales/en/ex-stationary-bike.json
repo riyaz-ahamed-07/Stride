@@ -1,0 +1,10 @@
+{
+  "id": "ex-stationary-bike",
+  "name": "Stationary Bike",
+  "instructions": "Set seat high, low resistance, ROM >100° needed for full rotation.",
+  "audioCues": [
+    "Adjust seat height",
+    "Pedal gently",
+    "Keep steady pace"
+  ]
+}

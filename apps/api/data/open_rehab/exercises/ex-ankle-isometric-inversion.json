@@ -1,0 +1,14 @@
+{
+  "id": "ex-ankle-isometric-inversion",
+  "version": "1.0",
+  "category": "isometric",
+  "bodyRegion": "foot",
+  "tags": [
+    "seated",
+    "wall-or-object",
+    "gentle"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ex-single-leg-balance",
+  "name": "Single-Leg Balance",
+  "instructions": "Hold chair, slowly lift good foot, balance on surgical leg for 30s. Gradually reduce support.",
+  "audioCues": [
+    "Hold the chair",
+    "Lift good foot",
+    "Keep balance",
+    "Hold 30 seconds"
+  ]
+}

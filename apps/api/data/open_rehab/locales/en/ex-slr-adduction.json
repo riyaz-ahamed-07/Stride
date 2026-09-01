@@ -1,0 +1,11 @@
+{
+  "id": "ex-slr-adduction",
+  "name": "SLR — Adduction",
+  "instructions": "Side-lying, top leg on pillow, lift bottom leg with knee straight, hold 3s, lower.",
+  "audioCues": [
+    "Top leg on pillow",
+    "Lift bottom leg up",
+    "Hold 3 seconds",
+    "Lower"
+  ]
+}

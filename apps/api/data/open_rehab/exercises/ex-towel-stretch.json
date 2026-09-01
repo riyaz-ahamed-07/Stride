@@ -1,0 +1,15 @@
+{
+  "id": "ex-towel-stretch",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "knee",
+  "tags": [
+    "phase1",
+    "knee",
+    "extension",
+    "stretch"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 3,
+  "defaultHoldSec": 30
+}

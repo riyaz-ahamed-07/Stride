@@ -1,0 +1,14 @@
+{
+  "id": "ex-ctr-edema-elevation",
+  "version": "1.0",
+  "category": "circulation",
+  "bodyRegion": "wrist",
+  "tags": [
+    "phase1",
+    "ctr",
+    "edema",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 20
+}

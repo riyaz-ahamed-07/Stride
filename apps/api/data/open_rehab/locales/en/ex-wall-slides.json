@@ -1,0 +1,11 @@
+{
+  "id": "ex-wall-slides",
+  "name": "Wall Slides",
+  "instructions": "Stand facing wall, foot on wall, slowly bend knee letting foot slide down.",
+  "audioCues": [
+    "Foot on wall",
+    "Slowly bend knee",
+    "To maximum",
+    "Straighten"
+  ]
+}

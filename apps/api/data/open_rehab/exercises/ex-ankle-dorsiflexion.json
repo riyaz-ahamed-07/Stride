@@ -1,0 +1,15 @@
+{
+  "id": "ex-ankle-dorsiflexion",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "ankle",
+  "tags": [
+    "phase1",
+    "ankle",
+    "rom",
+    "stretch"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 3,
+  "defaultHoldSec": 30
+}

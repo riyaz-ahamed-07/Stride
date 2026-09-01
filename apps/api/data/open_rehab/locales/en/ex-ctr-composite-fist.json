@@ -1,0 +1,11 @@
+{
+  "id": "ex-ctr-composite-fist",
+  "name": "Composite Fist (Gentle, ~30% effort)",
+  "instructions": "Slowly curl all fingers into a fist at ~30% effort. Hold 5 seconds, slowly open. Do NOT squeeze hard — goal is tendon gliding, not grip strength.",
+  "audioCues": [
+    "Slowly make a fist",
+    "About 30% effort",
+    "Hold 5 seconds",
+    "Slowly open"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ex-single-leg-squat",
+  "name": "Single-Leg Squat (Partial)",
+  "instructions": "Stand on surgical leg, lift good foot, slowly squat ~30-45 degrees and stand. Hold chair if needed.",
+  "audioCues": [
+    "Stand on one leg",
+    "Slowly squat",
+    "Don't go too deep",
+    "Stand up"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ex-stair-climbing",
+  "name": "Stair Climbing (Reciprocal)",
+  "instructions": "Going up: good leg first. Going down: surgical leg first. Goal: reciprocal pattern (step over step).",
+  "audioCues": [
+    "Good leg up first",
+    "Surgical leg down first",
+    "Step over step"
+  ]
+}

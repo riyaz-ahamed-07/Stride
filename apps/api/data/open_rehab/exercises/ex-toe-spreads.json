@@ -1,0 +1,14 @@
+{
+  "id": "ex-toe-spreads",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "foot",
+  "tags": [
+    "seated",
+    "no-equipment",
+    "gentle"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 3
+}

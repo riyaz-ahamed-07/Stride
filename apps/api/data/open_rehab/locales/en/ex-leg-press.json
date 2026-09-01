@@ -1,0 +1,10 @@
+{
+  "id": "ex-leg-press",
+  "name": "Leg Press (Progressive)",
+  "instructions": "Sit on leg press machine, feet on platform, push out slowly and return. Start light, progress gradually.",
+  "audioCues": [
+    "Feet on platform",
+    "Push out slowly",
+    "Slowly return"
+  ]
+}

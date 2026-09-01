@@ -1,0 +1,11 @@
+{
+  "id": "ex-elbow-flexion-aarom",
+  "name": "Elbow Flexion AAROM (gravity-assisted)",
+  "instructions": "Sit with forearm on table. Use other hand to gently assist bending elbow toward shoulder. Stay within surgeon's allowed ROM.",
+  "audioCues": [
+    "Gently assist with other hand",
+    "Slowly bend",
+    "Don't exceed allowed range",
+    "Slowly return"
+  ]
+}

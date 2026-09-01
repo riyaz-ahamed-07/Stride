@@ -1,0 +1,386 @@
+{
+  "version": "1.0.0",
+  "count": 76,
+  "exercises": [
+    {
+      "id": "ex-quad-set",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-slr-flexion",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-heel-slides",
+      "category": "rom",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-mini-squats-wall",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-hamstring-curls",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-calf-raises",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-stationary-bike",
+      "category": "aerobic",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-hamstring-stretch",
+      "category": "flexibility",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-ankle-pumps",
+      "category": "circulation",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-gluteal-sets",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-saq",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-slr-abduction",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-slr-adduction",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-patellar-mob",
+      "category": "mobility",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-gait-training",
+      "category": "functional",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-aa-knee-flexion",
+      "category": "rom",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-toe-raises",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-wall-slides",
+      "category": "rom",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-mini-squats-60",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-step-ups",
+      "category": "functional",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-seated-knee-ext",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-prone-knee-flex",
+      "category": "rom",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-leg-press",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-squats-progressive",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-step-downs",
+      "category": "functional",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-single-leg-balance",
+      "category": "balance",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-stair-climbing",
+      "category": "functional",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-elliptical",
+      "category": "aerobic",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-sit-to-stand",
+      "category": "functional",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-single-leg-squat",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-lateral-step-ups",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-balance-board",
+      "category": "proprioception",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-walking-program",
+      "category": "aerobic",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-swimming",
+      "category": "aerobic",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-forearm-pronation-supination",
+      "category": "rom",
+      "bodyRegion": "elbow"
+    },
+    {
+      "id": "ex-elbow-flexion-aarom",
+      "category": "rom",
+      "bodyRegion": "elbow"
+    },
+    {
+      "id": "ex-elbow-extension-passive",
+      "category": "rom",
+      "bodyRegion": "elbow"
+    },
+    {
+      "id": "ex-isometric-elbow-flexion",
+      "category": "isometric",
+      "bodyRegion": "elbow"
+    },
+    {
+      "id": "ex-toe-curls",
+      "category": "strengthening",
+      "bodyRegion": "foot"
+    },
+    {
+      "id": "ex-toe-spreads",
+      "category": "strengthening",
+      "bodyRegion": "foot"
+    },
+    {
+      "id": "ex-short-foot",
+      "category": "strengthening",
+      "bodyRegion": "foot"
+    },
+    {
+      "id": "ex-ankle-isometric-inversion",
+      "category": "isometric",
+      "bodyRegion": "foot"
+    },
+    {
+      "id": "ex-ankle-isometric-eversion",
+      "category": "isometric",
+      "bodyRegion": "foot"
+    },
+    {
+      "id": "ex-kegel-slow",
+      "category": "strengthening",
+      "bodyRegion": "pelvic-floor"
+    },
+    {
+      "id": "ex-kegel-quick",
+      "category": "strengthening",
+      "bodyRegion": "pelvic-floor"
+    },
+    {
+      "id": "ex-pelvic-floor-breathing",
+      "category": "coordination",
+      "bodyRegion": "pelvic-floor"
+    },
+    {
+      "id": "ex-bridge-pelvic-floor",
+      "category": "strengthening",
+      "bodyRegion": "pelvic-floor"
+    },
+    {
+      "id": "ex-ta-activation",
+      "category": "strengthening",
+      "bodyRegion": "pelvic-floor"
+    },
+    {
+      "id": "ex-adductor-squeeze-pf",
+      "category": "strengthening",
+      "bodyRegion": "pelvic-floor"
+    },
+    {
+      "id": "ex-knack-maneuver",
+      "category": "functional",
+      "bodyRegion": "pelvic-floor"
+    },
+    {
+      "id": "ex-hip-flexion-supine",
+      "category": "rom",
+      "bodyRegion": "hip"
+    },
+    {
+      "id": "ex-hip-abduction-sidelying",
+      "category": "strengthening",
+      "bodyRegion": "hip"
+    },
+    {
+      "id": "ex-hip-extension-prone",
+      "category": "strengthening",
+      "bodyRegion": "hip"
+    },
+    {
+      "id": "ex-clam-shell",
+      "category": "strengthening",
+      "bodyRegion": "hip"
+    },
+    {
+      "id": "ex-bridging",
+      "category": "strengthening",
+      "bodyRegion": "hip"
+    },
+    {
+      "id": "ex-pendulum",
+      "category": "rom",
+      "bodyRegion": "shoulder"
+    },
+    {
+      "id": "ex-passive-shoulder-flexion",
+      "category": "rom",
+      "bodyRegion": "shoulder"
+    },
+    {
+      "id": "ex-scapular-squeeze",
+      "category": "strengthening",
+      "bodyRegion": "shoulder"
+    },
+    {
+      "id": "ex-grip-strengthening",
+      "category": "strengthening",
+      "bodyRegion": "hand"
+    },
+    {
+      "id": "ex-wrist-arom",
+      "category": "rom",
+      "bodyRegion": "wrist"
+    },
+    {
+      "id": "ex-chin-tuck",
+      "category": "strengthening",
+      "bodyRegion": "cervical"
+    },
+    {
+      "id": "ex-diaphragmatic-breathing",
+      "category": "rom",
+      "bodyRegion": "trunk"
+    },
+    {
+      "id": "ex-pelvic-tilt",
+      "category": "strengthening",
+      "bodyRegion": "lumbar"
+    },
+    {
+      "id": "ex-log-roll",
+      "category": "functional",
+      "bodyRegion": "trunk"
+    },
+    {
+      "id": "ex-ankle-circles",
+      "category": "rom",
+      "bodyRegion": "ankle"
+    },
+    {
+      "id": "ex-towel-scrunches",
+      "category": "strengthening",
+      "bodyRegion": "foot"
+    },
+    {
+      "id": "ex-ankle-dorsiflexion",
+      "category": "rom",
+      "bodyRegion": "ankle"
+    },
+    {
+      "id": "ex-towel-stretch",
+      "category": "rom",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-terminal-knee-ext",
+      "category": "strengthening",
+      "bodyRegion": "knee"
+    },
+    {
+      "id": "ex-ctr-finger-tendon-glide",
+      "category": "rom",
+      "bodyRegion": "wrist"
+    },
+    {
+      "id": "ex-ctr-median-nerve-glide",
+      "category": "rom",
+      "bodyRegion": "wrist"
+    },
+    {
+      "id": "ex-ctr-thumb-opposition",
+      "category": "rom",
+      "bodyRegion": "wrist"
+    },
+    {
+      "id": "ex-ctr-composite-fist",
+      "category": "rom",
+      "bodyRegion": "wrist"
+    },
+    {
+      "id": "ex-ctr-wrist-extension-arom",
+      "category": "rom",
+      "bodyRegion": "wrist"
+    },
+    {
+      "id": "ex-ctr-finger-spread",
+      "category": "rom",
+      "bodyRegion": "wrist"
+    },
+    {
+      "id": "ex-ctr-edema-elevation",
+      "category": "circulation",
+      "bodyRegion": "wrist"
+    }
+  ]
+}

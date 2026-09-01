@@ -1,0 +1,11 @@
+{
+  "id": "ex-terminal-knee-ext",
+  "name": "Terminal Knee Extension",
+  "instructions": "Supine, place towel roll under knee, tighten quad to fully straighten knee pressing into towel, hold 5s, relax",
+  "audioCues": [
+    "Tighten quad",
+    "Press knee straight",
+    "Hold",
+    "Relax"
+  ]
+}

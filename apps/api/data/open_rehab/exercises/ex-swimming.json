@@ -1,0 +1,16 @@
+{
+  "id": "ex-swimming",
+  "version": "1.0",
+  "category": "aerobic",
+  "bodyRegion": "knee",
+  "tags": [
+    "pool",
+    "low-impact"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 1,
+  "equipment": [
+    "pool"
+  ],
+  "defaultHoldSec": 1200
+}

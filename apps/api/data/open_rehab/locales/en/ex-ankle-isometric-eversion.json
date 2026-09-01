@@ -1,0 +1,12 @@
+{
+  "id": "ex-ankle-isometric-eversion",
+  "name": "Ankle Isometric Eversion",
+  "instructions": "Sit and press outside of foot against a fixed object. Push outward without moving. Hold 5 seconds.",
+  "audioCues": [
+    "Press outside of foot",
+    "Push outward gently",
+    "Don't move",
+    "Hold 5 seconds",
+    "Release"
+  ]
+}

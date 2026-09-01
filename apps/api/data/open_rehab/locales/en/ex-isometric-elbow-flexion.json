@@ -1,0 +1,12 @@
+{
+  "id": "ex-isometric-elbow-flexion",
+  "name": "Isometric Elbow Flexion (gentle)",
+  "instructions": "Bend elbow 90°, place other hand on top of forearm. Gently push up (~30% effort) without actually moving. Hold 5 seconds, release.",
+  "audioCues": [
+    "Gently push up",
+    "Don't actually move",
+    "About 30% effort",
+    "Hold 5 seconds",
+    "Release"
+  ]
+}

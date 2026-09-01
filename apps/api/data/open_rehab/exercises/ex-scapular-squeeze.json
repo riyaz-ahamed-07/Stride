@@ -1,0 +1,15 @@
+{
+  "id": "ex-scapular-squeeze",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "shoulder",
+  "tags": [
+    "phase1",
+    "shoulder",
+    "posture",
+    "scapular"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

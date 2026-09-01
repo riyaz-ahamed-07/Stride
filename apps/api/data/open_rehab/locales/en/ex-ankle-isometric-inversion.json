@@ -1,0 +1,12 @@
+{
+  "id": "ex-ankle-isometric-inversion",
+  "name": "Ankle Isometric Inversion",
+  "instructions": "Sit and press inside of foot against a fixed object (wall/table leg). Push inward without moving. Hold 5 seconds. This is isometric — no joint movement.",
+  "audioCues": [
+    "Press inside of foot against wall",
+    "Push inward gently",
+    "Don't move",
+    "Hold 5 seconds",
+    "Release"
+  ]
+}

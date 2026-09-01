@@ -1,0 +1,13 @@
+{
+  "id": "ex-ankle-circles",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "ankle",
+  "tags": [
+    "phase1",
+    "ankle",
+    "rom"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

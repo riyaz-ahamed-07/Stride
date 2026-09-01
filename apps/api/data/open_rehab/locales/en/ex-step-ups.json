@@ -1,0 +1,10 @@
+{
+  "id": "ex-step-ups",
+  "name": "Step-Ups",
+  "instructions": "Stand at step, surgical leg steps up first, follow with other leg, then step down. Phase 2: 4 inch, Phase 3: 6-8 inch.",
+  "audioCues": [
+    "Surgical leg up first",
+    "Stand steady",
+    "Slowly step down"
+  ]
+}

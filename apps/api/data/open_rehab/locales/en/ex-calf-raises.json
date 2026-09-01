@@ -1,0 +1,10 @@
+{
+  "id": "ex-calf-raises",
+  "name": "Calf Raises",
+  "instructions": "Stand holding chair, rise on toes, hold 3s, lower.",
+  "audioCues": [
+    "Rise on your toes",
+    "Hold 3 seconds",
+    "Slowly lower"
+  ]
+}

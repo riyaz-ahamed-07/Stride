@@ -1,0 +1,13 @@
+{
+  "id": "ex-saq",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "supine",
+    "bed-ridden",
+    "towel-under-knee"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

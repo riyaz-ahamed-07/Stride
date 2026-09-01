@@ -1,0 +1,17 @@
+{
+  "id": "ex-adductor-squeeze-pf",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "pelvic-floor",
+  "tags": [
+    "supine",
+    "pillow-or-ball"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "equipment": [
+    "pillow",
+    "soft-ball"
+  ],
+  "defaultHoldSec": 5
+}
