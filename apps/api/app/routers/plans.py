@@ -17,8 +17,16 @@ def _to_out(plan: RehabilitationPlan) -> PlanOut:
             target_repetitions=item.target_repetitions,
             instructions=item.exercise.instructions,
             safety_notes=item.exercise.safety_notes,
+            week_number=item.week_number,
+            day_of_week=item.day_of_week,
+            session_type=item.session_type,  # type: ignore[arg-type]
+            sort_order=item.sort_order,
+            frequency_note=item.frequency_note or "",
+            body_region=item.exercise.body_region,
+            pose_recipe_key=item.exercise.pose_recipe_key,
+            demo_cue=item.exercise.demo_cue or "",
         )
-        for item in plan.items
+        for item in sorted(plan.items, key=lambda row: (row.week_number, row.day_of_week or -1, row.sort_order))
     ]
     return PlanOut(
         id=plan.id,
@@ -26,6 +34,8 @@ def _to_out(plan: RehabilitationPlan) -> PlanOut:
         therapist_id=plan.therapist_id,
         title=plan.title,
         start_date=plan.start_date,
+        duration_weeks=plan.duration_weeks,
+        goal=plan.goal or "",
         status=plan.status.value,
         items=items,
     )
@@ -54,21 +64,30 @@ def create_plan(payload: PlanCreate, db: Db, user: PhysioUser) -> PlanOut:
     patient = db.get(User, payload.patient_id)
     if patient is None or patient.role != UserRole.patient or patient.therapist_id != user.id:
         raise HTTPException(status_code=400, detail="Choose a patient from your list.")
+    if not payload.items:
+        raise HTTPException(status_code=400, detail="Add at least one exercise to the plan.")
     plan = RehabilitationPlan(
         patient_id=payload.patient_id,
         therapist_id=user.id,
         title=payload.title,
         start_date=payload.start_date,
+        duration_weeks=payload.duration_weeks,
+        goal=payload.goal,
     )
     db.add(plan)
     db.flush()
-    for item in payload.items:
+    for index, item in enumerate(payload.items):
         db.add(
             PlanExercise(
                 plan_id=plan.id,
                 exercise_id=item.exercise_id,
                 target_sets=item.target_sets,
                 target_repetitions=item.target_repetitions,
+                week_number=item.week_number,
+                day_of_week=item.day_of_week,
+                session_type=item.session_type,
+                sort_order=item.sort_order if item.sort_order else index,
+                frequency_note=item.frequency_note,
             )
         )
     db.commit()
