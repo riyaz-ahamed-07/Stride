@@ -61,14 +61,25 @@ def complete_session(session_id: str, payload: SessionComplete, db: Db, user: Cu
     session.ended_at = datetime.now(timezone.utc)
     session.reported_repetitions = payload.reported_repetitions
     session.patient_notes = payload.patient_notes
-    db.add(
-        MovementObservation(
-            session_id=session.id,
-            metric=payload.metric,
-            value=payload.value,
-            confidence=payload.confidence,
+    if payload.observations:
+        for row in payload.observations:
+            db.add(
+                MovementObservation(
+                    session_id=session.id,
+                    metric=row.metric,
+                    value=row.value,
+                    confidence=row.confidence,
+                )
+            )
+    else:
+        db.add(
+            MovementObservation(
+                session_id=session.id,
+                metric=payload.metric,
+                value=payload.value,
+                confidence=payload.confidence,
+            )
         )
-    )
     db.commit()
     db.refresh(session)
     return _out(session)
