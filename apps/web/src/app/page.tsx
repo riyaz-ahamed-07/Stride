@@ -12,10 +12,22 @@ const concerns = [
 ];
 
 const steps = [
-  { title: "Meet your therapist", body: "Book a video or clinic visit. Your physiotherapist learns your goals and limits." },
-  { title: "Get a home plan", body: "Exercises appear on web and phone with large text, safety notes, and clear reps." },
-  { title: "Train at home", body: "Complete movements at your pace. Sessions save to one shared clinic record." },
-  { title: "Review together", body: "Therapist approves progress, adjusts plans, and schedules follow-up visits." },
+  {
+    title: "Meet your therapist",
+    body: "Book a video or clinic visit. Your physiotherapist learns your goals and limits.",
+  },
+  {
+    title: "Get a home plan",
+    body: "Exercises appear on web and phone with large text, safety notes, and clear reps.",
+  },
+  {
+    title: "Train at home",
+    body: "Complete movements at your pace. Sessions save to one shared clinic record.",
+  },
+  {
+    title: "Review together",
+    body: "Therapist approves progress, adjusts plans, and schedules follow-up visits.",
+  },
 ];
 
 export default function HomePage() {
@@ -28,11 +40,14 @@ export default function HomePage() {
             <div className="hero-copy">
               <span className="hero-badge">Trusted tele-physiotherapy</span>
               <h1>
-                Your trusted path to <span className="text-primary">recovery at home</span>
+                Your trusted path to{" "}
+                <span className="text-primary">recovery at home</span>
               </h1>
               <p className="hero-lead">
-                Stride connects patients, family helpers, and physiotherapists through clear exercise plans,
-                appointment booking, and secure video consultations — designed for older adults and calm, readable screens.
+                Stride connects patients, family helpers, and physiotherapists
+                through clear exercise plans, appointment booking, and secure
+                video consultations — designed for older adults and calm,
+                readable screens.
               </p>
               <div className="hero-actions">
                 <Link className="btn btn-primary btn-lg" href="/login">
@@ -44,7 +59,11 @@ export default function HomePage() {
               </div>
               <div className="hero-search">
                 <span className="hero-search-icon">🔎</span>
-                <input type="search" placeholder="Search exercises, appointments, help topics…" aria-label="Search" />
+                <input
+                  type="search"
+                  placeholder="Search exercises, appointments, help topics…"
+                  aria-label="Search"
+                />
                 <Link className="btn btn-teal btn-sm" href="/login">
                   Search
                 </Link>
@@ -70,8 +89,8 @@ export default function HomePage() {
                     <span>Video visit</span>
                   </div>
                   <div>
-                    <strong>75%</strong>
-                    <span>Weekly progress</span>
+                    <strong>Plan</strong>
+                    <span>From your physiotherapist</span>
                   </div>
                 </div>
                 <Link className="btn btn-primary btn-block" href="/login">
@@ -90,7 +109,10 @@ export default function HomePage() {
             </div>
             <div className="concern-grid">
               {concerns.map((item) => (
-                <article key={item.label} className={`concern-card tone-${item.tone}`}>
+                <article
+                  key={item.label}
+                  className={`concern-card tone-${item.tone}`}
+                >
                   <span className="concern-icon">●</span>
                   {item.label}
                 </article>
@@ -103,28 +125,43 @@ export default function HomePage() {
           <div className="container">
             <div className="section-head centered">
               <h2>Everything in one clinic platform</h2>
-              <p className="subtitle">Web for families and therapists. Mobile app for patients on the go.</p>
+              <p className="subtitle">
+                Web for families and therapists. Mobile app for patients on the
+                go.
+              </p>
             </div>
             <div className="feature-grid-lg">
               <article className="card feature-tile">
                 <div className="feature-icon quick-icon blue">🔎</div>
                 <h3>Doctor discovery</h3>
-                <p>Browse your assigned physiotherapist, clinic details, and visit history in one place.</p>
+                <p>
+                  Browse your assigned physiotherapist, clinic details, and
+                  visit history in one place.
+                </p>
               </article>
               <article className="card feature-tile">
                 <div className="feature-icon quick-icon teal">📅</div>
                 <h3>Appointment booking</h3>
-                <p>See upcoming visits, reasons for care, and join from desktop or tablet.</p>
+                <p>
+                  See upcoming visits, reasons for care, and join from desktop
+                  or tablet.
+                </p>
               </article>
               <article className="card feature-tile">
                 <div className="feature-icon quick-icon amber">📹</div>
                 <h3>Video consultation</h3>
-                <p>High-quality video calls with mute, camera toggle, picture-in-picture, and clear controls.</p>
+                <p>
+                  High-quality video calls with mute, camera toggle,
+                  picture-in-picture, and clear controls.
+                </p>
               </article>
               <article className="card feature-tile">
                 <div className="feature-icon quick-icon rose">🏃</div>
                 <h3>Home exercise plans</h3>
-                <p>Step-by-step movements with safety alerts and therapist review before records update.</p>
+                <p>
+                  Step-by-step movements with safety alerts and therapist review
+                  before records update.
+                </p>
               </article>
             </div>
           </div>
@@ -136,8 +173,9 @@ export default function HomePage() {
               <span className="hero-badge">Video visits</span>
               <h2>Consult from home with confidence</h2>
               <p className="subtitle">
-                Join a scheduled visit in one click. See your therapist full-screen, keep your own camera in a
-                floating window, and use simple controls — no tiny icons.
+                Join a scheduled visit in one click. See your therapist
+                full-screen, keep your own camera in a floating window, and use
+                simple controls — no tiny icons.
               </p>
               <ul className="check-list">
                 <li>Picture-in-picture patient view</li>
@@ -180,7 +218,9 @@ export default function HomePage() {
           <div className="container trust-bar-lg">
             <div className="trust-item">
               <div className="trust-num">3</div>
-              <div className="trust-label">Roles · Patient, therapist, admin</div>
+              <div className="trust-label">
+                Roles · Patient, therapist, admin
+              </div>
             </div>
             <div className="trust-item">
               <div className="trust-num">1</div>
@@ -188,7 +228,9 @@ export default function HomePage() {
             </div>
             <div className="trust-item">
               <div className="trust-num">Safe</div>
-              <div className="trust-label">Not for emergencies or diagnosis</div>
+              <div className="trust-label">
+                Not for emergencies or diagnosis
+              </div>
             </div>
           </div>
         </section>
@@ -196,7 +238,10 @@ export default function HomePage() {
         <section className="cta-banner">
           <div className="container cta-banner-inner">
             <h2>Ready for Review 3 demo?</h2>
-            <p>Use the seeded clinic accounts to walk through login, exercises, video UI, and therapist approval.</p>
+            <p>
+              Use the seeded clinic accounts to walk through login, exercises,
+              video UI, and therapist approval.
+            </p>
             <Link className="btn btn-dark btn-lg" href="/login">
               Sign in to clinic demo
             </Link>

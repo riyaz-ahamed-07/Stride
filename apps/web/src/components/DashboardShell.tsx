@@ -3,23 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect } from "react";
-import { clearSession, readSession } from "@/lib/api";
+import { clearSession, readSession, routeAfterLogin } from "@/lib/api";
 
 type Role = "patient" | "physiotherapist" | "administrator";
 
 const patientLinks = [
-  { href: "/patient", label: "Dashboard", icon: "🏠" },
-  { href: "/patient/exercises", label: "Exercises", icon: "🏃" },
-  { href: "/patient/appointments", label: "Appointments", icon: "📅" },
-  { href: "/patient/help", label: "Help", icon: "❓" },
+  { href: "/patient", label: "Today" },
+  { href: "/patient/exercises", label: "Plan" },
+  { href: "/patient/progress", label: "Progress" },
+  { href: "/patient/appointments", label: "Appointments" },
+  { href: "/patient/help", label: "Help" },
 ];
 
 const therapistLinks = [
-  { href: "/therapist", label: "Clinic board", icon: "📋" },
-  { href: "/therapist/appointments", label: "Appointments", icon: "📅" },
+  { href: "/therapist", label: "Patients" },
+  { href: "/therapist/reviews", label: "Reviews" },
+  { href: "/therapist/progress", label: "Progress" },
+  { href: "/therapist/exercises", label: "Exercises" },
+  { href: "/therapist/plans", label: "Plans" },
+  { href: "/therapist/appointments", label: "Appointments" },
 ];
 
-const adminLinks = [{ href: "/admin", label: "Users", icon: "👤" }];
+const adminLinks = [{ href: "/admin", label: "Users" }];
 
 function linksFor(role: Role) {
   if (role === "patient") return patientLinks;
@@ -47,8 +52,15 @@ export function DashboardShell({
     const session = readSession();
     if (!session || session.role !== role) {
       window.location.href = "/login";
+      return;
     }
-  }, [role]);
+    if (session.status && session.status !== "active") {
+      const next = routeAfterLogin(session);
+      if (next !== pathname) {
+        window.location.href = next;
+      }
+    }
+  }, [role, pathname]);
 
   return (
     <div className="dashboard-shell">
@@ -58,17 +70,26 @@ export function DashboardShell({
           Stride
         </Link>
         <p className="sidebar-role">
-          {role === "patient" ? "Patient portal" : role === "physiotherapist" ? "Therapist portal" : "Administration"}
+          {role === "patient"
+            ? "Patient"
+            : role === "physiotherapist"
+              ? "Physiotherapist"
+              : "Administrator"}
         </p>
         <nav className="sidebar-nav" aria-label="Dashboard navigation">
           {links.map((link) => {
             const isHome = link.href === homeFor(role);
             const active =
               pathname === link.href ||
-              (!isHome && (pathname.startsWith(`${link.href}/`) || pathname === link.href));
+              (!isHome &&
+                (pathname.startsWith(`${link.href}/`) ||
+                  pathname === link.href));
             return (
-              <Link key={link.href} href={link.href} className={active ? "active" : undefined}>
-                <span className="sidebar-icon">{link.icon}</span>
+              <Link
+                key={link.href}
+                href={link.href}
+                className={active ? "active" : undefined}
+              >
                 {link.label}
               </Link>
             );
