@@ -1,73 +1,200 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import { EmptyState, ErrorState, LoadingBlock } from "@/components/AsyncState";
+
 import { api } from "@/lib/api";
 
-type Plan = {
-  title: string;
-  items: {
-    id: string;
-    exercise_name: string;
-    target_sets: number;
-    target_repetitions: number;
-    instructions: string;
-    safety_notes: string;
-  }[];
-};
+import {
+  type CarePlan,
+  type CarePlanItem,
+  type CareSession,
+  type TherapistContact,
+  dayLabel,
+  dosageLabel,
+  isExerciseCompleted,
+  planWeek,
+} from "@/lib/care";
 
-export default function ExercisesPage() {
-  const [plan, setPlan] = useState<Plan | null>(null);
+import { userFacingError } from "@/lib/userFacingError";
+
+export default function RehabilitationPlanPage() {
+  const [plan, setPlan] = useState<CarePlan | null>(null);
+
+  const [sessions, setSessions] = useState<CareSession[]>([]);
+
+  const [therapist, setTherapist] = useState<TherapistContact | null>(null);
+
+  const [weekFilter, setWeekFilter] = useState<number>(1);
+
+  const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    api<Plan[]>("/plans")
-      .then((rows) => setPlan(rows[0] ?? null))
-      .catch((err: Error) => setError(err.message));
+  const load = useCallback(() => {
+    setLoading(true);
+
+    setError("");
+
+    Promise.all([api<CarePlan[]>("/plans"), api<CareSession[]>("/sessions")])
+
+      .then(async ([plans, sessionRows]) => {
+        const row = plans[0] ?? null;
+
+        setPlan(row);
+
+        setSessions(sessionRows);
+
+        if (row) setWeekFilter(planWeek(row.start_date, row.duration_weeks));
+
+        try {
+          setTherapist(await api<TherapistContact>("/auth/my-therapist"));
+        } catch {
+          setTherapist(null);
+        }
+      })
+
+      .catch((err: unknown) =>
+        setError(
+          userFacingError(err, "Could not load your rehabilitation plan."),
+        ),
+      )
+
+      .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const weekItems = useMemo(() => {
+    if (!plan) return [];
+
+    return plan.items.filter((item) => item.week_number === weekFilter);
+  }, [plan, weekFilter]);
+
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <p className="greet-text">Your plan</p>
-          <h1>Home exercises</h1>
-        </div>
+    <div className="care-page">
+      <header className="care-header">
+        <p className="care-kicker">Rehabilitation plan</p>
+
+        <h1>{plan?.title ?? "Your plan"}</h1>
       </header>
 
-      {error ? <p className="error">{error}</p> : null}
+      {loading ? (
+        <LoadingBlock label="Loading your rehabilitation plan…" />
+      ) : null}
 
-      {!plan ? (
-        <div className="card">
-          <p className="subtitle">No active plan yet. Your physiotherapist will assign exercises here.</p>
-        </div>
-      ) : (
+      {error ? <ErrorState message={error} onRetry={load} /> : null}
+
+      {!loading && !error && !plan ? (
+        <EmptyState
+          title="No active rehabilitation plan yet"
+          body="Your physiotherapist will assign home exercises here after your assessment."
+          action={
+            <Link className="btn btn-outline" href="/patient">
+              Back to today
+            </Link>
+          }
+        />
+      ) : null}
+
+      {plan ? (
         <>
-          <div className="card card-gradient" style={{ marginBottom: 24 }}>
-            <h2>{plan.title}</h2>
-            <p className="subtitle">{plan.items.length} exercises · Complete at your own pace</p>
+          <p className="care-program">
+            {therapist ? (
+              <>Prescribed by {therapist.full_name}</>
+            ) : (
+              <>Prescribing physiotherapist details are not available.</>
+            )}
+
+            {plan.duration_weeks ? ` · ${plan.duration_weeks} weeks` : null}
+          </p>
+
+          {plan.goal ? <p className="care-lede">{plan.goal}</p> : null}
+
+          <div className="care-weeks" role="tablist" aria-label="Program week">
+            {Array.from({ length: plan.duration_weeks }, (_, i) => i + 1).map(
+              (week) => (
+                <button
+                  key={week}
+                  type="button"
+                  className={
+                    weekFilter === week ? "care-week active" : "care-week"
+                  }
+                  onClick={() => setWeekFilter(week)}
+                >
+                  Week {week}
+                </button>
+              ),
+            )}
           </div>
-          <div className="exercise-grid">
-            {plan.items.map((item) => (
-              <article className="card exercise-card" key={item.id}>
-                <span className="badge badge-warning">Guided movement</span>
-                <h3>{item.exercise_name}</h3>
-                <p className="subtitle">{item.instructions}</p>
-                <p className="exercise-meta">
-                  {item.target_sets} sets × {item.target_repetitions} reps
-                </p>
-                <div className="alert-safety compact">
-                  <strong>Stop if you feel pain</strong>
-                  {item.safety_notes}
-                </div>
-                <Link className="btn btn-primary btn-block" href={`/patient/move/${item.id}`}>
-                  Start exercise
-                </Link>
-              </article>
-            ))}
-          </div>
+
+          <section className="care-section">
+            <h2>Exercises · week {weekFilter}</h2>
+
+            {weekItems.length === 0 ? (
+              <p className="care-empty">No exercises assigned for this week.</p>
+            ) : (
+              <ul className="care-list care-list-actions">
+                {weekItems.map((item) => (
+                  <PlanExerciseRow
+                    key={item.id}
+                    item={item}
+                    done={isExerciseCompleted(item.id, sessions)}
+                  />
+                ))}
+              </ul>
+            )}
+          </section>
         </>
-      )}
+      ) : null}
     </div>
+  );
+}
+
+function PlanExerciseRow({
+  item,
+
+  done,
+}: {
+  item: CarePlanItem;
+
+  done: boolean;
+}) {
+  const supervised = item.session_type === "supervised";
+
+  return (
+    <li>
+      <div>
+        <p className="care-meta">
+          {supervised ? "Supervised" : "Home"} · {dayLabel(item.day_of_week)}
+        </p>
+
+        <h3>{item.exercise_name}</h3>
+
+        <p>{dosageLabel(item)}</p>
+      </div>
+
+      <div className="care-row-end">
+        <span className={done ? "care-flag done" : "care-flag"}>
+          {done ? "Completed" : "To do"}
+        </span>
+
+        {supervised ? (
+          <p className="care-hint">Complete during your appointment.</p>
+        ) : (
+          <Link
+            className="btn btn-primary btn-sm"
+            href={`/patient/move/${item.id}`}
+          >
+            {done ? "Do again" : "Start exercise"}
+          </Link>
+        )}
+      </div>
+    </li>
   );
 }
