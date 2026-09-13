@@ -6,7 +6,9 @@
     "orientation": "portrait",
     "scheme": "stride",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/icon.png",
       "backgroundColor": "#2563EB",
       "resizeMode": "contain"
     },
@@ -14,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "clinic.stride.app",
       "infoPlist": {
-        "NSCameraUsageDescription": "Stride uses the camera for your video visit with the physiotherapist.",
+        "NSCameraUsageDescription": "Stride uses the camera for guided exercises and video visits with your physiotherapist.",
         "NSMicrophoneUsageDescription": "Stride uses the microphone for your video visit with the physiotherapist."
       }
     },
@@ -22,25 +24,55 @@
       "package": "clinic.stride.app",
       "usesCleartextTraffic": true,
       "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#2563EB"
       },
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
         "MODIFY_AUDIO_SETTINGS",
-        "INTERNET"
+        "INTERNET",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
       "expo-asset",
+      "expo-dev-client",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24,
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 35
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ],
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "Stride uses the camera for guided exercises and video visits with your physiotherapist.",
+          "enableMicrophonePermission": false
+        }
+      ],
+      "./plugins/withMediaPipePose",
       [
         "expo-camera",
         {
-          "cameraPermission": "Stride uses the camera for your video visit with the physiotherapist.",
+          "cameraPermission": "Stride uses the camera for guided exercises and video visits with your physiotherapist.",
           "microphonePermission": "Stride uses the microphone for your video visit with the physiotherapist.",
           "recordAudioAndroid": true
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "10f16be7-5119-4dd4-a74f-d8523da6b3ab"
+      }
+    }
   }
 }
