@@ -4,7 +4,7 @@ export const C = {
   bg: "#EEF2F7",
   surface: "#FFFFFF",
   text: "#0F172A",
-  muted: "#64748B",
+  muted: "#475569",
   border: "#E2E8F0",
   success: "#10B981",
   successSoft: "#D1FAE5",

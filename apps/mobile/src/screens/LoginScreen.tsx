@@ -1,4 +1,6 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { PasswordField } from "../components/PasswordField";
+import { StrideLogo } from "../components/StrideLogo";
 import { C } from "../theme";
 
 type Props = {
@@ -6,11 +8,12 @@ type Props = {
   password: string;
   error: string;
   loading?: boolean;
-  apiUrl?: string;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onSignIn: () => void;
   onBack: () => void;
+  onForgotPassword: () => void;
+  onSignUp: () => void;
 };
 
 export function LoginScreen({
@@ -18,11 +21,12 @@ export function LoginScreen({
   password,
   error,
   loading = false,
-  apiUrl,
   onEmailChange,
   onPasswordChange,
   onSignIn,
   onBack,
+  onForgotPassword,
+  onSignUp,
 }: Props) {
   return (
     <View style={styles.shell}>
@@ -32,9 +36,7 @@ export function LoginScreen({
       <View style={styles.page}>
         <View style={styles.card}>
           <View style={styles.logoRow}>
-            <View style={styles.logoMark}>
-              <Text style={styles.logoMarkText}>S</Text>
-            </View>
+            <StrideLogo size={44} />
             <Text style={styles.logoText}>Stride</Text>
           </View>
           <Text style={styles.h1}>Welcome back</Text>
@@ -47,15 +49,17 @@ export function LoginScreen({
             autoCapitalize="none"
             keyboardType="email-address"
             editable={!loading}
+            placeholderTextColor={C.muted}
           />
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={[styles.input, loading && styles.inputDisabled]}
+          <PasswordField
             value={password}
             onChangeText={onPasswordChange}
-            secureTextEntry
             editable={!loading}
           />
+          <Pressable style={styles.forgotRow} onPress={onForgotPassword} disabled={loading}>
+            <Text style={styles.forgotText}>Forgot password?</Text>
+          </Pressable>
           {error ? <Text style={styles.error}>{error}</Text> : null}
           <Pressable
             style={[styles.btnPrimary, loading && styles.btnDisabled]}
@@ -71,7 +75,12 @@ export function LoginScreen({
               <Text style={styles.btnPrimaryText}>Sign in</Text>
             )}
           </Pressable>
-          {apiUrl ? <Text style={styles.apiHint}>API: {apiUrl}</Text> : null}
+          <View style={styles.signUpRow}>
+            <Text style={styles.signUpMuted}>Don&apos;t have an account? </Text>
+            <Pressable onPress={onSignUp} disabled={loading}>
+              <Text style={styles.signUpLink}>Sign up</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </View>
@@ -99,15 +108,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     justifyContent: "center",
   },
-  logoMark: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: C.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoMarkText: { color: "white", fontWeight: "800", fontSize: 18 },
   logoText: { fontSize: 24, fontWeight: "800", color: C.primary },
   h1: { fontSize: 28, fontWeight: "800", color: C.text, marginBottom: 8 },
   sub: { fontSize: 16, color: C.muted, marginBottom: 24, lineHeight: 24 },
@@ -120,9 +120,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8FAFC",
     paddingHorizontal: 16,
     fontSize: 17,
+    color: C.text,
     marginBottom: 4,
   },
   inputDisabled: { opacity: 0.7 },
+  forgotRow: { alignSelf: "flex-end", marginTop: 8, marginBottom: 4 },
+  forgotText: { color: C.primary, fontWeight: "700", fontSize: 15 },
   btnPrimary: {
     minHeight: 54,
     backgroundColor: C.primary,
@@ -135,5 +138,13 @@ const styles = StyleSheet.create({
   btnLoading: { flexDirection: "row", alignItems: "center", gap: 10 },
   btnPrimaryText: { color: "white", fontSize: 17, fontWeight: "700" },
   error: { color: C.danger, fontWeight: "600", marginTop: 8, lineHeight: 22 },
-  apiHint: { marginTop: 14, fontSize: 12, color: C.muted, textAlign: "center" },
+  signUpRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 18,
+    flexWrap: "wrap",
+  },
+  signUpMuted: { fontSize: 15, color: C.muted },
+  signUpLink: { fontSize: 15, color: C.primary, fontWeight: "700" },
 });
