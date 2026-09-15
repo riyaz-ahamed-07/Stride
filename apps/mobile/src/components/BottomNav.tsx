@@ -1,24 +1,32 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import type { PatientTab } from "../types";
+import type { AppTab } from "../types";
 import { C } from "../theme";
 
-type TabDef = { id: PatientTab; label: string; icon: string };
+type TabDef = { id: AppTab; label: string; icon: string };
 
-const TABS: TabDef[] = [
-  { id: "home", label: "Home", icon: "🏠" },
-  { id: "plan", label: "Plan", icon: "🏃" },
+const PATIENT_TABS: TabDef[] = [
+  { id: "home", label: "Today", icon: "🏠" },
+  { id: "plan", label: "Plan", icon: "📋" },
+  { id: "help", label: "Help", icon: "💬" },
+];
+
+const THERAPIST_TABS: TabDef[] = [
+  { id: "home", label: "Patients", icon: "🏠" },
+  { id: "appointments", label: "Appointments", icon: "📅" },
   { id: "help", label: "Help", icon: "💬" },
 ];
 
 type Props = {
-  active: PatientTab;
-  onChange: (tab: PatientTab) => void;
+  active: AppTab;
+  role: string;
+  onChange: (tab: AppTab) => void;
 };
 
-export function BottomNav({ active, onChange }: Props) {
+export function BottomNav({ active, role, onChange }: Props) {
+  const tabs = role === "patient" ? PATIENT_TABS : THERAPIST_TABS;
   return (
     <View style={styles.bar}>
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const selected = tab.id === active;
         return (
           <Pressable key={tab.id} style={styles.item} onPress={() => onChange(tab.id)}>
