@@ -1,146 +1,276 @@
-import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from "react-native";
-import { Camera } from "expo-camera";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { WebView } from "react-native-webview";
-import { API } from "../api";
-import type { Appointment } from "../types";
+import { Camera } from "expo-camera";
+import { endConsultation, joinConsultation } from "../api";
+import { buildConsultationHtml } from "../lib/consultationRoomHtml";
+import type { Appointment, ConsultationJoin } from "../types";
 
 type Props = {
   appointmentId: string;
-  displayName: string;
+  accessToken: string;
   appointment: Appointment | null;
+  role?: string;
   onLeave: () => void;
 };
 
-export function ConsultScreen({ appointmentId, displayName, appointment, onLeave }: Props) {
-  const [permState, setPermState] = useState<"checking" | "denied" | "ready">("checking");
-  const [webError, setWebError] = useState("");
+export function ConsultScreen({
+  appointmentId,
+  accessToken,
+  appointment,
+  role = "patient",
+  onLeave,
+}: Props) {
+  const [html, setHtml] = useState<string | null>(null);
+  const [join, setJoin] = useState<ConsultationJoin | null>(null);
+  const [loadError, setLoadError] = useState("");
+  const [cameraDenied, setCameraDenied] = useState(false);
+  const [micDenied, setMicDenied] = useState(false);
+  const [ready, setReady] = useState(false);
+  const webRef = useRef<WebView>(null);
 
-  const roomUrl = useMemo(() => {
-    const params = new URLSearchParams({
-      name: displayName,
-      role: "patient",
-    });
-    return `${API}/video/room/${encodeURIComponent(appointmentId)}?${params.toString()}`;
-  }, [appointmentId, displayName]);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      console.log(`[Stride] In-app video room: ${roomUrl}`);
+  const start = useCallback(async () => {
+    setReady(false);
+    setLoadError("");
+    try {
       const cam = await Camera.requestCameraPermissionsAsync();
       const mic = await Camera.requestMicrophonePermissionsAsync();
-      if (cancelled) return;
-      if (cam.granted && mic.granted) {
-        setPermState("ready");
-      } else {
-        setPermState("denied");
+      setCameraDenied(cam.status !== "granted");
+      setMicDenied(mic.status !== "granted");
+      if (cam.status !== "granted" || mic.status !== "granted") {
+        throw new Error(
+          "Camera and microphone are required for video visits. Open Settings → Apps → Stride → Permissions, enable both, then try again.",
+        );
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [roomUrl]);
+      const payload = await joinConsultation(accessToken, appointmentId);
+      setJoin(payload);
+      setHtml(buildConsultationHtml(payload));
+    } catch (err) {
+      setJoin(null);
+      setHtml(null);
+      setLoadError(
+        err instanceof Error
+          ? err.message
+          : "Could not start the consultation.",
+      );
+    } finally {
+      setReady(true);
+    }
+  }, [accessToken, appointmentId]);
 
-  if (permState === "checking") {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator color="#fff" size="large" />
-        <Text style={styles.wait}>Asking for camera and microphone…</Text>
-        <Pressable onPress={onLeave}>
-          <Text style={styles.leave}>← Cancel</Text>
-        </Pressable>
-      </View>
-    );
+  useEffect(() => {
+    void start();
+  }, [start]);
+
+  const hangUpAndLeave = useCallback(() => {
+    webRef.current?.injectJavaScript(`
+      try { if (window.__strideHangUp) window.__strideHangUp(); } catch (e) {}
+      true;
+    `);
+    setTimeout(() => onLeave(), 200);
+  }, [onLeave]);
+
+  async function onWebMessage(raw: string) {
+    try {
+      const msg = JSON.parse(raw) as { type?: string; message?: string };
+      if (msg.type === "end" || msg.type === "ended") {
+        hangUpAndLeave();
+        return;
+      }
+      if (msg.type === "need-token") {
+        const payload = await joinConsultation(accessToken, appointmentId);
+        const encoded = JSON.stringify({
+          url: payload.livekit_url,
+          token: payload.token,
+          tokenExpiresAt: payload.token_expires_at,
+        });
+        webRef.current?.injectJavaScript(`
+          try { if (window.__strideRefresh) window.__strideRefresh(${encoded}); } catch (e) {}
+          true;
+        `);
+        return;
+      }
+      if (msg.type === "permission-camera") setCameraDenied(true);
+      if (msg.type === "permission-mic") setMicDenied(true);
+      if (msg.type === "failed") {
+        setLoadError(
+          msg.message || "Could not connect to the consultation room.",
+        );
+      }
+    } catch {
+      if (raw === "end") hangUpAndLeave();
+    }
   }
 
-  if (permState === "denied") {
+  if (!ready) {
     return (
       <View style={styles.center}>
-        <Text style={styles.title}>Camera permission needed</Text>
-        <Text style={styles.body}>
-          Allow camera and microphone for Expo Go in your phone settings, then join the visit again.
+        <ActivityIndicator color="#93C5FD" size="large" />
+        <Text style={styles.loadingText}>
+          Opening your rehabilitation consultation…
         </Text>
-        <Pressable style={styles.btn} onPress={() => Linking.openSettings()}>
-          <Text style={styles.btnText}>Open settings</Text>
+      </View>
+    );
+  }
+
+  if (loadError || !html || !join) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorTitle}>Could not join</Text>
+        <Text style={styles.errorBody}>
+          {loadError || "This consultation is not available."}
+        </Text>
+        {appointment?.reason ? (
+          <Text style={styles.meta}>{appointment.reason}</Text>
+        ) : null}
+        {cameraDenied ? (
+          <Text style={styles.meta}>Camera permission was denied.</Text>
+        ) : null}
+        {micDenied ? (
+          <Text style={styles.meta}>Microphone permission was denied.</Text>
+        ) : null}
+        <Pressable style={styles.btn} onPress={() => void start()}>
+          <Text style={styles.btnText}>Try again</Text>
         </Pressable>
-        <Pressable onPress={onLeave}>
-          <Text style={styles.leave}>← Back</Text>
+        <Pressable style={styles.btnGhost} onPress={onLeave}>
+          <Text style={styles.btnGhostText}>Close</Text>
         </Pressable>
       </View>
     );
   }
+
+  const peerName =
+    role === "patient"
+      ? join.consultation.therapist.full_name
+      : join.consultation.patient.full_name;
 
   return (
-    <View style={styles.page}>
-      <View style={styles.topbar}>
-        <Pressable onPress={onLeave}>
-          <Text style={styles.leave}>← Leave call</Text>
+    <View style={styles.fill}>
+      <View style={styles.topBar}>
+        <View style={styles.topCopy}>
+          <Text style={styles.topTitle} numberOfLines={1}>
+            Rehabilitation consultation
+          </Text>
+          <Text style={styles.topMeta} numberOfLines={1}>
+            {peerName}
+            {join.consultation.reason ? ` · ${join.consultation.reason}` : ""}
+          </Text>
+        </View>
+        <Pressable
+          onPress={() => {
+            if (role !== "patient") {
+              void endConsultation(accessToken, appointmentId).catch(
+                () => undefined,
+              );
+            }
+            hangUpAndLeave();
+          }}
+          hitSlop={8}
+        >
+          <Text style={styles.closeBtn}>
+            {role === "patient" ? "Leave" : "End"}
+          </Text>
         </Pressable>
-        <Text style={styles.meta} numberOfLines={1}>
-          {appointment?.reason ?? "Video visit"} · in the app
-        </Text>
       </View>
-      {webError ? <Text style={styles.error}>{webError}</Text> : null}
+      {cameraDenied || micDenied ? (
+        <View style={styles.warn}>
+          {cameraDenied ? (
+            <Text style={styles.warnText}>Camera permission was denied.</Text>
+          ) : null}
+          {micDenied ? (
+            <Text style={styles.warnText}>
+              Microphone permission was denied.
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
       <WebView
-        source={{ uri: roomUrl }}
-        style={styles.webview}
+        ref={webRef}
+        source={{ html, baseUrl: "https://localhost/" }}
+        style={styles.fill}
         originWhitelist={["*"]}
-        mixedContentMode="always"
-        mediaPlaybackRequiresUserAction={false}
         allowsInlineMediaPlayback
+        mediaPlaybackRequiresUserAction={false}
         javaScriptEnabled
         domStorageEnabled
-        allowsFullscreenVideo
-        setSupportMultipleWindows={false}
         mediaCapturePermissionGrantType="grant"
-        androidLayerType="hardware"
-        onPermissionRequest={(event) => {
-          const nativeEvent = event.nativeEvent as { grant?: (resources: string[]) => void; resources?: string[] };
-          nativeEvent.grant?.(nativeEvent.resources ?? ["android.webkit.resource.VIDEO_CAPTURE", "android.webkit.resource.AUDIO_CAPTURE"]);
-        }}
-        onMessage={(event) => {
-          if (event.nativeEvent.data === "end") onLeave();
-        }}
-        onError={(event) => {
-          console.error("[Stride] WebView error", event.nativeEvent);
-          setWebError("Could not load the video room. Check the API HTTPS tunnel.");
-        }}
-        onHttpError={(event) => {
-          if (event.nativeEvent.statusCode >= 400) {
-            setWebError(`Video room HTTP ${event.nativeEvent.statusCode}`);
-          }
-        }}
+        allowsFullscreenVideo
+        onMessage={(event) => void onWebMessage(event.nativeEvent.data)}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: "#0F172A" },
+  fill: { flex: 1, backgroundColor: "#0F172A" },
   center: {
     flex: 1,
     backgroundColor: "#0F172A",
     alignItems: "center",
     justifyContent: "center",
-    padding: 28,
-    gap: 16,
+    padding: 24,
+    gap: 12,
   },
-  wait: { color: "white", fontSize: 16, marginTop: 12 },
-  title: { color: "white", fontSize: 22, fontWeight: "800", textAlign: "center" },
-  body: { color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 24, textAlign: "center" },
-  topbar: { paddingHorizontal: 16, paddingVertical: 10, gap: 4 },
-  leave: { color: "white", fontWeight: "700", fontSize: 16 },
-  meta: { color: "rgba(255,255,255,0.65)", fontSize: 13 },
-  error: { color: "#FCA5A5", paddingHorizontal: 16, paddingBottom: 8 },
-  webview: { flex: 1, backgroundColor: "#0F172A" },
+  loadingText: {
+    color: "#94A3B8",
+    marginTop: 12,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  errorTitle: { color: "white", fontSize: 22, fontWeight: "800" },
+  errorBody: {
+    color: "rgba(255,255,255,0.8)",
+    textAlign: "center",
+    lineHeight: 22,
+    fontSize: 16,
+  },
+  meta: { color: "rgba(255,255,255,0.5)", fontSize: 14, textAlign: "center" },
   btn: {
+    marginTop: 12,
     minHeight: 48,
-    paddingHorizontal: 24,
+    paddingHorizontal: 28,
     borderRadius: 999,
     backgroundColor: "#2563EB",
     alignItems: "center",
     justifyContent: "center",
   },
   btnText: { color: "white", fontWeight: "700", fontSize: 16 },
+  btnGhost: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
+  },
+  btnGhostText: { color: "#93C5FD", fontWeight: "700", fontSize: 16 },
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#1E293B",
+    gap: 12,
+  },
+  topCopy: { flex: 1 },
+  topTitle: { color: "white", fontWeight: "700", fontSize: 16 },
+  topMeta: { color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 2 },
+  closeBtn: {
+    color: "#FCA5A5",
+    fontWeight: "800",
+    fontSize: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  warn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "#7f1d1d",
+  },
+  warnText: { color: "#fecaca", fontSize: 14 },
 });
