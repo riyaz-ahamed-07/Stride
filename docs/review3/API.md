@@ -27,4 +27,4 @@ Auth: `POST /auth/token` with form fields `username` (email) and `password`. Sen
 | GET | `/video/debug` | public (demo) | Active rooms (debug) |
 
 Demo password: `StrideClinic1!`  
-`kamala@stride.clinic` · `therapist@stride.clinic` · `admin@stride.clinic`
+`riyaz@stride.clinic` · `therapist@stride.clinic` · `admin@stride.clinic`

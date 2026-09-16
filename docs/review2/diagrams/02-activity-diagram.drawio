@@ -1,0 +1,277 @@
+<mxfile host="app.diagrams.net" agent="Stride" version="24.0.0">
+  <diagram id="activity" name="Guided Exercise Activity">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="2200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="STRIDE — Guided Exercise Activity Diagram" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#123C3A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="700" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Home session with optional on-device pose analysis, optional live help, then therapist review of derived metrics only" style="text;html=1;fontSize=12;align=left;fontColor=#6D817F;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="900" height="24" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="laneP" value="Patient" style="swimlane;horizontal=1;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="480" height="1980" as="geometry"/>
+        </mxCell>
+        <mxCell id="laneS" value="Stride System" style="swimlane;horizontal=1;startSize=36;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=14;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="90" width="520" height="1980" as="geometry"/>
+        </mxCell>
+        <mxCell id="laneT" value="Physiotherapist" style="swimlane;horizontal=1;startSize=36;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=14;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="90" width="480" height="1980" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="start" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="laneP">
+          <mxGeometry x="210" y="50" width="36" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="select" value="Select assigned exercise&#xa;&amp; review instructions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="140" y="110" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="demo" value="Play human-figure&#xa;demonstration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="140" y="200" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="consent" value="Consent to&#xa;camera analysis?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="145" y="290" width="170" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="noCam" value="Perform guided exercise&#xa;(no camera analysis)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="20" y="430" width="170" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="withCam" value="Perform guided exercise&#xa;(with camera overlay)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="250" y="620" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="liveHelp" value="Need live&#xa;therapist help?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="255" y="740" width="170" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="continueEx" value="Continue exercise&#xa;or finish session" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="40" y="880" width="170" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="finish" value="Finish session&#xa;(stop or complete)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="laneP">
+          <mxGeometry x="140" y="1100" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="endP" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#000000;strokeWidth=8;" vertex="1" parent="laneP">
+          <mxGeometry x="212" y="1880" width="36" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="endPinner" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=none;" vertex="1" parent="laneP">
+          <mxGeometry x="220" y="1888" width="20" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="camReq" value="Request camera permission&#xa;&amp; run readiness check" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="160" y="300" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="camReady" value="Camera&#xa;ready?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="175" y="400" width="170" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="camGuide" value="Show permission / framing&#xa;/ lighting guidance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="20" y="520" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="startMP" value="Start local MediaPipe tracking&#xa;(no raw video stored)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="250" y="520" width="220" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="overlay" value="Show skeletal overlay&#xa;+ demonstration figure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="260" y="620" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="feedback" value="Detect movement &amp; show&#xa;non-diagnostic feedback (local)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="250" y="710" width="220" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="reliable" value="Tracking&#xa;reliable?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="285" y="800" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="reposition" value="Pause feedback &amp; show&#xa;reposition guidance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="40" y="810" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="pain" value="Pain or stop&#xa;requested?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="285" y="920" width="150" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="sendHelp" value="Route live-help request&#xa;to therapist" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="260" y="1060" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="report" value="Create derived session REPORT&#xa;(metrics, confidence, notes)&#xa;— no video stored" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="150" y="1220" width="220" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="pending" value="Store report as&#xa;Pending Review" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneS">
+          <mxGeometry x="160" y="1330" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="note" value="Note: MediaPipe runs on the patient device.&#xa;No raw camera video is stored or transmitted.&#xa;Feedback is non-diagnostic decision support." style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;fontSize=10;" vertex="1" parent="laneS">
+          <mxGeometry x="80" y="1780" width="360" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="schedJoin" value="Join scheduled video consultation&#xa;(optional — no home session required)" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="laneT">
+          <mxGeometry x="120" y="50" width="240" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="schedCall" value="Conduct scheduled LiveKit consult&#xa;(overlay + demo if camera consented)" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="laneT">
+          <mxGeometry x="120" y="140" width="240" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="available" value="Therapist&#xa;available?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="155" y="1040" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="unavail" value="Therapist unavailable —&#xa;patient continues alone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="20" y="1160" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="adhoc" value="Start ad-hoc LiveKit&#xa;video consultation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="250" y="1160" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="during" value="During call: skeletal overlay&#xa;aligned to patient + demo figure&#xa;+ verbal guidance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="laneT">
+          <mxGeometry x="230" y="1260" width="220" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="endCall" value="End consultation&#xa;→ return to home session" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="250" y="1360" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="review" value="Review movement&#xa;observations &amp; report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="140" y="1450" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="outcome" value="Review&#xa;outcome?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="160" y="1550" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="approve" value="Approve observations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="20" y="1680" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="correct" value="Correct observation&#xa;values" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="170" y="1680" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="reject" value="Reject unreliable&#xa;observations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="320" y="1680" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="publish" value="Publish therapist-approved&#xa;progress + notify patient" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="70" y="1780" width="220" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="markReject" value="Mark observations&#xa;as rejected (not published)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="laneT">
+          <mxGeometry x="310" y="1780" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" edge="1" parent="1" source="start" target="select" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="select" target="demo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="demo" target="consent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="consent" target="noCam" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="No">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="consent" target="camReq" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Yes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="noCam" target="finish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="camReq" target="camReady" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="camReady" target="camGuide" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="No">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="camGuide" target="camReq" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#d79b00;dashed=1;fontSize=10;" value="Retry">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="camReady" target="startMP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Yes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="camGuide" target="noCam" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;dashed=1;fontSize=10;" value="Continue without camera">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="startMP" target="overlay" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="overlay" target="withCam" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="withCam" target="feedback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="feedback" target="reliable" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="reliable" target="reposition" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="No">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="reposition" target="feedback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#d79b00;dashed=1;fontSize=10;" value="Retry">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="reliable" target="pain" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Yes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="pain" target="finish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;fontSize=10;" value="Yes — stop">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="pain" target="liveHelp" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="No">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="liveHelp" target="continueEx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="No">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="continueEx" target="finish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="continueEx" target="feedback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;dashed=1;fontSize=10;" value="Keep going">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e24" edge="1" parent="1" source="liveHelp" target="sendHelp" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Yes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="sendHelp" target="available" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e26" edge="1" parent="1" source="available" target="unavail" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="No">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e27" edge="1" parent="1" source="unavail" target="continueEx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;dashed=1;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e28" edge="1" parent="1" source="available" target="adhoc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Yes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e29" edge="1" parent="1" source="adhoc" target="during" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e30" edge="1" parent="1" source="during" target="endCall" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e31" edge="1" parent="1" source="endCall" target="continueEx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#9673a6;dashed=1;fontSize=10;" value="Return">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e32" edge="1" parent="1" source="finish" target="report" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e33" edge="1" parent="1" source="report" target="pending" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e34" edge="1" parent="1" source="pending" target="review" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e35" edge="1" parent="1" source="review" target="outcome" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e36" edge="1" parent="1" source="outcome" target="approve" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Approved">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e37" edge="1" parent="1" source="outcome" target="correct" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Corrected">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e38" edge="1" parent="1" source="outcome" target="reject" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;fontSize=10;" value="Rejected">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e39" edge="1" parent="1" source="approve" target="publish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e40" edge="1" parent="1" source="correct" target="publish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e41" edge="1" parent="1" source="reject" target="markReject" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e42" edge="1" parent="1" source="publish" target="endP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e43" edge="1" parent="1" source="markReject" target="endP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e44" edge="1" parent="1" source="schedJoin" target="schedCall" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#9673a6;dashed=1;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

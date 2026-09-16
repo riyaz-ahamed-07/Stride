@@ -9,5 +9,5 @@ Review 3 screenshots (auto-captured with API + web running):
 7. `06-swagger.png` — FastAPI Swagger
 8. `07-video-consult.png` — video consultation UI
 
-Demo accounts: `kamala@stride.clinic`, `therapist@stride.clinic`, `admin@stride.clinic` — password `StrideClinic1!`
+Demo accounts: `riyaz@stride.clinic`, `therapist@stride.clinic`, `admin@stride.clinic` — password `StrideClinic1!`
 
