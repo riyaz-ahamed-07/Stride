@@ -113,7 +113,7 @@ Full write-up: [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md)
 Stride/
 ├── README.md
 ├── apps/
-│   ├── api/          # FastAPI backend
+│   ├── api/          # FastAPI backend (+ data/open_rehab catalog)
 │   ├── web/          # Next.js clinic web app
 │   └── mobile/       # Expo patient app
 ├── docs/
@@ -124,7 +124,7 @@ Stride/
 │   ├── wireframes/
 │   ├── images/
 │   └── presentation/ # Interactive slide deck
-└── scripts/          # Tooling (e.g. Supabase bootstrap)
+└── scripts/          # Repo tooling (e.g. Supabase bootstrap)
 ```
 
 ---
