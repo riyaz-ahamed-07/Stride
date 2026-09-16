@@ -8,7 +8,7 @@
         <mxCell id="title" value="STRIDE — Logical Database Schema" style="text;html=1;fontSize=20;fontStyle=1;fontColor=#0d3b4c;align=left;" vertex="1" parent="1">
           <mxGeometry x="40" y="16" width="480" height="28" as="geometry"/>
         </mxCell>
-        <mxCell id="sub" value="Matches apps/api/app/models.py · Solid = patient FK · Dashed = therapist FK · Crow’s foot = 1 : N" style="text;html=1;fontSize=11;fontColor=#5d6d7e;align=left;" vertex="1" parent="1">
+        <mxCell id="sub" value="Matches api/app/models.py · Solid = patient FK · Dashed = therapist FK · Crow’s foot = 1 : N" style="text;html=1;fontSize=11;fontColor=#5d6d7e;align=left;" vertex="1" parent="1">
           <mxGeometry x="40" y="44" width="620" height="20" as="geometry"/>
         </mxCell>
 

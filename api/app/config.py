@@ -3,7 +3,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# Load apps/api/.env if present (gitignored). SQLite remains the default without it.
+# Load api/.env if present (gitignored). SQLite remains the default without it.
 _env_file = ROOT / ".env"
 if _env_file.exists():
     for raw in _env_file.read_text(encoding="utf-8").splitlines():

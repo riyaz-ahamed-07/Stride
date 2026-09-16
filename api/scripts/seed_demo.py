@@ -1,6 +1,6 @@
 """CLI wrapper: python scripts/seed_demo.py [--reset]
 
-Prefer `python -m app.seed` from apps/api (same flags).
+Prefer `python -m app.seed` from api (same flags).
 """
 
 from app.seed import main

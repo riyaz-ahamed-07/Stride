@@ -8,16 +8,16 @@ __pycache__/
 .expo/
 dist/
 *.tsbuildinfo
-# Optional local clones of third-party sources (runtime catalog is apps/api/data/open_rehab/)
+# Optional local clones of third-party sources (runtime catalog is api/data/open_rehab/)
 vendor/
 debug.log
 *.log
-apps/api/e2e_*.log
-apps/api/e2e_qa_results.json
+api/e2e_*.log
+api/e2e_qa_results.json
 .cursor/
 .env
 .env.*
 !.env.example
-apps/api/.env
-apps/api/.env.*
-!apps/api/.env.example
+api/.env
+api/.env.*
+!api/.env.example

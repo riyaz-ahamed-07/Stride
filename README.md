@@ -20,9 +20,9 @@ Stride connects patients and physiotherapists in one care workflow: prescribe ex
 
 | Client                 | Role                                         |
 | ---------------------- | -------------------------------------------- |
-| Web (`apps/web`)       | Patient, physiotherapist, and admin portals  |
-| Mobile (`apps/mobile`) | Patient companion (plans, sessions, consult) |
-| API (`apps/api`)       | FastAPI care workflow + auth                 |
+| Web (`web/`)       | Patient, physiotherapist, and admin portals  |
+| Mobile (`mobile/`) | Patient companion (plans, sessions, consult) |
+| API (`api/`)       | FastAPI care workflow + auth                 |
 
 **Lifecycle**
 
@@ -112,10 +112,9 @@ Full write-up: [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md)
 ```text
 Stride/
 ├── README.md
-├── apps/
-│   ├── api/          # FastAPI backend (+ data/open_rehab catalog)
-│   ├── web/          # Next.js clinic web app
-│   └── mobile/       # Expo patient app
+├── api/              # FastAPI backend (+ data/open_rehab catalog)
+├── web/              # Next.js clinic web app
+├── mobile/           # Expo patient app
 └── docs/
     ├── PROJECT_DOCUMENTATION.md
     ├── API.md
@@ -141,7 +140,7 @@ Stride/
 ### 1. API
 
 ```bat
-cd apps\api
+cd api
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 copy .env.example .env
@@ -150,16 +149,16 @@ copy .env.example .env
 ```
 
 - OpenAPI: http://127.0.0.1:8000/docs
-- Seed creates local SQLite `apps/api/stride.db`
+- Seed creates local SQLite `api/stride.db`
 - `--reset` deletes the SQLite file only (never Postgres)
 - Auto-seed on startup runs when `STRIDE_ENV=dev` **and** the database is SQLite
 
-Environment template: [`apps/api/.env.example`](apps/api/.env.example)
+Environment template: [`api/.env.example`](api/.env.example)
 
 ### 2. Web
 
 ```bat
-cd apps\web
+cd web
 npm install
 npm run dev
 ```
@@ -169,12 +168,12 @@ App: http://localhost:3001
 ### 3. Mobile (optional)
 
 ```bat
-cd apps\mobile
+cd mobile
 npm install
 copy .env.example .env
 ```
 
-Set `EXPO_PUBLIC_API_URL` to your LAN IP (phone and PC on the same network). See [`apps/mobile/.env.example`](apps/mobile/.env.example).
+Set `EXPO_PUBLIC_API_URL` to your LAN IP (phone and PC on the same network). See [`mobile/.env.example`](mobile/.env.example).
 
 ```bat
 npm run start
@@ -199,9 +198,9 @@ Override locally with `STRIDE_DEMO_PASSWORD`. Do not commit real secrets.
 
 | Task           | Command                                                                         |
 | -------------- | ------------------------------------------------------------------------------- |
-| API tests      | `cd apps/api` → `.venv\Scripts\python -m pytest`                                |
-| Pose unit test | `cd apps/web` → `npm run test:pose`                                             |
-| Re-seed demo   | `cd apps/api` → `python -m app.seed` (idempotent)                               |
+| API tests      | `cd api` → `.venv\Scripts\python -m pytest`                                     |
+| Pose unit test | `cd web` → `npm run test:pose`                                                  |
+| Re-seed demo   | `cd api` → `python -m app.seed` (idempotent)                                    |
 | LiveKit        | Set `STRIDE_LIVEKIT_URL`, `STRIDE_LIVEKIT_API_KEY`, `STRIDE_LIVEKIT_API_SECRET` |
 
 ---
@@ -266,7 +265,7 @@ Details: [Known limitations](docs/PROJECT_DOCUMENTATION.md#19-known-limitations)
 
 ## License
 
-No repository-level `LICENSE` file is published yet. Open Rehab exercise content is licensed separately (CC BY 4.0); see `apps/api/data/open_rehab/`.
+No repository-level `LICENSE` file is published yet. Open Rehab exercise content is licensed separately (CC BY 4.0); see `api/data/open_rehab/`.
 
 ---
 

@@ -1,6 +1,6 @@
 # API scripts
 
-Utilities for local development of `apps/api`. Run from `apps/api` with the virtualenv active:
+Utilities for local development of `api`. Run from `api` with the virtualenv active:
 
 ```bat
 .venv\Scripts\python -m app.seed --reset

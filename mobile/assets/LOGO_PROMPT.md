@@ -8,7 +8,7 @@ It is used for:
 - Splash screen
 - In-app logo (`StrideLogo` on login, landing, splash, account)
 
-Replace `apps/mobile/assets/icon.png`, then:
+Replace `mobile/assets/icon.png`, then:
 - **In-app logo:** restart Metro (`npm run start:dev`)
 - **Launcher / splash:** new dev build (`eas build --profile development --platform android`)
 

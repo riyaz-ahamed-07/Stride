@@ -28,10 +28,10 @@ console.log(`[Stride] API base URL = ${API}`);
 
 function networkHint() {
   if (API.includes("127.0.0.1") || API.includes("localhost")) {
-    return " On a physical phone, set EXPO_PUBLIC_API_URL in apps/mobile/.env to your laptop LAN IP (ipconfig), e.g. http://192.168.1.5:8000, then restart Expo with npm run start:dev.";
+    return " On a physical phone, set EXPO_PUBLIC_API_URL in mobile/.env to your laptop LAN IP (ipconfig), e.g. http://192.168.1.5:8000, then restart Expo with npm run start:dev.";
   }
   if (API.includes("trycloudflare.com")) {
-    return " Remove the old Cloudflare URL from apps/mobile/.env — use your laptop LAN IP instead (same Wi‑Fi), then restart Expo.";
+    return " Remove the old Cloudflare URL from mobile/.env — use your laptop LAN IP instead (same Wi‑Fi), then restart Expo.";
   }
   if (API.includes("169.254.")) {
     return " Your laptop has a 169.254 address (no real Wi‑Fi). Connect laptop + phone to the same router/hotspot, run ipconfig, put the 192.168.x.x (or 10.x) IP in .env, then restart Expo.";

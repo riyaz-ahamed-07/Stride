@@ -4,7 +4,7 @@ Credentials below are **development/demo only**. They are not production secrets
 Override the password with STRIDE_DEMO_PASSWORD if you do not want the default
 in your local environment (do not commit real secrets).
 
-Commands (from apps/api):
+Commands (from api):
 
     python -m app.seed           # idempotent upsert; safe to run repeatedly
     python -m app.seed --reset   # delete the SQLite file, recreate, then seed

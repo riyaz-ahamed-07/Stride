@@ -1,6 +1,6 @@
 # Product screenshots
 
-Capture these after starting the API and web app (`npm run dev` in `apps/web`).
+Capture these after starting the API and web app (`npm run dev` in `web`).
 
 | File | Suggested content |
 |---|---|

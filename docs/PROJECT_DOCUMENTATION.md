@@ -178,7 +178,7 @@ Diagram assets: [`docs/diagrams/`](diagrams/README.md) · raster exports also un
 
 ## 9. Application architecture
 
-### Web (`apps/web`)
+### Web (`web`)
 
 - Auth: register, OTP verify, password reset, role-aware login routing  
 - Patient: today/home, plan, move session, progress, appointments, consult, help  
@@ -186,13 +186,13 @@ Diagram assets: [`docs/diagrams/`](diagrams/README.md) · raster exports also un
 - Admin: user list, pending therapist approval  
 - Shared: API client, care helpers, PoseCamera, LiveKit ConsultationRoom  
 
-### Mobile (`apps/mobile`)
+### Mobile (`mobile`)
 
 - Patient-focused Expo app with auth, onboarding, home/plan/progress, move, appointments, consult  
 - Pose skeleton overlay; automated sit-to-stand counter is strongest on web  
 - Therapist mobile screens may exist; clinic therapist workflows are primarily web  
 
-### Backend (`apps/api`)
+### Backend (`api`)
 
 Module catalogue (care-domain interfaces):
 
@@ -237,7 +237,7 @@ Password reset uses hashed tokens; local demo may surface a reset token when SMT
 
 ## 11. Exercise library and rehabilitation plans
 
-- System exercises are seeded from the **Open Rehab Exercises** catalog (CC BY 4.0) with attribution under `apps/api/data/open_rehab/`.  
+- System exercises are seeded from the **Open Rehab Exercises** catalog (CC BY 4.0) with attribution under `api/data/open_rehab/`.  
 - Therapists can also create custom library entries.  
 - Plans attach exercises with targets (sets/reps) and optional week/day/session-type scheduling.  
 - Patients execute plan items as sessions; they do not edit the library.
@@ -283,10 +283,10 @@ flowchart TD
 
 Implementation references:
 
-- `apps/web/src/components/PoseCamera.tsx`  
-- `apps/web/src/lib/pose/sitToStand.ts`  
-- `apps/web/src/app/patient/move/[id]/page.tsx`  
-- Automated test: `npm run test:pose` in `apps/web`  
+- `web/src/components/PoseCamera.tsx`  
+- `web/src/lib/pose/sitToStand.ts`  
+- `web/src/app/patient/move/[id]/page.tsx`  
+- Automated test: `npm run test:pose` in `web`  
 
 ---
 
@@ -323,8 +323,8 @@ Patients see confirmed (approved/corrected) observations. Therapists work a pend
 
 ## 15. Database design
 
-Primary implementation: SQLAlchemy models in `apps/api/app/models.py`.  
-Local demo: SQLite file `apps/api/stride.db` (created on startup).  
+Primary implementation: SQLAlchemy models in `api/app/models.py`.  
+Local demo: SQLite file `api/stride.db` (created on startup).  
 Optional: PostgreSQL via `STRIDE_DATABASE_URL` (Supabase-compatible). Additive SQLite column helpers live in `schema_migrate.py` for academic prototype evolution (not full Alembic).
 
 ### Core entities
