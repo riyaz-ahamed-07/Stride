@@ -18,11 +18,11 @@ Stride connects patients and physiotherapists in one care workflow: prescribe ex
 
 **Approach.** A modular clinic stack:
 
-| Client | Role |
-|---|---|
-| Web (`apps/web`) | Patient, physiotherapist, and admin portals |
+| Client                 | Role                                         |
+| ---------------------- | -------------------------------------------- |
+| Web (`apps/web`)       | Patient, physiotherapist, and admin portals  |
 | Mobile (`apps/mobile`) | Patient companion (plans, sessions, consult) |
-| API (`apps/api`) | FastAPI care workflow + auth |
+| API (`apps/api`)       | FastAPI care workflow + auth                 |
 
 **Lifecycle**
 
@@ -40,11 +40,11 @@ flowchart LR
 
 ## Why Stride
 
-| Generic alternative | Stride focus |
-|---|---|
-| Standalone video meeting | Appointment-bound consult + rehab record |
-| Exercise PDF / tracker | Prescribed plans, sessions, and review queue |
-| Unreviewed “AI scores” | Pending → approve / correct / reject before progress |
+| Generic alternative      | Stride focus                                         |
+| ------------------------ | ---------------------------------------------------- |
+| Standalone video meeting | Appointment-bound consult + rehab record             |
+| Exercise PDF / tracker   | Prescribed plans, sessions, and review queue         |
+| Unreviewed “AI scores”   | Pending → approve / correct / reject before progress |
 
 Differentiation is the **therapist-controlled loop**, not “AI replaces physiotherapy.”
 
@@ -54,22 +54,22 @@ Differentiation is the **therapist-controlled loop**, not “AI replaces physiot
 
 ### Patient
 
-- Email registration, OTP verification, invite-code onboarding  
-- Today’s plan, guided move sessions, progress  
-- Camera consent + sit-to-stand pose assist (web)  
-- Appointments and LiveKit consultation join  
+- Email registration, OTP verification, invite-code onboarding
+- Today’s plan, guided move sessions, progress
+- Camera consent + sit-to-stand pose assist (web)
+- Appointments and LiveKit consultation join
 
 ### Physiotherapist
 
-- Caseload and invite code  
-- Exercise library and multi-week plan builder  
-- Observation review queue  
-- Scheduling, consult join, visit complete/cancel  
+- Caseload and invite code
+- Exercise library and multi-week plan builder
+- Observation review queue
+- Scheduling, consult join, visit complete/cancel
 
 ### Administrator
 
-- Pending therapist approval  
-- Account status management  
+- Pending therapist approval
+- Account status management
 
 ---
 
@@ -94,16 +94,16 @@ Full write-up: [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md)
 
 ## Technology stack
 
-| Layer | Technology |
-|---|---|
-| Web | Next.js, TypeScript, React |
-| Mobile | Expo / React Native |
-| Backend | FastAPI, SQLAlchemy, Pydantic |
-| Database | SQLite (local demo) · PostgreSQL / Supabase (optional) |
-| Auth | JWT, PBKDF2, email OTP |
-| Movement analysis | MediaPipe Pose Landmarker |
-| Video | LiveKit |
-| Exercise content | Open Rehab Exercises (CC BY 4.0) |
+| Layer             | Technology                                             |
+| ----------------- | ------------------------------------------------------ |
+| Web               | Next.js, TypeScript, React                             |
+| Mobile            | Expo / React Native                                    |
+| Backend           | FastAPI, SQLAlchemy, Pydantic                          |
+| Database          | SQLite (local demo) · PostgreSQL / Supabase (optional) |
+| Auth              | JWT, PBKDF2, email OTP                                 |
+| Movement analysis | MediaPipe Pose Landmarker                              |
+| Video             | LiveKit                                                |
+| Exercise content  | Open Rehab Exercises (CC BY 4.0)                       |
 
 ---
 
@@ -116,15 +116,14 @@ Stride/
 │   ├── api/          # FastAPI backend (+ data/open_rehab catalog)
 │   ├── web/          # Next.js clinic web app
 │   └── mobile/       # Expo patient app
-├── docs/
-│   ├── PROJECT_DOCUMENTATION.md
-│   ├── API.md
-│   ├── diagrams/
-│   ├── screenshots/
-│   ├── wireframes/
-│   ├── images/
-│   └── presentation/ # Interactive slide deck
-└── scripts/          # Repo tooling (e.g. Supabase bootstrap)
+└── docs/
+    ├── PROJECT_DOCUMENTATION.md
+    ├── API.md
+    ├── diagrams/
+    ├── screenshots/
+    ├── wireframes/
+    ├── images/
+    └── presentation/ # Interactive slide deck
 ```
 
 ---
@@ -133,11 +132,11 @@ Stride/
 
 ### Prerequisites
 
-- Python 3.12+  
-- Node.js 20+ (npm)  
-- Optional: Android SDK / Expo Dev Client for native mobile pose  
-- Optional: LiveKit project for video  
-- Optional: PostgreSQL / Supabase for non-SQLite databases  
+- Python 3.12+
+- Node.js 20+ (npm)
+- Optional: Android SDK / Expo Dev Client for native mobile pose
+- Optional: LiveKit project for video
+- Optional: PostgreSQL / Supabase for non-SQLite databases
 
 ### 1. API
 
@@ -150,10 +149,10 @@ copy .env.example .env
 .venv\Scripts\uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-- OpenAPI: http://127.0.0.1:8000/docs  
-- Seed creates local SQLite `apps/api/stride.db`  
-- `--reset` deletes the SQLite file only (never Postgres)  
-- Auto-seed on startup runs when `STRIDE_ENV=dev` **and** the database is SQLite  
+- OpenAPI: http://127.0.0.1:8000/docs
+- Seed creates local SQLite `apps/api/stride.db`
+- `--reset` deletes the SQLite file only (never Postgres)
+- Auto-seed on startup runs when `STRIDE_ENV=dev` **and** the database is SQLite
 
 Environment template: [`apps/api/.env.example`](apps/api/.env.example)
 
@@ -188,44 +187,44 @@ For native pose / Dev Client builds, follow the comments in the mobile `.env.exa
 Password for all seeded users: `StrideClinic1!`  
 Override locally with `STRIDE_DEMO_PASSWORD`. Do not commit real secrets.
 
-| Role | Email |
-|---|---|
-| Administrator | `admin@stride.clinic` |
+| Role                                | Email                     |
+| ----------------------------------- | ------------------------- |
+| Administrator                       | `admin@stride.clinic`     |
 | Physiotherapist (invite `THERAP01`) | `therapist@stride.clinic` |
-| Patient | `riyaz@stride.clinic` |
+| Patient                             | `riyaz@stride.clinic`     |
 
 ---
 
 ## Development
 
-| Task | Command |
-|---|---|
-| API tests | `cd apps/api` → `.venv\Scripts\python -m pytest` |
-| Pose unit test | `cd apps/web` → `npm run test:pose` |
-| Re-seed demo | `cd apps/api` → `python -m app.seed` (idempotent) |
-| LiveKit | Set `STRIDE_LIVEKIT_URL`, `STRIDE_LIVEKIT_API_KEY`, `STRIDE_LIVEKIT_API_SECRET` |
+| Task           | Command                                                                         |
+| -------------- | ------------------------------------------------------------------------------- |
+| API tests      | `cd apps/api` → `.venv\Scripts\python -m pytest`                                |
+| Pose unit test | `cd apps/web` → `npm run test:pose`                                             |
+| Re-seed demo   | `cd apps/api` → `python -m app.seed` (idempotent)                               |
+| LiveKit        | Set `STRIDE_LIVEKIT_URL`, `STRIDE_LIVEKIT_API_KEY`, `STRIDE_LIVEKIT_API_SECRET` |
 
 ---
 
 ## Documentation
 
-| Document | Description |
-|---|---|
+| Document                                               | Description                                                 |
+| ------------------------------------------------------ | ----------------------------------------------------------- |
 | [Project documentation](docs/PROJECT_DOCUMENTATION.md) | Architecture, workflow, modules, pose pipeline, limitations |
-| [API summary](docs/API.md) | Endpoint overview (Swagger remains authoritative) |
-| [Diagrams](docs/diagrams/README.md) | Use case, activity, class, ER, architecture |
-| [Screenshots](docs/screenshots/README.md) | Product UI captures |
-| [Presentation](docs/presentation/README.md) | Interactive review deck |
+| [API summary](docs/API.md)                             | Endpoint overview (Swagger remains authoritative)           |
+| [Diagrams](docs/diagrams/README.md)                    | Use case, activity, class, ER, architecture                 |
+| [Screenshots](docs/screenshots/README.md)              | Product UI captures                                         |
+| [Presentation](docs/presentation/README.md)            | Interactive review deck                                     |
 
 ---
 
 ## Security and privacy
 
-- Server-side RBAC and ownership checks  
-- Explicit camera consent before pose analysis  
-- Derived metrics stored by default—not raw exercise video  
-- Short-lived, appointment-scoped video tokens  
-- Hashed passwords and OTP/reset tokens  
+- Server-side RBAC and ownership checks
+- Explicit camera consent before pose analysis
+- Derived metrics stored by default—not raw exercise video
+- Short-lived, appointment-scoped video tokens
+- Hashed passwords and OTP/reset tokens
 
 Stride does **not** claim HIPAA, medical-device, or clinical validation status. Movement analysis is assistive decision support pending therapist review.
 
@@ -233,24 +232,24 @@ Stride does **not** claim HIPAA, medical-device, or clinical validation status. 
 
 ## Current status
 
-| Area | Status |
-|---|---|
-| Auth, onboarding, admin approval | Implemented |
-| Plans, sessions, observations, progress | Implemented |
-| Appointments + LiveKit consult | Implemented (needs LiveKit config) |
-| Sit-to-stand pose (web) | Implemented |
-| Mobile companion | Implemented (patient-focused) |
-| Google sign-in | Stub (not enabled) |
-| Production hosting / clinical validation | Not claimed |
+| Area                                     | Status                             |
+| ---------------------------------------- | ---------------------------------- |
+| Auth, onboarding, admin approval         | Implemented                        |
+| Plans, sessions, observations, progress  | Implemented                        |
+| Appointments + LiveKit consult           | Implemented (needs LiveKit config) |
+| Sit-to-stand pose (web)                  | Implemented                        |
+| Mobile companion                         | Implemented (patient-focused)      |
+| Google sign-in                           | Stub (not enabled)                 |
+| Production hosting / clinical validation | Not claimed                        |
 
 ---
 
 ## Limitations
 
-- Automated pose counting is limited to a small exercise set (sit-to-stand on web is the primary counter).  
-- Landmark quality depends on framing, lighting, clothing, and device.  
-- Local demo defaults to SQLite; Postgres is optional.  
-- Email OTP/reset requires SMTP in non-dev setups.  
+- Automated pose counting is limited to a small exercise set (sit-to-stand on web is the primary counter).
+- Landmark quality depends on framing, lighting, clothing, and device.
+- Local demo defaults to SQLite; Postgres is optional.
+- Email OTP/reset requires SMTP in non-dev setups.
 
 Details: [Known limitations](docs/PROJECT_DOCUMENTATION.md#19-known-limitations).
 
@@ -258,10 +257,10 @@ Details: [Known limitations](docs/PROJECT_DOCUMENTATION.md#19-known-limitations)
 
 ## Roadmap
 
-- Expand physiotherapist-validated pose recipes  
-- Stronger automated test and evaluation harness  
-- Production-hardening (Postgres, secrets, HTTPS, monitoring)  
-- Broader accessibility and device testing  
+- Expand physiotherapist-validated pose recipes
+- Stronger automated test and evaluation harness
+- Production-hardening (Postgres, secrets, HTTPS, monitoring)
+- Broader accessibility and device testing
 
 ---
 
