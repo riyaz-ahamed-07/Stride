@@ -21,24 +21,61 @@ type ContentSlide = {
 type Slide = ContentSlide | DiagramSlide;
 
 const slides: Slide[] = [
-  { id: "intro", eyebrow: "FOURTH REVIEW · 2026", title: "Movement signals,\non device." },
-  { id: "checklist", eyebrow: "02 · WEEK 4 REQUIREMENTS", title: "Advanced feature\n+ five documents." },
-  { id: "algorithm", eyebrow: "03 · ALGORITHM", title: "Knee-angle\nstate machine." },
-  { id: "model", eyebrow: "04 · AI / ML MODEL", title: "MediaPipe\nPose Landmarker." },
-  { id: "integration", eyebrow: "05 · INTEGRATION", title: "Pose into the\ncare workflow." },
-  { id: "privacy", eyebrow: "06 · PRIVACY", title: "On device.\nTherapist decides." },
+  {
+    id: "intro",
+    eyebrow: "FOURTH REVIEW · 2026",
+    title: "Movement signals,\non device.",
+  },
+  {
+    id: "checklist",
+    eyebrow: "02 · WEEK 4 REQUIREMENTS",
+    title: "Advanced feature\n+ five documents.",
+  },
+  {
+    id: "algorithm",
+    eyebrow: "03 · ALGORITHM",
+    title: "Knee-angle\nstate machine.",
+  },
+  {
+    id: "model",
+    eyebrow: "04 · AI / ML MODEL",
+    title: "MediaPipe\nPose Landmarker.",
+  },
+  {
+    id: "integration",
+    eyebrow: "05 · INTEGRATION",
+    title: "Pose into the\ncare workflow.",
+  },
+  {
+    id: "privacy",
+    eyebrow: "06 · PRIVACY",
+    title: "On device.\nTherapist decides.",
+  },
   { id: "demo", eyebrow: "07 · LIVE DEMO", title: "Sit to stand\nend to end." },
-  { id: "tests", eyebrow: "08 · TEST CASES", title: "Twelve draft\nfunctional tests." },
+  {
+    id: "tests",
+    eyebrow: "08 · TEST CASES",
+    title: "Twelve draft\nfunctional tests.",
+  },
   {
     id: "diagram-activity",
     eyebrow: "09 · FLOWCHART",
     title: "Activity\ndiagram.",
     kind: "diagram",
     src: "/diagrams/02-activity.png",
-    caption: "Guided exercise — consent, camera overlay, metrics, therapist review.",
+    caption:
+      "Guided exercise — consent, camera overlay, metrics, therapist review.",
   },
-  { id: "stack", eyebrow: "10 · IMPLEMENTATION", title: "Code paths\nand stack." },
-  { id: "closing", eyebrow: "11 · REVIEW 4", title: "Implemented.\nIntegrated." },
+  {
+    id: "stack",
+    eyebrow: "10 · IMPLEMENTATION",
+    title: "Code paths\nand stack.",
+  },
+  {
+    id: "closing",
+    eyebrow: "11 · REVIEW 4",
+    title: "Implemented.\nIntegrated.",
+  },
 ];
 
 const MIN_ZOOM = 0.5;
@@ -59,7 +96,9 @@ function DiagramPanel({ slide }: { slide: DiagramSlide }) {
   const zoomRef = useRef(1);
   const panRef = useRef({ x: 0, y: 0 });
   const labelRaf = useRef<number | null>(null);
-  const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(
+    null,
+  );
 
   const paint = useCallback(() => {
     const stage = stageRef.current;
@@ -75,7 +114,10 @@ function DiagramPanel({ slide }: { slide: DiagramSlide }) {
     });
   }, []);
 
-  const clampZoom = useCallback((value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value)), []);
+  const clampZoom = useCallback(
+    (value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value)),
+    [],
+  );
 
   const setZoomAtPointer = useCallback(
     (nextZoom: number, clientX?: number, clientY?: number) => {
@@ -157,7 +199,11 @@ function DiagramPanel({ slide }: { slide: DiagramSlide }) {
         let dy = event.deltaY;
         if (event.deltaMode === 1) dy *= 16;
         if (event.deltaMode === 2) dy *= 400;
-        setZoomAtPointer(zoomRef.current * Math.exp(-dy * PINCH_SENSITIVITY), event.clientX, event.clientY);
+        setZoomAtPointer(
+          zoomRef.current * Math.exp(-dy * PINCH_SENSITIVITY),
+          event.clientX,
+          event.clientY,
+        );
         return;
       }
 
@@ -186,14 +232,29 @@ function DiagramPanel({ slide }: { slide: DiagramSlide }) {
           <span>{slide.caption}</span>
         </div>
         <div className="diagram-toolbar-actions">
-          <button type="button" onClick={() => zoomBy(-ZOOM_STEP)} aria-label="Zoom out" title="Zoom out (−)">
+          <button
+            type="button"
+            onClick={() => zoomBy(-ZOOM_STEP)}
+            aria-label="Zoom out"
+            title="Zoom out (−)"
+          >
             −
           </button>
           <span className="diagram-zoom-label">{zoomLabel}%</span>
-          <button type="button" onClick={() => zoomBy(ZOOM_STEP)} aria-label="Zoom in" title="Zoom in (+)">
+          <button
+            type="button"
+            onClick={() => zoomBy(ZOOM_STEP)}
+            aria-label="Zoom in"
+            title="Zoom in (+)"
+          >
             +
           </button>
-          <button type="button" onClick={resetView} aria-label="Fit whole image" title="Fit whole image">
+          <button
+            type="button"
+            onClick={resetView}
+            aria-label="Fit whole image"
+            title="Fit whole image"
+          >
             Fit
           </button>
         </div>
@@ -243,7 +304,8 @@ function DiagramPanel({ slide }: { slide: DiagramSlide }) {
           <div className="diagram-placeholder">
             <b>IMAGE PENDING</b>
             <p>
-              Drop the diagram at <code>presentation/public{slide.src}</code> and refresh.
+              Drop the diagram at{" "}
+              <code>docs/presentation/public{slide.src}</code> and refresh.
             </p>
           </div>
         ) : (
@@ -268,12 +330,20 @@ function DiagramPanel({ slide }: { slide: DiagramSlide }) {
           </div>
         )}
       </div>
-      <p className="diagram-hint">Pinch to zoom · Scroll / drag to pan · Fit restores full image</p>
+      <p className="diagram-hint">
+        Pinch to zoom · Scroll / drag to pan · Fit restores full image
+      </p>
     </div>
   );
 }
 
-function TitleLines({ title, className }: { title: string; className?: string }) {
+function TitleLines({
+  title,
+  className,
+}: {
+  title: string;
+  className?: string;
+}) {
   return (
     <h2 className={className}>
       {title.split("\n").map((line, i) => (
@@ -297,7 +367,10 @@ function R4Head({ title, meta }: { title: string; meta: string }) {
 export default function Home() {
   const [active, setActive] = useState(0);
   const touchStart = useRef<number | null>(null);
-  const go = useCallback((next: number) => setActive(Math.max(0, Math.min(slides.length - 1, next))), []);
+  const go = useCallback(
+    (next: number) => setActive(Math.max(0, Math.min(slides.length - 1, next))),
+    [],
+  );
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -309,7 +382,8 @@ export default function Home() {
         event.preventDefault();
         go(active - 1);
       }
-      if (event.key.toLowerCase() === "f") document.documentElement.requestFullscreen?.();
+      if (event.key.toLowerCase() === "f")
+        document.documentElement.requestFullscreen?.();
       if (event.key === "Home") go(0);
       if (event.key === "End") go(slides.length - 1);
     };
@@ -338,7 +412,11 @@ export default function Home() {
       }}
     >
       <header className="topbar">
-        <button className="wordmark" onClick={() => go(0)} aria-label="Go to first slide">
+        <button
+          className="wordmark"
+          onClick={() => go(0)}
+          aria-label="Go to first slide"
+        >
           STRIDE<span>●</span>
         </button>
         <div className="top-meta">
@@ -357,7 +435,9 @@ export default function Home() {
             aria-hidden={index !== active}
           >
             <div className="slide-inner">
-              {item.kind !== "diagram" ? <p className="eyebrow">{item.eyebrow}</p> : null}
+              {item.kind !== "diagram" ? (
+                <p className="eyebrow">{item.eyebrow}</p>
+              ) : null}
 
               {item.kind === "diagram" && <DiagramPanel slide={item} />}
 
@@ -372,8 +452,9 @@ export default function Home() {
                       ))}
                     </h1>
                     <p>
-                      On-device MediaPipe pose analysis for sit-to-stand — integrated into sessions, observations, and
-                      therapist review. No raw video leaves the patient device.
+                      On-device MediaPipe pose analysis for sit-to-stand —
+                      integrated into sessions, observations, and therapist
+                      review. No raw video leaves the patient device.
                     </p>
                   </div>
                   <div className="motion-orb" aria-hidden="true">
@@ -400,11 +481,31 @@ export default function Home() {
                   />
                   <div className="r4-checklist">
                     {[
-                      ["01", "Algorithm / methodology", "Knee-angle state machine · confidence gating · hold frames"],
-                      ["02", "Flowcharts", "Pose pipeline + activity diagram (consent → camera → review)"],
-                      ["03", "AI/ML model description", "MediaPipe Pose Landmarker lite · 33 landmarks · no custom training"],
-                      ["04", "Module integration", "Move UI → consent → sessions API → pending observation → therapist"],
-                      ["05", "Test cases (draft)", "TC-P01 … TC-P12 — consent, tracking, privacy, review paths"],
+                      [
+                        "01",
+                        "Algorithm / methodology",
+                        "Knee-angle state machine · confidence gating · hold frames",
+                      ],
+                      [
+                        "02",
+                        "Flowcharts",
+                        "Pose pipeline + activity diagram (consent → camera → review)",
+                      ],
+                      [
+                        "03",
+                        "AI/ML model description",
+                        "MediaPipe Pose Landmarker lite · 33 landmarks · no custom training",
+                      ],
+                      [
+                        "04",
+                        "Module integration",
+                        "Move UI → consent → sessions API → pending observation → therapist",
+                      ],
+                      [
+                        "05",
+                        "Test cases (draft)",
+                        "TC-P01 … TC-P12 — consent, tracking, privacy, review paths",
+                      ],
                     ].map((row) => (
                       <article key={row[0]}>
                         <b>{row[0]}</b>
@@ -418,7 +519,7 @@ export default function Home() {
                     <span>Advanced features</span>
                     <span>Integration</span>
                     <span>Functionality</span>
-                    <span>FOURTH_REVIEW.md</span>
+                    <span>docs/PROJECT_DOCUMENTATION.md</span>
                   </div>
                 </>
               )}
@@ -433,7 +534,9 @@ export default function Home() {
                     <div className="r4-rationale">
                       <span>DESIGN CHOICES</span>
                       <ul>
-                        <li>Knee angle hip–knee–ankle — interpretable in viva</li>
+                        <li>
+                          Knee angle hip–knee–ankle — interpretable in viva
+                        </li>
                         <li>Standing ≥ 155° · sitting ≤ 115°</li>
                         <li>Rep on stable standing → sitting transition</li>
                         <li>Confidence &lt; 0.55 pauses counting</li>
@@ -469,18 +572,33 @@ export default function Home() {
 
               {item.id === "model" && (
                 <>
-                  <R4Head title={item.title} meta="Pre-trained Google model — no patient video used for training." />
+                  <R4Head
+                    title={item.title}
+                    meta="Pre-trained Google model — no patient video used for training."
+                  />
                   <div className="model-spec">
                     {[
-                      ["Product", "Google MediaPipe Pose Landmarker (Tasks Vision)"],
+                      [
+                        "Product",
+                        "Google MediaPipe Pose Landmarker (Tasks Vision)",
+                      ],
                       ["Package", "@mediapipe/tasks-vision"],
                       ["Variant", "pose_landmarker_lite (float16)"],
-                      ["Runtime", "Browser WASM · GPU delegate or CPU fallback"],
+                      [
+                        "Runtime",
+                        "Browser WASM · GPU delegate or CPU fallback",
+                      ],
                       ["Input", "Live webcam frames (~640×480)"],
                       ["Output", "33 body landmarks + per-point visibility"],
                       ["Stride training", "None — pre-trained model only"],
-                      ["Intended use", "Decision support for home exercise logging"],
-                      ["Not for", "Diagnosis, treatment, or medical-device claims"],
+                      [
+                        "Intended use",
+                        "Decision support for home exercise logging",
+                      ],
+                      [
+                        "Not for",
+                        "Diagnosis, treatment, or medical-device claims",
+                      ],
                     ].map(([label, value]) => (
                       <div className="model-row" key={label}>
                         <span>{label}</span>
@@ -499,16 +617,42 @@ export default function Home() {
 
               {item.id === "integration" && (
                 <>
-                  <R4Head title={item.title} meta="Review 3 API unchanged — pose adds client-side metrics before session complete." />
+                  <R4Head
+                    title={item.title}
+                    meta="Review 3 API unchanged — pose adds client-side metrics before session complete."
+                  />
                   <div className="r4-integration-flow">
                     {[
-                      ["PATIENT WEB", "Move screen · consent · PoseCamera · skeleton + rep counter", "lime"],
-                      ["ON DEVICE", "MediaPipe WASM loop — landmarks stay on patient device", "dark"],
-                      ["FASTAPI", "POST /consent · POST /sessions · complete with reps + confidence", "dark"],
-                      ["DATABASE", "movement_observations · review_status = pending", "white"],
-                      ["THERAPIST WEB", "Review board · approve · correct · reject", "blue"],
+                      [
+                        "PATIENT WEB",
+                        "Move screen · consent · PoseCamera · skeleton + rep counter",
+                        "lime",
+                      ],
+                      [
+                        "ON DEVICE",
+                        "MediaPipe WASM loop — landmarks stay on patient device",
+                        "dark",
+                      ],
+                      [
+                        "FASTAPI",
+                        "POST /consent · POST /sessions · complete with reps + confidence",
+                        "dark",
+                      ],
+                      [
+                        "DATABASE",
+                        "movement_observations · review_status = pending",
+                        "white",
+                      ],
+                      [
+                        "THERAPIST WEB",
+                        "Review board · approve · correct · reject",
+                        "blue",
+                      ],
                     ].map((row) => (
-                      <article key={row[0]} className={`r4-int-row tone-${row[2]}`}>
+                      <article
+                        key={row[0]}
+                        className={`r4-int-row tone-${row[2]}`}
+                      >
                         <b>{row[0]}</b>
                         <p>{row[1]}</p>
                       </article>
@@ -525,30 +669,47 @@ export default function Home() {
 
               {item.id === "privacy" && (
                 <>
-                  <R4Head title={item.title} meta="Educational prototype — decision support only, not a medical device." />
+                  <R4Head
+                    title={item.title}
+                    meta="Educational prototype — decision support only, not a medical device."
+                  />
                   <div className="r4-privacy-grid">
                     <article className="r4-privacy-card lime">
                       <span>ON-DEVICE INFERENCE</span>
-                      <p>MediaPipe runs in the patient browser or phone. Landmarks never uploaded frame-by-frame.</p>
+                      <p>
+                        MediaPipe runs in the patient browser or phone.
+                        Landmarks never uploaded frame-by-frame.
+                      </p>
                     </article>
                     <article className="r4-privacy-card">
                       <span>DERIVED METRICS ONLY</span>
-                      <p>Session completion sends repetitions, confidence, and notes — not raw camera video.</p>
+                      <p>
+                        Session completion sends repetitions, confidence, and
+                        notes — not raw camera video.
+                      </p>
                     </article>
                     <article className="r4-privacy-card blue">
                       <span>CONSENT GATE</span>
-                      <p>Camera analysis requires purpose-scoped consent (camera_analysis) before the toggle enables.</p>
+                      <p>
+                        Camera analysis requires purpose-scoped consent
+                        (camera_analysis) before the toggle enables.
+                      </p>
                     </article>
                     <article className="r4-privacy-card coral">
                       <span>HUMAN IN THE LOOP</span>
-                      <p>Observations stay pending until the physiotherapist approves, corrects, or rejects.</p>
+                      <p>
+                        Observations stay pending until the physiotherapist
+                        approves, corrects, or rejects.
+                      </p>
                     </article>
                   </div>
                   <div className="guardrail r4-guardrail">
                     <b>SCOPE DISCLAIMER</b>
                     <p>
-                      Educational prototype — not a medical device. Pose feedback is non-diagnostic decision support. A
-                      licensed physiotherapist remains responsible for clinical decisions.
+                      Educational prototype — not a medical device. Pose
+                      feedback is non-diagnostic decision support. A licensed
+                      physiotherapist remains responsible for clinical
+                      decisions.
                     </p>
                   </div>
                 </>
@@ -556,15 +717,42 @@ export default function Home() {
 
               {item.id === "demo" && (
                 <>
-                  <R4Head title={item.title} meta="Password: StrideClinic1! · Primary demo on web patient move screen." />
+                  <R4Head
+                    title={item.title}
+                    meta="Password: StrideClinic1! · Primary demo on web patient move screen."
+                  />
                   <div className="demo-steps">
                     {[
-                      ["1", "Patient login", "riyaz@stride.clinic → Exercises → Sit to stand"],
-                      ["2", "Safety + consent", "Show stop guidance · grant camera_analysis"],
-                      ["3", "Live tracking", "Enable pose · perform 2–3 sit-to-stands · watch reps + confidence"],
-                      ["4", "Finish session", "Metrics saved · observation status pending"],
-                      ["5", "Therapist login", "therapist@stride.clinic → review pending observation"],
-                      ["6", "Approve", "Only approved metrics become official progress"],
+                      [
+                        "1",
+                        "Patient login",
+                        "riyaz@stride.clinic → Exercises → Sit to stand",
+                      ],
+                      [
+                        "2",
+                        "Safety + consent",
+                        "Show stop guidance · grant camera_analysis",
+                      ],
+                      [
+                        "3",
+                        "Live tracking",
+                        "Enable pose · perform 2–3 sit-to-stands · watch reps + confidence",
+                      ],
+                      [
+                        "4",
+                        "Finish session",
+                        "Metrics saved · observation status pending",
+                      ],
+                      [
+                        "5",
+                        "Therapist login",
+                        "therapist@stride.clinic → review pending observation",
+                      ],
+                      [
+                        "6",
+                        "Approve",
+                        "Only approved metrics become official progress",
+                      ],
                     ].map((step) => (
                       <article key={step[0]}>
                         <b>{step[0]}</b>
@@ -584,19 +772,42 @@ export default function Home() {
 
               {item.id === "tests" && (
                 <>
-                  <R4Head title={item.title} meta="Draft functional tests for consent, tracking, privacy, and review." />
+                  <R4Head
+                    title={item.title}
+                    meta="Draft functional tests for consent, tracking, privacy, and review."
+                  />
                   <div className="r4-test-grid">
                     {[
-                      ["TC-P01", "Camera before consent", "Blocked until granted"],
+                      [
+                        "TC-P01",
+                        "Camera before consent",
+                        "Blocked until granted",
+                      ],
                       ["TC-P02", "Grant consent", "Toggle enabled · persisted"],
                       ["TC-P03", "Manual path", "No camera · confidence ≈ 0.5"],
                       ["TC-P04", "Good framing", "Skeleton visible · Tracking"],
                       ["TC-P05", "Sit-stand-sit", "Rep counter +1"],
-                      ["TC-P06", "Low confidence", "Reposition · counting pauses"],
-                      ["TC-P07", "Patient edits reps", "API stores corrected count"],
-                      ["TC-P08", "Complete with camera", "Therapist sees pending"],
+                      [
+                        "TC-P06",
+                        "Low confidence",
+                        "Reposition · counting pauses",
+                      ],
+                      [
+                        "TC-P07",
+                        "Patient edits reps",
+                        "API stores corrected count",
+                      ],
+                      [
+                        "TC-P08",
+                        "Complete with camera",
+                        "Therapist sees pending",
+                      ],
                       ["TC-P09", "Therapist approve", "Progress published"],
-                      ["TC-P10", "Network during tracking", "No video · JSON on finish"],
+                      [
+                        "TC-P10",
+                        "Network during tracking",
+                        "No video · JSON on finish",
+                      ],
                       ["TC-P11", "Unsupported exercise", "Manual log only"],
                       ["TC-P12", "Not today exit", "Session not forced"],
                     ].map((row) => (
@@ -612,15 +823,38 @@ export default function Home() {
 
               {item.id === "stack" && (
                 <>
-                  <R4Head title={item.title} meta="FOURTH_REVIEW.md §7 · @mediapipe/tasks-vision · npm run test:pose" />
+                  <R4Head
+                    title={item.title}
+                    meta="docs/PROJECT_DOCUMENTATION.md · @mediapipe/tasks-vision · npm run test:pose"
+                  />
                   <div className="stack-grid">
                     {[
-                      ["01", "PoseCamera.tsx", "Webcam · MediaPipe loop · metrics callback"],
-                      ["02", "sitToStand.ts", "Phase state machine · rep counting"],
-                      ["03", "landmarks.ts", "Knee angle · visibility · side pick"],
+                      [
+                        "01",
+                        "PoseCamera.tsx",
+                        "Webcam · MediaPipe loop · metrics callback",
+                      ],
+                      [
+                        "02",
+                        "sitToStand.ts",
+                        "Phase state machine · rep counting",
+                      ],
+                      [
+                        "03",
+                        "landmarks.ts",
+                        "Knee angle · visibility · side pick",
+                      ],
                       ["04", "drawSkeleton.ts", "Canvas skeletal overlay"],
-                      ["05", "move/[id]/page.tsx", "Consent · toggle · session logging"],
-                      ["06", "PoseSkeletonCamera", "Mobile WebView skeleton overlay"],
+                      [
+                        "05",
+                        "move/[id]/page.tsx",
+                        "Consent · toggle · session logging",
+                      ],
+                      [
+                        "06",
+                        "PoseSkeletonCamera",
+                        "Mobile WebView skeleton overlay",
+                      ],
                     ].map((x) => (
                       <article key={x[0]}>
                         <b>{x[0]}</b>
@@ -640,15 +874,28 @@ export default function Home() {
 
               {item.id === "closing" && (
                 <>
-                  <R4Head title={item.title} meta="Week 4 deliverable — bounded AI feature with integration evidence." />
+                  <R4Head
+                    title={item.title}
+                    meta="Week 4 deliverable — bounded AI feature with integration evidence."
+                  />
                   <div className="boundary-grid">
                     <article className="boundary-yes">
                       <span>DELIVERED IN REVIEW 4</span>
                       <ul>
-                        <li>On-device MediaPipe pose with live skeletal overlay</li>
-                        <li>Sit-to-stand rep counting with confidence gating</li>
-                        <li>Integrated into consent, sessions, and therapist review</li>
-                        <li>Algorithm, flowchart, model doc, integration, test cases</li>
+                        <li>
+                          On-device MediaPipe pose with live skeletal overlay
+                        </li>
+                        <li>
+                          Sit-to-stand rep counting with confidence gating
+                        </li>
+                        <li>
+                          Integrated into consent, sessions, and therapist
+                          review
+                        </li>
+                        <li>
+                          Algorithm, flowchart, model doc, integration, test
+                          cases
+                        </li>
                       </ul>
                     </article>
                     <article className="boundary-no">
@@ -662,7 +909,10 @@ export default function Home() {
                   </div>
                   <div className="closing">
                     <p>REVIEW 4 DELIVERABLE</p>
-                    <h3>Bounded AI feature — implemented, integrated, documented, and demo-ready.</h3>
+                    <h3>
+                      Bounded AI feature — implemented, integrated, documented,
+                      and demo-ready.
+                    </h3>
                     <div className="closing-mark">4</div>
                   </div>
                 </>
@@ -673,7 +923,10 @@ export default function Home() {
       </div>
 
       <footer className="controls">
-        <div className="progress" aria-label={`Slide ${active + 1} of ${slides.length}`}>
+        <div
+          className="progress"
+          aria-label={`Slide ${active + 1} of ${slides.length}`}
+        >
           <span style={{ width: `${((active + 1) / slides.length) * 100}%` }} />
         </div>
         <div className="counter">
@@ -681,13 +934,24 @@ export default function Home() {
           <span>/ {String(slides.length).padStart(2, "0")}</span>
         </div>
         <nav aria-label="Presentation controls">
-          <button onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous slide">
+          <button
+            onClick={() => go(active - 1)}
+            disabled={active === 0}
+            aria-label="Previous slide"
+          >
             ←
           </button>
-          <button onClick={() => go(active + 1)} disabled={active === slides.length - 1} aria-label="Next slide">
+          <button
+            onClick={() => go(active + 1)}
+            disabled={active === slides.length - 1}
+            aria-label="Next slide"
+          >
             →
           </button>
-          <button onClick={() => document.documentElement.requestFullscreen?.()} aria-label="Enter fullscreen">
+          <button
+            onClick={() => document.documentElement.requestFullscreen?.()}
+            aria-label="Enter fullscreen"
+          >
             ⛶
           </button>
         </nav>
