@@ -14,7 +14,7 @@ debug.log
 *.log
 apps/api/e2e_*.log
 apps/api/e2e_qa_results.json
-.cursor/mcp.json
+.cursor/
 .env
 .env.*
 !.env.example
