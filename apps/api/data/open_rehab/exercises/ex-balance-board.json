@@ -1,0 +1,23 @@
+{
+  "id": "ex-balance-board",
+  "version": "1.0",
+  "category": "proprioception",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "equipment-balance"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 1,
+  "equipment": [
+    "balance_board"
+  ],
+  "defaultHoldSec": 30,
+  "contraindications": {
+    "phases": [
+      0,
+      1,
+      2
+    ]
+  }
+}

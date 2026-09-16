@@ -1,0 +1,9 @@
+{
+  "id": "ex-hip-flexion-supine",
+  "name": "Hip Flexion — Supine",
+  "instructions": "Lie supine, slide heel toward buttock bending the hip within pain-free range, slowly return",
+  "audioCues": [
+    "Slowly bend",
+    "Return to start"
+  ]
+}

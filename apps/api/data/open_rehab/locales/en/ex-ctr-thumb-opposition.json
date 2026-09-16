@@ -1,0 +1,12 @@
+{
+  "id": "ex-ctr-thumb-opposition",
+  "name": "Thumb-to-Finger Opposition",
+  "instructions": "Touch thumb tip to each fingertip in order: index → middle → ring → pinky. Hold each touch 3 seconds. Gentle motion, no forceful pinching. Activates median nerve-innervated thenar muscles.",
+  "audioCues": [
+    "Touch index finger",
+    "Touch middle",
+    "Touch ring",
+    "Touch pinky",
+    "Hold 3 seconds"
+  ]
+}

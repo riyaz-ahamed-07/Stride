@@ -1,0 +1,12 @@
+{
+  "id": "ex-slr-flexion",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "supine",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

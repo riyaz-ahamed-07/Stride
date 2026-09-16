@@ -1,0 +1,20 @@
+{
+  "id": "ex-single-leg-squat",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 8,
+  "contraindications": {
+    "phases": [
+      0,
+      1,
+      2,
+      3
+    ]
+  }
+}

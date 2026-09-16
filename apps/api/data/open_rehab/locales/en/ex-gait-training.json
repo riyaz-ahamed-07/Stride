@@ -1,0 +1,11 @@
+{
+  "id": "ex-gait-training",
+  "name": "Gait Training",
+  "instructions": "Walk with walker or cane, heel strike first, maintain stability when weight on surgical side. Phase 1: walker, Phase 2: transition to cane.",
+  "audioCues": [
+    "Place walker ahead",
+    "Heel strike first",
+    "Shift weight slowly",
+    "Stay stable"
+  ]
+}

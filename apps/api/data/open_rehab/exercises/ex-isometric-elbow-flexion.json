@@ -1,0 +1,14 @@
+{
+  "id": "ex-isometric-elbow-flexion",
+  "version": "1.0",
+  "category": "isometric",
+  "bodyRegion": "elbow",
+  "tags": [
+    "seated",
+    "no-equipment",
+    "gentle"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

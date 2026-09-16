@@ -1,0 +1,13 @@
+{
+  "id": "ex-bridge-pelvic-floor",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "pelvic-floor",
+  "tags": [
+    "supine",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

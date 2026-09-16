@@ -1,0 +1,89 @@
+%% Stride Review 3 — Logical database schema (Relational model)
+%% Import: diagrams.net → Arrange → Insert → Advanced → Mermaid
+%% Schema levels (GeeksforGeeks): this diagram = LOGICAL (+ conceptual ER view)
+%% Physical = SQLite/Postgres storage; View = role-filtered API responses
+
+erDiagram
+    USERS ||--o{ USERS : "therapist_id"
+    USERS ||--o{ APPOINTMENTS : "patient_id"
+    USERS ||--o{ APPOINTMENTS : "therapist_id"
+    USERS ||--o{ REHABILITATION_PLANS : "patient_id"
+    USERS ||--o{ REHABILITATION_PLANS : "therapist_id"
+    USERS ||--o{ CONSENT_RECORDS : "patient_id"
+    REHABILITATION_PLANS ||--o{ PLAN_EXERCISES : "contains"
+    EXERCISES ||--o{ PLAN_EXERCISES : "assigned_as"
+    PLAN_EXERCISES ||--o{ EXERCISE_SESSIONS : "produces"
+    EXERCISE_SESSIONS ||--o{ MOVEMENT_OBSERVATIONS : "records"
+
+    USERS {
+        string id PK
+        string email UK
+        string full_name
+        string password_hash
+        string role
+        string status
+        date date_of_birth
+        string therapist_id FK
+        text notes
+        datetime created_at
+        datetime updated_at
+    }
+    APPOINTMENTS {
+        string id PK
+        string patient_id FK
+        string therapist_id FK
+        datetime scheduled_at
+        string status
+        string reason
+        datetime created_at
+    }
+    EXERCISES {
+        string id PK
+        string name UK
+        text instructions
+        text safety_notes
+        datetime created_at
+    }
+    REHABILITATION_PLANS {
+        string id PK
+        string patient_id FK
+        string therapist_id FK
+        string title
+        date start_date
+        string status
+        datetime created_at
+    }
+    PLAN_EXERCISES {
+        string id PK
+        string plan_id FK
+        string exercise_id FK
+        int target_sets
+        int target_repetitions
+    }
+    EXERCISE_SESSIONS {
+        string id PK
+        string plan_exercise_id FK
+        datetime started_at
+        datetime ended_at
+        string status
+        int reported_repetitions
+        text patient_notes
+    }
+    MOVEMENT_OBSERVATIONS {
+        string id PK
+        string session_id FK
+        string metric
+        float value
+        float confidence
+        string review_status
+        text therapist_comment
+        datetime created_at
+    }
+    CONSENT_RECORDS {
+        string id PK
+        string patient_id FK
+        string purpose
+        string status
+        datetime granted_at
+        datetime revoked_at
+    }

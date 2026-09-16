@@ -1,0 +1,11 @@
+{
+  "id": "ex-mini-squats-wall",
+  "name": "Mini Squats (Wall)",
+  "instructions": "Stand with back against wall, feet shoulder-width, slowly squat ~30 degrees, hold 3s, stand up.",
+  "audioCues": [
+    "Back against the wall",
+    "Slowly squat down",
+    "Hold 3 seconds",
+    "Stand up"
+  ]
+}

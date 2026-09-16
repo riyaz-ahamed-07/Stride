@@ -1,0 +1,11 @@
+{
+  "id": "ex-seated-knee-ext",
+  "name": "Seated Knee Extension",
+  "instructions": "Sit on chair, slowly lift lower leg to straighten knee, hold 3s, lower.",
+  "audioCues": [
+    "Lift lower leg",
+    "Straighten knee",
+    "Hold 3 seconds",
+    "Slowly lower"
+  ]
+}

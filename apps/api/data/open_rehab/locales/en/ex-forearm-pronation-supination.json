@@ -1,0 +1,11 @@
+{
+  "id": "ex-forearm-pronation-supination",
+  "name": "Forearm Pronation/Supination",
+  "instructions": "Bend elbow 90° at your side. Slowly rotate forearm palm-up to palm-down and back. Stay within pain-free range.",
+  "audioCues": [
+    "Palm up",
+    "Slowly rotate down",
+    "Rotate back",
+    "Stay pain-free"
+  ]
+}

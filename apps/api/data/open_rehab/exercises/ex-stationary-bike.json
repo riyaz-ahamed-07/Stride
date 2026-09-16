@@ -1,0 +1,16 @@
+{
+  "id": "ex-stationary-bike",
+  "version": "1.0",
+  "category": "aerobic",
+  "bodyRegion": "knee",
+  "tags": [
+    "seated",
+    "equipment-bike"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 1,
+  "equipment": [
+    "stationary_bike"
+  ],
+  "defaultHoldSec": 600
+}

@@ -1,0 +1,14 @@
+{
+  "id": "ex-elbow-extension-passive",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "elbow",
+  "tags": [
+    "supine",
+    "gravity-assisted",
+    "gentle"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 10
+}

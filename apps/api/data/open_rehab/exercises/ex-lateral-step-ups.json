@@ -1,0 +1,22 @@
+{
+  "id": "ex-lateral-step-ups",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "step"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "equipment": [
+    "step_platform"
+  ],
+  "contraindications": {
+    "phases": [
+      0,
+      1,
+      2
+    ]
+  }
+}

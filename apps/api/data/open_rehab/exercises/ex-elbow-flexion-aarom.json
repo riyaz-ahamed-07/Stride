@@ -1,0 +1,13 @@
+{
+  "id": "ex-elbow-flexion-aarom",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "elbow",
+  "tags": [
+    "seated",
+    "table-supported",
+    "gentle"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

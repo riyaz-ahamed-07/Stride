@@ -1,0 +1,12 @@
+{
+  "id": "ex-seated-knee-ext",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "seated",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

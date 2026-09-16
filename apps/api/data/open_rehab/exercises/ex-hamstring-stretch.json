@@ -1,0 +1,13 @@
+{
+  "id": "ex-hamstring-stretch",
+  "version": "1.0",
+  "category": "flexibility",
+  "bodyRegion": "knee",
+  "tags": [
+    "seated",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 1,
+  "defaultHoldSec": 30
+}

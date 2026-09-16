@@ -1,0 +1,15 @@
+{
+  "id": "ex-step-ups",
+  "version": "1.0",
+  "category": "functional",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "step"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "equipment": [
+    "step_platform"
+  ]
+}

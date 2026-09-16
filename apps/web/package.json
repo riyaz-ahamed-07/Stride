@@ -3,11 +3,14 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p 3001",
+    "test:pose": "node --experimental-strip-types --test tests/sitToStand.test.ts"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.18",
+    "livekit-client": "^2.22.3",
     "next": "^15.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

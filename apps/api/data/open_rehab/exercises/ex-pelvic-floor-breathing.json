@@ -1,0 +1,13 @@
+{
+  "id": "ex-pelvic-floor-breathing",
+  "version": "1.0",
+  "category": "coordination",
+  "bodyRegion": "pelvic-floor",
+  "tags": [
+    "supine",
+    "seated",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

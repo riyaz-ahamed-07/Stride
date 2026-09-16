@@ -1,0 +1,11 @@
+{
+  "id": "ex-pendulum",
+  "name": "Pendulum Exercise",
+  "instructions": "Stand, lean on table with unaffected arm, let affected arm hang and swing forward-back, side-side, circles using body momentum",
+  "audioCues": [
+    "Relax arm",
+    "Swing forward-back",
+    "Swing side-side",
+    "Circles"
+  ]
+}

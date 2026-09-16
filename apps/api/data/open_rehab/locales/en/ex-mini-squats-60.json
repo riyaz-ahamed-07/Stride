@@ -1,0 +1,11 @@
+{
+  "id": "ex-mini-squats-60",
+  "name": "Mini Squats (0-60 Range)",
+  "instructions": "Stand shoulder-width, slowly squat to ~60 degrees knee flexion, hold 3s, stand. Do not exceed 60 degrees.",
+  "audioCues": [
+    "Slowly squat",
+    "No more than 60 degrees",
+    "Hold 3 seconds",
+    "Stand up"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "ex-towel-scrunches",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "foot",
+  "tags": [
+    "phase1",
+    "foot",
+    "intrinsic"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 15
+}

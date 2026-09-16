@@ -1,0 +1,11 @@
+{
+  "id": "ex-hamstring-curls",
+  "name": "Standing Hamstring Curls",
+  "instructions": "Stand holding chair back, curl heel toward buttock, hold 3s, lower.",
+  "audioCues": [
+    "Hold the chair",
+    "Curl your heel back",
+    "Hold 3 seconds",
+    "Lower"
+  ]
+}

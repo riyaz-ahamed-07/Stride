@@ -1,0 +1,13 @@
+{
+  "id": "ex-patellar-mob",
+  "version": "1.0",
+  "category": "mobility",
+  "bodyRegion": "knee",
+  "tags": [
+    "seated",
+    "no-equipment"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 1,
+  "defaultHoldSec": 120
+}

@@ -1,0 +1,12 @@
+{
+  "id": "ex-kegel-slow",
+  "name": "Kegel Exercise — Slow Twitch",
+  "instructions": "Contract pelvic floor muscles as if stopping urination or holding gas. Do not move abdomen, thighs, or buttocks. Hold the contraction, then relax. Gradually increase hold time as you progress.",
+  "audioCues": [
+    "Tighten pelvic floor",
+    "Like stopping urine flow",
+    "Keep breathing",
+    "Hold the contraction",
+    "Slowly release"
+  ]
+}

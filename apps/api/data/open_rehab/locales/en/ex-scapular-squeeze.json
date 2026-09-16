@@ -1,0 +1,10 @@
+{
+  "id": "ex-scapular-squeeze",
+  "name": "Scapular Squeeze",
+  "instructions": "Sit or stand, relax arms, squeeze shoulder blades together, hold 5s, release",
+  "audioCues": [
+    "Squeeze blades",
+    "Hold",
+    "Release"
+  ]
+}

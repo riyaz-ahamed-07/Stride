@@ -1,0 +1,10 @@
+{
+  "id": "ex-swimming",
+  "name": "Swimming / Pool Walking",
+  "instructions": "After wound fully healed (~3-4 weeks post-op), pool walking or swimming. Buoyancy reduces joint load.",
+  "audioCues": [
+    "Ensure wound is healed",
+    "Walk slowly in water",
+    "Enjoy the buoyancy"
+  ]
+}

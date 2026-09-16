@@ -1,0 +1,16 @@
+{
+  "id": "ex-elliptical",
+  "version": "1.0",
+  "category": "aerobic",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "equipment-machine"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 1,
+  "equipment": [
+    "elliptical"
+  ],
+  "defaultHoldSec": 900
+}

@@ -1,0 +1,14 @@
+{
+  "id": "ex-walking-program",
+  "version": "1.0",
+  "category": "aerobic",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "outdoor",
+    "no-equipment"
+  ],
+  "defaultSets": 1,
+  "defaultReps": 1,
+  "defaultHoldSec": 1200
+}

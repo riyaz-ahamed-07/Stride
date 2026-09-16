@@ -1,0 +1,12 @@
+{
+  "id": "ex-slr-adduction",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "side-lying",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

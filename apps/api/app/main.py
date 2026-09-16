@@ -3,18 +3,25 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import CORS_ALLOW_ALL, CORS_ORIGINS
+from app.config import CORS_ALLOW_ALL, CORS_ORIGINS, DATABASE_URL, IS_DEV
 from app.db import Base, SessionLocal, engine
 from app.routers import admin, appointments, auth, consent, exercises, observations, patients, plans, sessions, video
-from app.seed import seed_if_empty
+from app.schema_migrate import ensure_schema
+from app.seed import ensure_system_exercises, seed_demo
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    if engine is None or SessionLocal is None:
+        raise RuntimeError("Database engine is not configured.")
     Base.metadata.create_all(bind=engine)
+    ensure_schema(engine)
     db = SessionLocal()
     try:
-        seed_if_empty(db)
+        if IS_DEV and DATABASE_URL.startswith("sqlite"):
+            seed_demo(db)
+        else:
+            ensure_system_exercises(db)
     finally:
         db.close()
     yield

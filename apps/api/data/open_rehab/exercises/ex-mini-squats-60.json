@@ -1,0 +1,12 @@
+{
+  "id": "ex-mini-squats-60",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

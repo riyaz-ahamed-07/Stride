@@ -1,0 +1,14 @@
+{
+  "id": "ex-diaphragmatic-breathing",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "trunk",
+  "tags": [
+    "phase1",
+    "spine",
+    "breathing",
+    "relaxation"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

@@ -17,7 +17,9 @@ def hash_password(password: str) -> str:
     return f"pbkdf2${salt}${digest.hex()}"
 
 
-def verify_password(plain: str, stored: str) -> bool:
+def verify_password(plain: str, stored: str | None) -> bool:
+    if not stored:
+        return False
     try:
         scheme, salt, digest = stored.split("$", 2)
     except ValueError:

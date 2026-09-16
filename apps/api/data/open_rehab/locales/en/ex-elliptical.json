@@ -1,0 +1,10 @@
+{
+  "id": "ex-elliptical",
+  "name": "Elliptical",
+  "instructions": "Low resistance on elliptical, maintain steady pace. Lower impact than treadmill.",
+  "audioCues": [
+    "Keep steady pace",
+    "Low resistance",
+    "Easy pedaling"
+  ]
+}

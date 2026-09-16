@@ -1,0 +1,13 @@
+{
+  "id": "ex-ankle-pumps",
+  "version": "1.0",
+  "category": "circulation",
+  "bodyRegion": "knee",
+  "tags": [
+    "supine",
+    "bed-ridden",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 20
+}

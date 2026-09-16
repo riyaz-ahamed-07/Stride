@@ -1,0 +1,10 @@
+{
+  "id": "ex-hip-extension-prone",
+  "name": "Hip Extension — Prone",
+  "instructions": "Lie prone, keep knee straight, squeeze glute to lift leg ~15 degrees, hold and lower slowly",
+  "audioCues": [
+    "Squeeze glute",
+    "Lift",
+    "Lower"
+  ]
+}

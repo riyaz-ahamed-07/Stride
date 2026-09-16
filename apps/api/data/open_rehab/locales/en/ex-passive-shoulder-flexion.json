@@ -1,0 +1,10 @@
+{
+  "id": "ex-passive-shoulder-flexion",
+  "name": "Passive Shoulder Flexion",
+  "instructions": "Supine, use unaffected hand to grasp affected wrist, assist arm overhead within pain-free range",
+  "audioCues": [
+    "Assist with other hand",
+    "Slowly raise",
+    "Within pain-free range"
+  ]
+}

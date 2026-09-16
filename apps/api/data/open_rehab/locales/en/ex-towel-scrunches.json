@@ -1,0 +1,9 @@
+{
+  "id": "ex-towel-scrunches",
+  "name": "Towel Scrunches",
+  "instructions": "Seated, place towel on floor, use toes to scrunch towel toward you repeatedly",
+  "audioCues": [
+    "Grip with toes",
+    "Pull toward you"
+  ]
+}

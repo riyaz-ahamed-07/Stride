@@ -1,0 +1,11 @@
+{
+  "id": "ex-diaphragmatic-breathing",
+  "name": "Diaphragmatic Breathing",
+  "instructions": "Supine or seated, one hand on chest, one on belly, inhale through nose expanding belly, exhale slowly through mouth",
+  "audioCues": [
+    "Inhale through nose",
+    "Expand belly",
+    "Exhale through mouth",
+    "Belly falls"
+  ]
+}

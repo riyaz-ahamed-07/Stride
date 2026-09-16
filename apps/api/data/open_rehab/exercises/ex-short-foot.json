@@ -1,0 +1,14 @@
+{
+  "id": "ex-short-foot",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "foot",
+  "tags": [
+    "seated",
+    "no-equipment",
+    "intrinsic"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

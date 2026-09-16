@@ -1,0 +1,13 @@
+{
+  "id": "ex-ctr-finger-tendon-glide",
+  "name": "Finger Tendon Gliding (5 positions)",
+  "instructions": "Cycle through 5 hand positions: straight → hook fist → full fist → tabletop → straight fist. Hold each 5 seconds, transition slowly. Promotes tendon gliding through carpal tunnel to prevent adhesions.",
+  "audioCues": [
+    "Fingers straight",
+    "Hook fist",
+    "Full fist",
+    "Tabletop",
+    "Straight fist",
+    "Hold 5 seconds"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ex-sit-to-stand",
+  "name": "Sit-to-Stand (No Hands)",
+  "instructions": "Sit on chair, arms crossed on chest, stand up using leg strength only, then sit down.",
+  "audioCues": [
+    "Arms on chest",
+    "Stand up with your legs",
+    "Slowly sit down"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ex-slr-flexion",
+  "name": "Straight Leg Raise — Flexion",
+  "instructions": "Lie flat, tighten thigh, keep knee straight, lift leg ~30cm off bed, hold 3 seconds, lower.",
+  "audioCues": [
+    "Keep knee straight",
+    "Lift your leg",
+    "Hold for 3 seconds",
+    "Slowly lower"
+  ]
+}

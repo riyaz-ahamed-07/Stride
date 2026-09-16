@@ -1,0 +1,84 @@
+%% Stride Review 3 — Module architecture (import into diagrams.net via Arrange → Insert → Advanced → Mermaid)
+flowchart TB
+  subgraph Actors["Actors"]
+    P["Patient"]
+    T["Physiotherapist"]
+    A["Administrator"]
+  end
+
+  subgraph Clients["Client layer"]
+    WEB["Clinic website"]
+    MOB["Patient phone app"]
+  end
+
+  subgraph Modules["Stride modules — functional abstraction"]
+    M1["M1 Identity & access"]
+    M2["M2 Patient records"]
+    M3["M3 Exercise library"]
+    M4["M4 Rehabilitation plans"]
+    M5["M5 Appointments"]
+    M6["M6 Exercise sessions"]
+    M7["M7 Movement observations"]
+    M8["M8 Consent"]
+    M9["M9 Administration"]
+    M10["M10 Video consult"]
+  end
+
+  subgraph Data["Data abstraction — persisted entities"]
+    U[("users")]
+    EX[("exercises")]
+    RP[("rehabilitation_plans")]
+    PE[("plan_exercises")]
+    AP[("appointments")]
+    ES[("exercise_sessions")]
+    MO[("movement_observations")]
+    CR[("consent_records")]
+  end
+
+  P --> WEB
+  P --> MOB
+  T --> WEB
+  A --> WEB
+
+  WEB --> M1
+  MOB --> M1
+  WEB --> M2
+  WEB --> M3
+  WEB --> M4
+  MOB --> M4
+  WEB --> M5
+  MOB --> M5
+  WEB --> M6
+  MOB --> M6
+  WEB --> M7
+  WEB --> M8
+  MOB --> M8
+  WEB --> M9
+  WEB --> M10
+  MOB --> M10
+
+  M1 --> U
+  M2 --> U
+  M9 --> U
+  M3 --> EX
+  M4 --> RP
+  M4 --> PE
+  PE --> EX
+  M5 --> AP
+  M6 --> ES
+  M7 --> MO
+  M8 --> CR
+
+  M10 -.->|ephemeral signaling only| SIG["No DB persistence"]
+
+  classDef actor fill:#1a5f7a,stroke:#0d3b4c,color:#fff,font-weight:bold
+  classDef client fill:#d5f5e3,stroke:#1e8449,color:#145a32
+  classDef mod fill:#f9e79f,stroke:#b7950b,color:#7d6608
+  classDef data fill:#ffffff,stroke:#5d6d7e,color:#2c3e50
+  classDef note fill:#fadbd8,stroke:#922b21,color:#641e16
+
+  class P,T,A actor
+  class WEB,MOB client
+  class M1,M2,M3,M4,M5,M6,M7,M8,M9,M10 mod
+  class U,EX,RP,PE,AP,ES,MO,CR data
+  class SIG note

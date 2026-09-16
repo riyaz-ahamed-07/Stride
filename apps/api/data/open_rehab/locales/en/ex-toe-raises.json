@@ -1,0 +1,10 @@
+{
+  "id": "ex-toe-raises",
+  "name": "Standing Toe Raises",
+  "instructions": "Stand holding chair, lift toes with heels on ground, hold 3s, lower.",
+  "audioCues": [
+    "Lift your toes",
+    "Hold 3 seconds",
+    "Lower"
+  ]
+}

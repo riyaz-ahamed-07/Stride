@@ -1,0 +1,14 @@
+{
+  "id": "ex-quad-set",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "supine",
+    "bed-ridden",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

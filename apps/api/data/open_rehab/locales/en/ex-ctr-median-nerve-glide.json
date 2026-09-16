@@ -1,0 +1,14 @@
+{
+  "id": "ex-ctr-median-nerve-glide",
+  "name": "Median Nerve Gliding (6 positions)",
+  "instructions": "Cycle through 6 positions: fist → fingers extended wrist neutral → fingers+wrist extended → add thumb extension → forearm supination → gentle thumb stretch with other hand. Hold each 5s. Stop if pain or numbness increases.",
+  "audioCues": [
+    "Make a fist",
+    "Extend fingers",
+    "Extend wrist",
+    "Extend thumb",
+    "Supinate",
+    "Gentle thumb stretch",
+    "Hold 5 seconds"
+  ]
+}

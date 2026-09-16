@@ -1,0 +1,13 @@
+{
+  "id": "ex-forearm-pronation-supination",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "elbow",
+  "tags": [
+    "seated",
+    "no-equipment",
+    "gentle"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

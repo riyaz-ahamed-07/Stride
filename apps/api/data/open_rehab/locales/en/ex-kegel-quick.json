@@ -1,0 +1,12 @@
+{
+  "id": "ex-kegel-quick",
+  "name": "Kegel Exercise — Quick Flick",
+  "instructions": "Quickly contract pelvic floor muscles and immediately release. This trains fast-twitch fibers for cough/sneeze leak prevention.",
+  "audioCues": [
+    "Quick squeeze",
+    "Immediately release",
+    "Squeeze, release",
+    "Keep breathing",
+    "Quick rhythm"
+  ]
+}

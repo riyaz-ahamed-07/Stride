@@ -8,3 +8,11 @@ __pycache__/
 .expo/
 dist/
 *.tsbuildinfo
+vendor/
+.cursor/mcp.json
+.env
+.env.*
+!.env.example
+apps/api/.env
+apps/api/.env.*
+!apps/api/.env.example

@@ -1,9 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { C } from "../theme";
 
-type Props = { onDone: () => void };
+type Props = {
+  onDone: () => void;
+  onViewProgress?: () => void;
+};
 
-export function MoveSuccessScreen({ onDone }: Props) {
+export function MoveSuccessScreen({ onDone, onViewProgress }: Props) {
   return (
     <View style={styles.page}>
       <View style={styles.icon}>
@@ -13,6 +16,11 @@ export function MoveSuccessScreen({ onDone }: Props) {
       <Text style={styles.body}>
         Your session is saved. Your physiotherapist will review it and add it to your record.
       </Text>
+      {onViewProgress ? (
+        <Pressable style={styles.btnSecondary} onPress={onViewProgress}>
+          <Text style={styles.btnSecondaryText}>View progress</Text>
+        </Pressable>
+      ) : null}
       <Pressable style={styles.btnPrimary} onPress={onDone}>
         <Text style={styles.btnPrimaryText}>Back to dashboard</Text>
       </Pressable>
@@ -45,6 +53,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 28,
   },
+  btnSecondary: {
+    minHeight: 54,
+    minWidth: "100%",
+    backgroundColor: C.surface,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: C.border,
+    marginBottom: 12,
+  },
+  btnSecondaryText: { color: C.primary, fontSize: 17, fontWeight: "700" },
   btnPrimary: {
     minHeight: 54,
     minWidth: "100%",

@@ -1,0 +1,11 @@
+{
+  "id": "ex-squats-progressive",
+  "name": "Squats (Progressive Depth)",
+  "instructions": "Feet shoulder-width, slowly squat, progress depth from 60 to 90 degrees. Knees stay behind toes.",
+  "audioCues": [
+    "Slowly squat",
+    "Knees behind toes",
+    "Hold 3 seconds",
+    "Stand up"
+  ]
+}

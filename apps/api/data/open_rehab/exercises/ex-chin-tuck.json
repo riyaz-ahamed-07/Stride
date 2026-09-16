@@ -1,0 +1,15 @@
+{
+  "id": "ex-chin-tuck",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "cervical",
+  "tags": [
+    "phase1",
+    "spine",
+    "cervical",
+    "posture"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

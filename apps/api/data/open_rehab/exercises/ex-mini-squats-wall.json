@@ -1,0 +1,17 @@
+{
+  "id": "ex-mini-squats-wall",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "knee",
+  "tags": [
+    "standing",
+    "wall"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "contraindications": {
+    "phases": [
+      1
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "ex-ankle-circles",
+  "name": "Ankle Circles",
+  "instructions": "Seated or supine, lift affected foot, slowly circle ankle clockwise 10 times, then counterclockwise 10 times",
+  "audioCues": [
+    "Circle clockwise",
+    "Circle counterclockwise"
+  ]
+}

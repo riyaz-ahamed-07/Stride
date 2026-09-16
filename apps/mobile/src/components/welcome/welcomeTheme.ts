@@ -1,0 +1,20 @@
+/** Welcome / onboarding palette — light canvas + Stride blue/teal figures. */
+export const W = {
+  bg: "#F4F7FD",
+  blobBlue: "#DBEAFE",
+  blobMint: "#D1FAE5",
+  primary: "#2563EB",
+  primaryDark: "#1D4ED8",
+  teal: "#0D9488",
+  mint: "#6EE7B7",
+  shirt: "#93C5FD",
+  pants: "#2563EB",
+  skin: "#FCD9BD",
+  hair: "#1E293B",
+  line: "#94A3B8",
+  screenBg: "#FFFFFF",
+  screenBorder: "#BFDBFE",
+  plant: "#0D9488",
+  plantAlt: "#60A5FA",
+  pot: "#64748B",
+};

@@ -1,0 +1,10 @@
+{
+  "id": "ex-log-roll",
+  "name": "Log Roll",
+  "instructions": "Supine, bend knees, cross arms or keep at sides, roll shoulders and hips together to one side keeping spine aligned, avoid twisting",
+  "audioCues": [
+    "Bend knees",
+    "Roll as one unit",
+    "No twisting"
+  ]
+}

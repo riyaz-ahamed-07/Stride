@@ -1,0 +1,15 @@
+{
+  "id": "ex-ctr-median-nerve-glide",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "wrist",
+  "tags": [
+    "phase1",
+    "ctr",
+    "nerve-gliding",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 5,
+  "defaultHoldSec": 5
+}

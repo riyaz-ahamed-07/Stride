@@ -1,0 +1,11 @@
+{
+  "id": "ex-slr-abduction",
+  "name": "SLR — Abduction",
+  "instructions": "Side-lying, keep knee straight, lift top leg ~30cm outward, hold 3s, lower.",
+  "audioCues": [
+    "Lie on your side",
+    "Lift leg outward",
+    "Hold 3 seconds",
+    "Lower"
+  ]
+}

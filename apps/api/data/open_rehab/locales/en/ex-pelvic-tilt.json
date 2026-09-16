@@ -1,0 +1,11 @@
+{
+  "id": "ex-pelvic-tilt",
+  "name": "Pelvic Tilt",
+  "instructions": "Supine with knees bent, tighten abs to flatten lower back against bed, hold 5s, relax",
+  "audioCues": [
+    "Tighten abs",
+    "Flatten back",
+    "Hold",
+    "Relax"
+  ]
+}

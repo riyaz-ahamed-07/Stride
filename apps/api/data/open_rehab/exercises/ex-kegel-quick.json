@@ -1,0 +1,14 @@
+{
+  "id": "ex-kegel-quick",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "pelvic-floor",
+  "tags": [
+    "supine",
+    "seated",
+    "standing",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10
+}

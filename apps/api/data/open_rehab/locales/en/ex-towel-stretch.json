@@ -1,0 +1,10 @@
+{
+  "id": "ex-towel-stretch",
+  "name": "Towel Stretch — Knee Extension",
+  "instructions": "Seated, loop towel around foot, pull towel while straightening knee as much as possible, hold 30s",
+  "audioCues": [
+    "Pull towel",
+    "Straighten knee",
+    "Hold"
+  ]
+}

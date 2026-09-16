@@ -1,0 +1,15 @@
+{
+  "id": "ex-kegel-slow",
+  "version": "1.0",
+  "category": "strengthening",
+  "bodyRegion": "pelvic-floor",
+  "tags": [
+    "supine",
+    "seated",
+    "standing",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 5
+}

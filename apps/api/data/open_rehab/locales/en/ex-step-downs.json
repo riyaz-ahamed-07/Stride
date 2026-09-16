@@ -1,0 +1,11 @@
+{
+  "id": "ex-step-downs",
+  "name": "Step-Downs (Quad Control)",
+  "instructions": "Stand on step, slowly lower with surgical leg control, good foot touches ground then returns. Focus on quad eccentric control.",
+  "audioCues": [
+    "Stand steady on step",
+    "Slowly lower down",
+    "Good foot touches lightly",
+    "Return up"
+  ]
+}

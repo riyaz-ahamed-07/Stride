@@ -1,0 +1,15 @@
+{
+  "id": "ex-ctr-thumb-opposition",
+  "version": "1.0",
+  "category": "rom",
+  "bodyRegion": "wrist",
+  "tags": [
+    "phase1",
+    "ctr",
+    "thumb",
+    "no-equipment"
+  ],
+  "defaultSets": 3,
+  "defaultReps": 10,
+  "defaultHoldSec": 3
+}

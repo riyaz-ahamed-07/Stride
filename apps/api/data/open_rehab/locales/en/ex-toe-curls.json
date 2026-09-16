@@ -1,0 +1,10 @@
+{
+  "id": "ex-toe-curls",
+  "name": "Toe Curls",
+  "instructions": "Sit with foot flat on floor. Curl toes to grip the floor as if picking up a towel. Hold 3 seconds, release.",
+  "audioCues": [
+    "Curl toes to grip",
+    "Hold 3 seconds",
+    "Release"
+  ]
+}
