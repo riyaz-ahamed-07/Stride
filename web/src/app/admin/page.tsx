@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EmptyState, ErrorState, LoadingBlock, SuccessBanner } from "@/components/AsyncState";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingBlock,
+  SuccessBanner,
+} from "@/components/AsyncState";
+import { PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
 import { userFacingError } from "@/lib/userFacingError";
 
@@ -23,7 +29,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
-  const [lastInvite, setLastInvite] = useState<{ name: string; code: string } | null>(null);
+  const [lastInvite, setLastInvite] = useState<{
+    name: string;
+    code: string;
+  } | null>(null);
 
   async function refresh() {
     setError("");
@@ -38,16 +47,23 @@ export default function AdminPage() {
   useEffect(() => {
     setLoading(true);
     refresh()
-      .catch((err: unknown) => setError(userFacingError(err, "Could not load accounts.")))
+      .catch((err: unknown) =>
+        setError(userFacingError(err, "Could not load accounts.")),
+      )
       .finally(() => setLoading(false));
   }, []);
 
   async function approve(id: string) {
     setActionError("");
     try {
-      const approved = await api<User>(`/admin/users/${id}/approve`, { method: "POST" });
+      const approved = await api<User>(`/admin/users/${id}/approve`, {
+        method: "POST",
+      });
       if (approved.invite_code) {
-        setLastInvite({ name: approved.full_name || approved.email, code: approved.invite_code });
+        setLastInvite({
+          name: approved.full_name || approved.email,
+          code: approved.invite_code,
+        });
       }
       await refresh();
     } catch (err) {
@@ -62,7 +78,9 @@ export default function AdminPage() {
       await api(`/admin/users/${id}/reject`, { method: "POST" });
       await refresh();
     } catch (err) {
-      setActionError(userFacingError(err, "Could not reject this application."));
+      setActionError(
+        userFacingError(err, "Could not reject this application."),
+      );
     }
   }
 
@@ -70,7 +88,10 @@ export default function AdminPage() {
     setActionError("");
     try {
       const next = user.status === "active" ? "inactive" : "active";
-      await api(`/admin/users/${user.id}`, { method: "PATCH", body: JSON.stringify({ status: next }) });
+      await api(`/admin/users/${user.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: next }),
+      });
       await refresh();
     } catch (err) {
       setActionError(userFacingError(err, "Could not update this account."));
@@ -88,24 +109,27 @@ export default function AdminPage() {
   if (error) {
     return (
       <div className="dashboard-page">
-        <ErrorState message={error} onRetry={() => {
-          setLoading(true);
-          refresh()
-            .catch((err: unknown) => setError(userFacingError(err, "Could not load accounts.")))
-            .finally(() => setLoading(false));
-        }} />
+        <ErrorState
+          message={error}
+          onRetry={() => {
+            setLoading(true);
+            refresh()
+              .catch((err: unknown) =>
+                setError(userFacingError(err, "Could not load accounts.")),
+              )
+              .finally(() => setLoading(false));
+          }}
+        />
       </div>
     );
   }
 
   return (
     <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <p className="greet-text">Administration</p>
-          <h1>Account management</h1>
-        </div>
-      </header>
+      <PageHeader
+        title="Account management"
+        subtitle="Approve physiotherapists and manage clinic accounts."
+      />
 
       {actionError ? <ErrorState message={actionError} /> : null}
       {lastInvite ? (
@@ -123,7 +147,13 @@ export default function AdminPage() {
           />
         ) : (
           pending.map((user) => (
-            <div key={user.id} style={{ padding: "12px 0", borderBottom: "1px solid var(--border)" }}>
+            <div
+              key={user.id}
+              style={{
+                padding: "12px 0",
+                borderBottom: "1px solid var(--border)",
+              }}
+            >
               <strong>{user.full_name || user.email}</strong>
               <div className="subtitle">
                 {user.email}
@@ -132,10 +162,18 @@ export default function AdminPage() {
                 {user.specialty ? ` · ${user.specialty}` : ""}
               </div>
               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                <button className="btn btn-primary btn-sm" type="button" onClick={() => approve(user.id)}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  type="button"
+                  onClick={() => approve(user.id)}
+                >
                   Approve
                 </button>
-                <button className="btn btn-outline btn-sm" type="button" onClick={() => reject(user.id)}>
+                <button
+                  className="btn btn-outline btn-sm"
+                  type="button"
+                  onClick={() => reject(user.id)}
+                >
                   Reject
                 </button>
               </div>
@@ -144,7 +182,10 @@ export default function AdminPage() {
         )}
       </section>
 
-      <p className="subtitle">Manage clinic accounts. Approved therapists receive a patient invite code.</p>
+      <p className="subtitle">
+        Manage clinic accounts. Approved therapists receive a patient invite
+        code.
+      </p>
       <div className="card">
         {users.length === 0 ? (
           <p className="subtitle">No accounts yet.</p>
@@ -169,14 +210,21 @@ export default function AdminPage() {
                     </td>
                     <td>{user.role}</td>
                     <td>
-                      <span className={`badge ${user.status === "active" ? "badge-success" : "badge-warning"}`}>
+                      <span
+                        className={`badge ${user.status === "active" ? "badge-success" : "badge-warning"}`}
+                      >
                         {user.status.replace(/_/g, " ")}
                       </span>
                     </td>
                     <td>{user.invite_code ?? "n/a"}</td>
                     <td>
-                      {user.status === "active" || user.status === "inactive" ? (
-                        <button className="btn btn-outline btn-sm" type="button" onClick={() => toggle(user)}>
+                      {user.status === "active" ||
+                      user.status === "inactive" ? (
+                        <button
+                          className="btn btn-outline btn-sm"
+                          type="button"
+                          onClick={() => toggle(user)}
+                        >
                           {user.status === "active" ? "Deactivate" : "Activate"}
                         </button>
                       ) : null}

@@ -38,20 +38,17 @@ export default function AppointmentsPage() {
   const { upcoming, past } = partitionAppointments(rows);
 
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page bento-page patient-bento">
       <header className="dashboard-header">
         <div>
           <p className="greet-text">Schedule</p>
           <h1>Appointments</h1>
+          <p className="subtitle">
+            Join video consultations from your browser. Booking is managed by
+            your physiotherapist in the clinic portal.
+          </p>
         </div>
       </header>
-
-      <div className="card">
-        <p className="subtitle">
-          Join video consultations from your browser. Booking is managed by your
-          physiotherapist in the clinic portal.
-        </p>
-      </div>
 
       {loading ? <LoadingBlock label="Loading appointments…" /> : null}
       {error ? <ErrorState message={error} onRetry={load} /> : null}
@@ -69,81 +66,91 @@ export default function AppointmentsPage() {
       ) : null}
 
       {!loading && !error && rows.length > 0 ? (
-        <>
-          <section className="card" style={{ marginBottom: 20 }}>
-            <h2>Upcoming</h2>
-            {upcoming.length === 0 ? (
-              <p className="subtitle">No upcoming appointments.</p>
-            ) : (
-              <div className="appointment-list">
-                {upcoming.map((item) => (
-                  <article className="card appt-row" key={item.id}>
-                    <div className="appt-row-main">
-                      <div className="appt-avatar" aria-hidden="true">
-                        PT
+        <div className="bento-grid bento-patient-appts">
+          <section className="bento-tile tile-upcoming">
+            <div className="bento-tile-head">
+              <h2>Upcoming</h2>
+              <span className="patient-chip">{upcoming.length}</span>
+            </div>
+            <div className="bento-scroll">
+              {upcoming.length === 0 ? (
+                <p className="subtitle">No upcoming appointments.</p>
+              ) : (
+                <div className="appointment-list">
+                  {upcoming.map((item) => (
+                    <article className="patient-appt-row" key={item.id}>
+                      <div className="appt-row-main">
+                        <div className="appt-avatar" aria-hidden="true">
+                          PT
+                        </div>
+                        <div>
+                          <h3>
+                            {item.therapist_name
+                              ? `Consultation with ${item.therapist_name}`
+                              : "Physiotherapy consultation"}
+                          </h3>
+                          <p className="appt-detail">
+                            {formatVisitWhen(item.scheduled_at)}
+                          </p>
+                          {item.reason ? (
+                            <p className="appt-detail">{item.reason}</p>
+                          ) : null}
+                        </div>
                       </div>
-                      <div>
-                        <h3>
-                          {item.therapist_name
-                            ? `Consultation with ${item.therapist_name}`
-                            : "Physiotherapy consultation"}
-                        </h3>
-                        <p className="appt-detail">
-                          {formatVisitWhen(item.scheduled_at)}
-                        </p>
-                        {item.reason ? (
-                          <p className="appt-detail">{item.reason}</p>
-                        ) : null}
+                      <div className="appt-row-actions">
+                        <span className="badge badge-pending">Scheduled</span>
+                        <Link
+                          className="btn btn-primary btn-sm"
+                          href={`/patient/consult/${item.id}`}
+                        >
+                          Join consultation
+                        </Link>
                       </div>
-                    </div>
-                    <div className="appt-row-actions">
-                      <span className="badge badge-pending">Scheduled</span>
-                      <Link
-                        className="btn btn-primary"
-                        href={`/patient/consult/${item.id}`}
-                      >
-                        Join consultation
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
 
-          <section className="card">
-            <h2>Past</h2>
-            {past.length === 0 ? (
-              <p className="subtitle">No past appointments yet.</p>
-            ) : (
-              <div className="appointment-list">
-                {past.map((item) => (
-                  <article className="card appt-row" key={item.id}>
-                    <div className="appt-row-main">
-                      <div className="appt-avatar" aria-hidden="true">
-                        PT
+          <section className="bento-tile tile-past">
+            <div className="bento-tile-head">
+              <h2>Past</h2>
+              <span className="patient-chip">{past.length}</span>
+            </div>
+            <div className="bento-scroll">
+              {past.length === 0 ? (
+                <p className="subtitle">No past appointments yet.</p>
+              ) : (
+                <div className="appointment-list">
+                  {past.map((item) => (
+                    <article className="patient-appt-row" key={item.id}>
+                      <div className="appt-row-main">
+                        <div className="appt-avatar" aria-hidden="true">
+                          PT
+                        </div>
+                        <div>
+                          <h3>
+                            {item.therapist_name
+                              ? `Consultation with ${item.therapist_name}`
+                              : "Physiotherapy consultation"}
+                          </h3>
+                          <p className="appt-detail">
+                            {formatVisitWhen(item.scheduled_at)}
+                          </p>
+                          {item.reason ? (
+                            <p className="appt-detail">{item.reason}</p>
+                          ) : null}
+                        </div>
                       </div>
-                      <div>
-                        <h3>
-                          {item.therapist_name
-                            ? `Consultation with ${item.therapist_name}`
-                            : "Physiotherapy consultation"}
-                        </h3>
-                        <p className="appt-detail">
-                          {formatVisitWhen(item.scheduled_at)}
-                        </p>
-                        {item.reason ? (
-                          <p className="appt-detail">{item.reason}</p>
-                        ) : null}
-                      </div>
-                    </div>
-                    <span className="badge badge-success">{item.status}</span>
-                  </article>
-                ))}
-              </div>
-            )}
+                      <span className="badge badge-success">{item.status}</span>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
-        </>
+        </div>
       ) : null}
     </div>
   );

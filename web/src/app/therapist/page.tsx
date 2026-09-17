@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { ErrorState, LoadingBlock } from "@/components/AsyncState";
-import { api } from "@/lib/api";
+import { api, readSession } from "@/lib/api";
 import { formatVisitWhen, partitionAppointments } from "@/lib/care";
 import { userFacingError } from "@/lib/userFacingError";
 
@@ -40,6 +40,7 @@ export default function TherapistDesk() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState("");
   const [name, setName] = useState("New patient");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -62,6 +63,8 @@ export default function TherapistDesk() {
   }
 
   useEffect(() => {
+    const session = readSession();
+    if (session?.full_name) setDisplayName(session.full_name);
     setLoading(true);
     refresh()
       .catch((err: unknown) =>
@@ -88,14 +91,54 @@ export default function TherapistDesk() {
     }
   }
 
+  const upcoming = partitionAppointments(appointments).upcoming;
+
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <p className="greet-text">Physiotherapist</p>
-          <h1>Patients</h1>
+    <div className="dashboard-page bento-page">
+      {!loading ? (
+        <div className="welcome-banner">
+          <div>
+            <h2>Hello{displayName ? `, ${displayName.split(" ")[0]}` : ""}</h2>
+            <p>
+              {queue.length > 0
+                ? `You have ${queue.length} observation${queue.length === 1 ? "" : "s"} waiting for review.`
+                : `${patients.length} patient${patients.length === 1 ? "" : "s"} in your clinic.`}
+            </p>
+            <div className="welcome-banner-bar" aria-hidden>
+              <span
+                style={{
+                  width: `${Math.min(
+                    100,
+                    patients.length
+                      ? Math.round(
+                          ((patients.length -
+                            Math.min(queue.length, patients.length)) /
+                            Math.max(patients.length, 1)) *
+                            100,
+                        )
+                      : 12,
+                  )}%`,
+                }}
+              />
+            </div>
+          </div>
+          <div className="compact-actions">
+            <Link
+              className="btn btn-sm btn-secondary"
+              href="/therapist/reviews"
+            >
+              Reviews
+            </Link>
+            <Link
+              className="btn btn-outline btn-sm"
+              href="/therapist/plans"
+              style={{ borderColor: "#fff", color: "#fff" }}
+            >
+              Plans
+            </Link>
+          </div>
         </div>
-      </header>
+      ) : null}
 
       {error ? (
         <ErrorState
@@ -112,212 +155,170 @@ export default function TherapistDesk() {
       ) : null}
       {loading ? <LoadingBlock label="Loading patients…" /> : null}
 
-      {!loading && inviteCode ? (
-        <section className="card" style={{ marginBottom: 20 }}>
-          <h2>Patient invite code</h2>
-          <p className="subtitle">
-            Share this code so patients can link to you during onboarding.
-          </p>
-          <p
-            style={{
-              fontSize: 28,
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              margin: "8px 0 0",
-            }}
-          >
-            {inviteCode}
-          </p>
-        </section>
-      ) : null}
-
-      <div className="stats-row">
-        <div className="stat-card">
-          <div className="stat-value">{patients.length}</div>
-          <div className="stat-label">Patients</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">{queue.length}</div>
-          <div className="stat-label">Awaiting review</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">
-            {partitionAppointments(appointments).upcoming.length}
-          </div>
-          <div className="stat-label">Upcoming appointments</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">{exercises.length}</div>
-          <div className="stat-label">Exercises</div>
-        </div>
-      </div>
-
-      <div
-        style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}
-      >
-        <Link className="btn btn-primary" href="/therapist/reviews">
-          Open review queue
-        </Link>
-        <Link className="btn btn-outline" href="/therapist/progress">
-          Patient progress
-        </Link>
-        <Link className="btn btn-outline" href="/therapist/plans">
-          Open plan builder
-        </Link>
-        <Link className="btn btn-outline" href="/therapist/exercises">
-          Exercise library
-        </Link>
-        <Link className="btn btn-outline" href="/therapist/appointments">
-          Schedule appointment
-        </Link>
-      </div>
-
       {!loading ? (
-        <section className="card" style={{ marginBottom: 20 }}>
-          <h2>Upcoming appointments</h2>
-          {(() => {
-            const { upcoming } = partitionAppointments(appointments);
-            if (upcoming.length === 0) {
-              return (
-                <p className="subtitle">
-                  No upcoming appointments.{" "}
-                  <Link href="/therapist/appointments">Schedule one</Link>.
-                </p>
-              );
-            }
-            return (
-              <div className="appointment-list">
-                {upcoming.slice(0, 5).map((item) => (
-                  <article className="appt-row" key={item.id}>
-                    <div className="appt-row-main">
-                      <div>
-                        <h3>{item.patient_name ?? "Patient"}</h3>
-                        <p className="appt-detail">
-                          {formatVisitWhen(item.scheduled_at)}
-                        </p>
-                        {item.reason ? (
-                          <p className="appt-detail">{item.reason}</p>
-                        ) : null}
-                      </div>
+        <div className="bento-grid bento-patients">
+          <section className="bento-tile tile-invite">
+            <h2>Invite code</h2>
+            <p className="subtitle">Share during patient onboarding.</p>
+            <p className="bento-invite-code">{inviteCode ?? "—"}</p>
+          </section>
+
+          <section className="bento-tile tile-stats">
+            <h2>Clinic snapshot</h2>
+            <div className="bento-stats">
+              <div className="bento-stat">
+                <div className="stat-value">{patients.length}</div>
+                <div className="stat-label">Patients</div>
+              </div>
+              <div className="bento-stat">
+                <div className="stat-value">{queue.length}</div>
+                <div className="stat-label">Awaiting review</div>
+              </div>
+              <div className="bento-stat">
+                <div className="stat-value">{upcoming.length}</div>
+                <div className="stat-label">Upcoming</div>
+              </div>
+              <div className="bento-stat">
+                <div className="stat-value">{exercises.length}</div>
+                <div className="stat-label">Exercises</div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bento-tile tile-patients">
+            <div className="bento-tile-head">
+              <h2>Your patients</h2>
+            </div>
+            <div className="bento-scroll">
+              <div className="table-wrap">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {patients.map((row) => (
+                      <tr key={row.id}>
+                        <td>
+                          <strong>{row.full_name}</strong>
+                        </td>
+                        <td>{row.email}</td>
+                        <td>
+                          {row.status === "active" ? (
+                            <span className="badge badge-success">Active</span>
+                          ) : (
+                            row.status
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <form onSubmit={addPatient} style={{ marginTop: 12 }}>
+                <h3 style={{ fontSize: "0.9rem", margin: "0 0 8px" }}>
+                  Add patient
+                </h3>
+                <div className="compact-form-row">
+                  <div className="field" style={{ marginBottom: 0 }}>
+                    <input
+                      placeholder="Full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="field" style={{ marginBottom: 0 }}>
+                    <input
+                      placeholder="Email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button className="btn btn-primary btn-sm" type="submit">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <section className="bento-tile tile-appts">
+            <div className="bento-tile-head">
+              <h2>Upcoming</h2>
+              <Link
+                className="btn btn-outline btn-sm"
+                href="/therapist/appointments"
+              >
+                All
+              </Link>
+            </div>
+            <div className="bento-scroll">
+              {upcoming.length === 0 ? (
+                <p className="subtitle">No upcoming appointments.</p>
+              ) : (
+                upcoming.slice(0, 8).map((item) => (
+                  <div className="appt-row-compact" key={item.id}>
+                    <div>
+                      <h3>{item.patient_name ?? "Patient"}</h3>
+                      <p className="appt-detail">
+                        {formatVisitWhen(item.scheduled_at)}
+                      </p>
                     </div>
                     <Link
-                      className="btn btn-primary"
+                      className="btn btn-primary btn-sm"
                       href={`/therapist/consult/${item.id}`}
                     >
-                      Join consultation
+                      Join
                     </Link>
-                  </article>
-                ))}
-              </div>
-            );
-          })()}
-        </section>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+
+          <section className="bento-tile tile-queue">
+            <div className="bento-tile-head">
+              <h2>Pending reviews</h2>
+              <Link
+                className="btn btn-outline btn-sm"
+                href="/therapist/reviews"
+              >
+                Queue
+              </Link>
+            </div>
+            <div className="bento-scroll">
+              {queue.length === 0 ? (
+                <p className="subtitle">Nothing waiting for review.</p>
+              ) : (
+                queue.map((row) => (
+                  <div className="queue-item review-card-pending" key={row.id}>
+                    <p style={{ margin: 0 }}>
+                      <strong>{row.patient_name}</strong> · {row.exercise_name}
+                    </p>
+                    <p className="subtitle" style={{ margin: "4px 0 0" }}>
+                      {row.metric}: {row.value} ·{" "}
+                      {Math.round(row.confidence * 100)}%
+                    </p>
+                  </div>
+                ))
+              )}
+              <Link
+                className="btn btn-outline btn-sm"
+                href="/therapist/reviews?tab=progress"
+                style={{ marginTop: 8 }}
+              >
+                Progress overview
+              </Link>
+            </div>
+          </section>
+        </div>
       ) : null}
-
-      <div className="dashboard-grid">
-        <section className="card">
-          <h2>Your patients</h2>
-          <div className="table-wrap">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patients.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      <strong>{row.full_name}</strong>
-                    </td>
-                    <td>{row.email}</td>
-                    <td>
-                      {row.status === "active" ? (
-                        <span className="badge badge-success">Active</span>
-                      ) : (
-                        row.status
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <form onSubmit={addPatient} style={{ marginTop: 24 }}>
-            <h3>Add patient</h3>
-            <div className="field">
-              <input
-                placeholder="Full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="field">
-              <input
-                placeholder="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <button className="btn btn-primary" type="submit">
-              Save patient
-            </button>
-          </form>
-        </section>
-
-        <section className="card">
-          <h2>Pending observations</h2>
-          <p className="subtitle">
-            System-derived movement metrics wait here until you confirm them.
-            They are not clinical diagnoses.
-          </p>
-          {queue.length === 0 ? (
-            <p className="subtitle">No observations waiting for review.</p>
-          ) : null}
-          {queue.slice(0, 4).map((row) => (
-            <div className="queue-item review-card-pending" key={row.id}>
-              <p>
-                <strong>{row.patient_name}</strong> · {row.exercise_name}
-              </p>
-              <p className="subtitle">
-                {row.metric}: {row.value} · Confidence{" "}
-                {Math.round(row.confidence * 100)}%
-              </p>
-            </div>
-          ))}
-          <Link
-            className="btn btn-outline btn-block"
-            href="/therapist/reviews"
-            style={{ marginTop: 12 }}
-          >
-            Review all pending ({queue.length})
-          </Link>
-          <div
-            style={{
-              marginTop: 24,
-              paddingTop: 24,
-              borderTop: "1px solid var(--border)",
-            }}
-          >
-            <h3>Confirmed progress</h3>
-            <p className="subtitle">
-              See adherence and therapist-confirmed observation trends.
-            </p>
-            <Link
-              className="btn btn-outline btn-block"
-              href="/therapist/progress"
-              style={{ marginTop: 12 }}
-            >
-              Open progress overview
-            </Link>
-          </div>
-        </section>
-      </div>
     </div>
   );
 }
