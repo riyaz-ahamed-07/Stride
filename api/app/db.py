@@ -24,8 +24,18 @@ def configure_engine(database_url: str) -> Engine:
     if engine is not None:
         engine.dispose()
     url = _sqlalchemy_url(database_url)
-    connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
-    engine = create_engine(url, connect_args=connect_args, future=True)
+    if url.startswith("sqlite"):
+        connect_args: dict = {"check_same_thread": False}
+        engine = create_engine(url, connect_args=connect_args, future=True)
+    else:
+        # Supabase transaction pooler (PgBouncer :6543) rejects named prepared
+        # statements across clients — disable them for psycopg3.
+        engine = create_engine(
+            url,
+            connect_args={"prepare_threshold": None},
+            pool_pre_ping=True,
+            future=True,
+        )
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
     return engine
 
