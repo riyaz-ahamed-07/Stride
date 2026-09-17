@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, clearSession, homeFor, readSession, saveSession, type Role, type Session } from "@/lib/api";
+import {
+  api,
+  clearSession,
+  homeFor,
+  readSession,
+  saveSession,
+  type Role,
+  type Session,
+} from "@/lib/api";
 
 type Profile = {
   status: string;
@@ -31,7 +39,10 @@ export default function PendingApprovalPage() {
       return;
     }
     if (session.status && session.status !== "pending_approval") {
-      window.location.href = session.status === "pending_onboarding" ? "/onboarding/therapist" : "/login";
+      window.location.href =
+        session.status === "pending_onboarding"
+          ? "/onboarding/therapist"
+          : "/login";
       return;
     }
     setChecking(false);
@@ -59,15 +70,20 @@ export default function PendingApprovalPage() {
       }
       if (profile.status === "inactive") {
         clearSession();
-        setMessage("This application was not approved. Contact your clinic administrator.");
+        setMessage(
+          "This application was not approved. Contact your clinic administrator.",
+        );
         return;
       }
       setMessage("Still waiting for admin approval. Check again soon.");
     } catch (err) {
-      const text = err instanceof Error ? err.message : "Could not check status.";
+      const text =
+        err instanceof Error ? err.message : "Could not check status.";
       if (text.toLowerCase().includes("inactive")) {
         clearSession();
-        setMessage("This application was not approved. Contact your clinic administrator.");
+        setMessage(
+          "This application was not approved. Contact your clinic administrator.",
+        );
       } else {
         setMessage(text);
       }
@@ -79,7 +95,10 @@ export default function PendingApprovalPage() {
   if (checking) {
     return (
       <div className="auth-page">
-        <div className="auth-form-wrap" style={{ margin: "0 auto", maxWidth: 480 }}>
+        <div
+          className="auth-form-wrap"
+          style={{ margin: "0 auto", maxWidth: 480 }}
+        >
           <div className="login-card auth-card">
             <p className="subtitle">Checking your application…</p>
           </div>
@@ -90,15 +109,32 @@ export default function PendingApprovalPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-form-wrap" style={{ margin: "0 auto", maxWidth: 480 }}>
+      <div
+        className="auth-form-wrap"
+        style={{ margin: "0 auto", maxWidth: 480 }}
+      >
         <div className="login-card auth-card">
           <h2>Pending approval</h2>
           <p className="subtitle">
-            Your physiotherapist account is with the clinic administrator. You will receive access once approved,
-            including your patient invite code.
+            Your physiotherapist account is with the clinic administrator. You
+            will receive access once approved, including your patient invite
+            code.
           </p>
-          {message ? <p className={message.includes("not approved") ? "error" : "subtitle"}>{message}</p> : null}
-          <button className="btn btn-teal btn-block" type="button" onClick={checkStatus} disabled={busy}>
+          {message ? (
+            <p
+              className={
+                message.includes("not approved") ? "error" : "subtitle"
+              }
+            >
+              {message}
+            </p>
+          ) : null}
+          <button
+            className="btn btn-primary btn-block"
+            type="button"
+            onClick={checkStatus}
+            disabled={busy}
+          >
             {busy ? "Checking…" : "Check status"}
           </button>
           <button
