@@ -6,60 +6,56 @@ import {
   Text,
   View,
 } from "react-native";
+import {
+  Hand,
+  Monitor,
+  Phone,
+  Type,
+  Users,
+} from "lucide-react-native";
 import { AccountGearButton } from "../components/AccountGearButton";
+import { IconBubble } from "../components/ui";
 import { phoneDialUri } from "../lib/phone";
 import type { TherapistContact } from "../types";
-import { C } from "../theme";
+import { C, colors, shadow } from "../theme";
 
 const TOPICS = [
   {
-    title: "If something hurts",
-    body: "Stop the exercise. Sit down. If pain is sudden or severe, call your physiotherapist using the button below.",
+    title: "Pain",
+    body: "Stop. Sit. Call your PT if severe.",
+    Icon: Hand,
+    color: colors.semantic.errorSoft,
+    iconColor: colors.semantic.error,
   },
   {
-    title: "Video consultations",
-    body: "Use a tablet or computer for the best view. Allow camera and microphone. If video fails, call your physiotherapist.",
+    title: "Video call",
+    body: "Allow camera & mic. Prefer tablet.",
+    Icon: Monitor,
+    color: colors.brand.primarySoft,
+    iconColor: colors.brand.primary,
   },
   {
-    title: "If text looks small",
-    body: "This app uses large buttons and clear labels. Family helpers can tap buttons for the patient.",
+    title: "Text size",
+    body: "Ask a helper to tap buttons.",
+    Icon: Type,
+    color: colors.semantic.infoSoft,
+    iconColor: colors.semantic.info,
   },
   {
-    title: "Family helpers",
-    body: "You may tap buttons for the patient. Do not change the prescribed plan without the therapist.",
+    title: "Helpers",
+    body: "Help tap — don’t change the plan.",
+    Icon: Users,
+    color: colors.brand.accentSoft,
+    iconColor: colors.brand.accent,
   },
-];
+] as const;
 
 type Props = {
   therapist: TherapistContact | null;
   onOpenAccount: () => void;
 };
 
-function emergencyCopy(therapist: TherapistContact | null): {
-  title: string;
-  body: string;
-} {
-  if (therapist?.phone) {
-    const clinic = therapist.clinic_name ? ` at ${therapist.clinic_name}` : "";
-    return {
-      title: "Urgent help",
-      body: `If exercise causes sudden or severe pain, stop immediately and call ${therapist.full_name}${clinic}. For life-threatening emergencies, call your local emergency number.`,
-    };
-  }
-  if (therapist) {
-    return {
-      title: "Urgent help",
-      body: `Contact ${therapist.full_name}${therapist.clinic_name ? ` (${therapist.clinic_name})` : ""} through your clinic if you have sudden or severe pain. For life-threatening emergencies, call your local emergency number.`,
-    };
-  }
-  return {
-    title: "Urgent help",
-    body: "If exercise causes sudden or severe pain, stop immediately and contact your clinic. For life-threatening emergencies, call your local emergency number.",
-  };
-}
-
 export function HelpScreen({ therapist, onOpenAccount }: Props) {
-  const urgent = emergencyCopy(therapist);
   const dial = therapist?.phone ? phoneDialUri(therapist.phone) : "";
 
   function callTherapist() {
@@ -73,85 +69,89 @@ export function HelpScreen({ therapist, onOpenAccount }: Props) {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.topRow}>
-        <View style={{ flex: 1 }} />
+        <Text style={styles.h1}>Help</Text>
         <AccountGearButton onOpenAccount={onOpenAccount} />
       </View>
-      <Text style={styles.eyebrow}>Support</Text>
-      <Text style={styles.h1}>Help centre</Text>
-      <Text style={styles.sub}>
-        Simple answers for patients and family helpers.
-      </Text>
 
-      {TOPICS.map((topic) => (
-        <View key={topic.title} style={styles.card}>
-          <Text style={styles.cardTitle}>{topic.title}</Text>
-          <Text style={styles.cardBody}>{topic.body}</Text>
-        </View>
-      ))}
+      {TOPICS.map((topic) => {
+        const Icon = topic.Icon;
+        return (
+          <View key={topic.title} style={styles.card}>
+            <IconBubble color={topic.color}>
+              <Icon size={20} color={topic.iconColor} />
+            </IconBubble>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.cardTitle}>{topic.title}</Text>
+              <Text style={styles.cardBody}>{topic.body}</Text>
+            </View>
+          </View>
+        );
+      })}
 
-      <View style={styles.cardDanger}>
-        <Text style={styles.cardTitle}>{urgent.title}</Text>
-        <Text style={styles.cardBody}>{urgent.body}</Text>
-        {dial ? (
-          <Pressable style={styles.btnPrimary} onPress={callTherapist}>
-            <Text style={styles.btnPrimaryText}>
-              Call {therapist!.full_name}
-            </Text>
-          </Pressable>
-        ) : null}
-        {therapist?.phone ? (
-          <Text style={styles.phoneHint}>{therapist.phone}</Text>
-        ) : therapist ? (
-          <Text style={styles.phoneHint}>
-            No phone number on file — contact your clinic directly.
+      <View style={styles.urgent}>
+        <IconBubble color="#fff">
+          <Phone size={20} color={C.danger} />
+        </IconBubble>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.cardTitle}>Urgent</Text>
+          <Text style={styles.cardBody}>
+            Severe pain → stop & call
+            {therapist ? ` ${therapist.full_name}` : " your clinic"}
           </Text>
-        ) : null}
+        </View>
       </View>
+
+      {dial ? (
+        <Pressable style={styles.btnPrimary} onPress={callTherapist}>
+          <Text style={styles.btnPrimaryText}>
+            Call {therapist?.full_name ?? "clinic"}
+          </Text>
+        </Pressable>
+      ) : null}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { padding: 20, paddingBottom: 24 },
+  page: { padding: 20, paddingBottom: 110, gap: 10 },
   topRow: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    marginBottom: 4,
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
   },
-  eyebrow: { fontSize: 14, color: C.muted, marginBottom: 4 },
-  h1: { fontSize: 28, fontWeight: "800", color: C.text, marginBottom: 8 },
-  sub: { fontSize: 16, color: C.muted, lineHeight: 24, marginBottom: 20 },
-  card: {
-    backgroundColor: C.surface,
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: C.border,
-  },
-  cardDanger: {
-    backgroundColor: C.dangerSoft,
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: "#FECACA",
-  },
-  cardTitle: {
-    fontSize: 18,
+  h1: {
+    fontSize: 30,
     fontWeight: "800",
     color: C.text,
-    marginBottom: 8,
+    letterSpacing: -0.5,
   },
-  cardBody: { fontSize: 16, color: C.text, lineHeight: 24 },
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: C.surface,
+    borderRadius: 22,
+    padding: 14,
+    ...shadow.sm,
+  },
+  urgent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: C.dangerSoft,
+    borderRadius: 22,
+    padding: 14,
+  },
+  cardTitle: { fontSize: 15, fontWeight: "800", color: C.text },
+  cardBody: { fontSize: 13, color: C.muted, marginTop: 2, lineHeight: 18 },
   btnPrimary: {
-    marginTop: 14,
-    minHeight: 48,
+    marginTop: 4,
+    minHeight: 50,
     backgroundColor: C.danger,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
   },
-  btnPrimaryText: { color: "white", fontWeight: "700", fontSize: 16 },
-  phoneHint: { marginTop: 10, fontSize: 14, color: C.muted, fontWeight: "600" },
+  btnPrimaryText: { color: "white", fontWeight: "800", fontSize: 15 },
 });
