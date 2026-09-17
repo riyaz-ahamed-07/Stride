@@ -13,6 +13,9 @@ const VISIBILITY_MIN = 0.35;
 export type SkeletonOverlay = {
   phase?: SitStandPhase;
   showReference?: boolean;
+  showGuides?: boolean;
+  showBadge?: boolean;
+  showGoniometer?: boolean;
   progress?: number;
   cue?: string;
 };
@@ -185,14 +188,18 @@ export function drawSkeleton(
 ) {
   ctx.save();
   ctx.clearRect(0, 0, width, height);
-  drawAlignmentGuides(ctx, width, height);
+  if (overlay?.showGuides !== false) {
+    drawAlignmentGuides(ctx, width, height);
+  }
   if (overlay?.showReference !== false) {
     drawReferenceSilhouette(ctx, width, height, overlay?.phase);
   }
   if (typeof overlay?.progress === "number") {
     drawProgressRing(ctx, width, height, overlay.progress);
   }
-  drawPhaseBadge(ctx, width, overlay?.phase, overlay?.cue);
+  if (overlay?.showBadge !== false) {
+    drawPhaseBadge(ctx, width, overlay?.phase, overlay?.cue);
+  }
 
   if (!landmarks.length) {
     ctx.restore();
@@ -249,7 +256,9 @@ export function drawSkeleton(
     ctx.stroke();
   }
 
-  drawGoniometer(ctx, landmarks, width, height, mirrored);
+  if (overlay?.showGoniometer !== false) {
+    drawGoniometer(ctx, landmarks, width, height, mirrored);
+  }
 
   ctx.restore();
 }
