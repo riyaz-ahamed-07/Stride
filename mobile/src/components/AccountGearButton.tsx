@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { C } from "../theme";
+import { Pressable, StyleSheet } from "react-native";
+import { Settings } from "lucide-react-native";
+import { C, shadow } from "../theme";
 
 type Props = {
   onOpenAccount: () => void;
@@ -13,7 +14,7 @@ export function AccountGearButton({ onOpenAccount }: Props) {
       accessibilityRole="button"
       accessibilityLabel="Open account settings"
     >
-      <Text style={styles.icon}>⚙</Text>
+      <Settings size={20} color={C.text} strokeWidth={2.2} />
     </Pressable>
   );
 }
@@ -22,12 +23,10 @@ const styles = StyleSheet.create({
   btn: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 16,
     backgroundColor: C.surface,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
-    borderColor: C.border,
+    ...shadow.sm,
   },
-  icon: { fontSize: 22, color: C.text },
 });

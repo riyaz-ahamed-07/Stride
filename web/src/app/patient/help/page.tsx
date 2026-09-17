@@ -37,6 +37,25 @@ function urgentCopy(therapist: TherapistContact | null) {
   };
 }
 
+const HELP_ITEMS = [
+  {
+    title: "If something hurts",
+    body: "Stop the exercise. Sit down. If pain is sudden or severe, call your physiotherapist using the urgent help card.",
+  },
+  {
+    title: "Video consultations",
+    body: "Use Chrome or Edge on a computer or tablet. Allow camera and microphone when prompted. If video fails, call your physiotherapist.",
+  },
+  {
+    title: "If text looks small",
+    body: "On a computer, press Ctrl and + to enlarge. On phone, use the Stride mobile app.",
+  },
+  {
+    title: "Family helpers",
+    body: "You may tap buttons for the patient. Do not change the prescribed plan without the therapist.",
+  },
+] as const;
+
 export default function HelpPage() {
   const [therapist, setTherapist] = useState<TherapistContact | null>(null);
 
@@ -50,47 +69,27 @@ export default function HelpPage() {
   const dial = therapist?.phone ? phoneHref(therapist.phone) : "";
 
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page bento-page patient-bento">
       <header className="dashboard-header">
         <div>
           <p className="greet-text">Support</p>
           <h1>Help</h1>
+          <p className="subtitle">
+            Simple answers for patients and family helpers.
+          </p>
         </div>
       </header>
-      <p className="subtitle">
-        Simple answers for patients and family helpers.
-      </p>
 
-      <div className="help-grid">
-        <article className="card">
-          <h2>If something hurts</h2>
-          <p className="subtitle">
-            Stop the exercise. Sit down. If pain is sudden or severe, call your
-            physiotherapist using the button below.
-          </p>
-        </article>
-        <article className="card">
-          <h2>Video consultations</h2>
-          <p className="subtitle">
-            Use Chrome or Edge on a computer or tablet. Allow camera and
-            microphone when prompted. If video fails, call your physiotherapist.
-          </p>
-        </article>
-        <article className="card">
-          <h2>If text looks small</h2>
-          <p className="subtitle">
-            On a computer, press Ctrl and + to enlarge. On phone, use the Stride
-            mobile app.
-          </p>
-        </article>
-        <article className="card">
-          <h2>Family helpers</h2>
-          <p className="subtitle">
-            You may tap buttons for the patient. Do not change the prescribed
-            plan without the therapist.
-          </p>
-        </article>
-        <article className="card">
+      <div className="bento-grid bento-patient-help">
+        {HELP_ITEMS.map((item) => (
+          <article className="bento-tile" key={item.title}>
+            <h2>{item.title}</h2>
+            <p className="subtitle">{item.body}</p>
+          </article>
+        ))}
+
+        <article className="bento-tile tile-urgent">
+          <p className="review-kicker">Priority</p>
           <h2>Urgent help</h2>
           <p className="subtitle">{urgent.body}</p>
           {urgent.canCall && dial ? (

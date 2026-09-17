@@ -1,19 +1,30 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  CalendarDays,
+  ClipboardList,
+  HelpCircle,
+  Home,
+  MessageCircle,
+} from "lucide-react-native";
 import type { AppTab } from "../types";
-import { C } from "../theme";
+import { C, colors, radius, shadow, type as typography } from "../theme";
 
-type TabDef = { id: AppTab; label: string; icon: string };
+type TabDef = {
+  id: AppTab;
+  label: string;
+  Icon: typeof Home;
+};
 
 const PATIENT_TABS: TabDef[] = [
-  { id: "home", label: "Today", icon: "🏠" },
-  { id: "plan", label: "Plan", icon: "📋" },
-  { id: "help", label: "Help", icon: "💬" },
+  { id: "home", label: "Today", Icon: Home },
+  { id: "plan", label: "Plan", Icon: ClipboardList },
+  { id: "help", label: "Help", Icon: HelpCircle },
 ];
 
 const THERAPIST_TABS: TabDef[] = [
-  { id: "home", label: "Patients", icon: "🏠" },
-  { id: "appointments", label: "Appointments", icon: "📅" },
-  { id: "help", label: "Help", icon: "💬" },
+  { id: "home", label: "Patients", Icon: Home },
+  { id: "appointments", label: "Appointments", Icon: CalendarDays },
+  { id: "help", label: "Help", Icon: MessageCircle },
 ];
 
 type Props = {
@@ -25,32 +36,76 @@ type Props = {
 export function BottomNav({ active, role, onChange }: Props) {
   const tabs = role === "patient" ? PATIENT_TABS : THERAPIST_TABS;
   return (
-    <View style={styles.bar}>
-      {tabs.map((tab) => {
-        const selected = tab.id === active;
-        return (
-          <Pressable key={tab.id} style={styles.item} onPress={() => onChange(tab.id)}>
-            <Text style={[styles.icon, selected && styles.iconActive]}>{tab.icon}</Text>
-            <Text style={[styles.label, selected && styles.labelActive]}>{tab.label}</Text>
-          </Pressable>
-        );
-      })}
+    <View style={styles.wrap} pointerEvents="box-none">
+      <View style={styles.pill} accessibilityRole="tablist">
+        {tabs.map((tab) => {
+          const selected = tab.id === active;
+          const Icon = tab.Icon;
+          return (
+            <Pressable
+              key={tab.id}
+              style={[styles.item, selected && styles.itemActive]}
+              onPress={() => onChange(tab.id)}
+              accessibilityRole="tab"
+              accessibilityState={{ selected }}
+              accessibilityLabel={tab.label}
+            >
+              <Icon
+                size={20}
+                color={selected ? colors.text.inverse : colors.text.muted}
+                strokeWidth={selected ? 2.4 : 2}
+              />
+              <Text style={[styles.label, selected && styles.labelActive]}>
+                {tab.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: {
-    flexDirection: "row",
-    backgroundColor: C.surface,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
-    paddingTop: 8,
+  wrap: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 18,
     paddingBottom: 10,
+    alignItems: "center",
   },
-  item: { flex: 1, alignItems: "center", gap: 4, minHeight: 52, justifyContent: "center" },
-  icon: { fontSize: 22, opacity: 0.55 },
-  iconActive: { opacity: 1 },
-  label: { fontSize: 13, fontWeight: "600", color: C.muted },
-  labelActive: { color: C.primary, fontWeight: "700" },
+  pill: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: C.surface,
+    borderRadius: radius.full,
+    padding: 6,
+    gap: 4,
+    ...shadow.lg,
+  },
+  item: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
+    minHeight: 52,
+    borderRadius: radius.full,
+    paddingHorizontal: 8,
+  },
+  itemActive: {
+    backgroundColor: colors.brand.primary,
+  },
+  label: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: C.muted,
+    fontFamily: typography.fontFamilyBold,
+  },
+  labelActive: {
+    color: colors.text.inverse,
+  },
 });

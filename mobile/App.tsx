@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import "react-native-reanimated";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
+  AppState,
   BackHandler,
   Pressable,
   StyleSheet,
@@ -10,16 +12,26 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import {
+  useFonts,
+  Nunito_400Regular,
+  Nunito_500Medium,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+  Nunito_800ExtraBold,
+} from "@expo-google-fonts/nunito";
+import {
   API,
   completeExerciseSession,
   fetchAppointments,
   fetchMyTherapist,
   fetchObservations,
+  fetchPatients,
   fetchPlans,
   fetchProfile,
   fetchSessions,
   signIn,
   type ObservationRow,
+  type PatientSummary,
 } from "./src/api";
 import { BottomNav } from "./src/components/BottomNav";
 import { LoadingBlock } from "./src/components/AsyncState";
@@ -35,10 +47,13 @@ import { LoginScreen } from "./src/screens/LoginScreen";
 import { MoveScreen } from "./src/screens/MoveScreen";
 import { MoveSuccessScreen } from "./src/screens/MoveSuccessScreen";
 import { PatientOnboardingScreen } from "./src/screens/PatientOnboardingScreen";
+import { PendingApprovalScreen } from "./src/screens/PendingApprovalScreen";
 import { PlanScreen } from "./src/screens/PlanScreen";
 import { ProgressScreen } from "./src/screens/ProgressScreen";
 import { SignUpScreen } from "./src/screens/SignUpScreen";
 import { SplashScreenView } from "./src/screens/SplashScreenView";
+import { TherapistHomeScreen } from "./src/screens/TherapistHomeScreen";
+import { TherapistOnboardingScreen } from "./src/screens/TherapistOnboardingScreen";
 import { VerifyOtpScreen } from "./src/screens/VerifyOtpScreen";
 import {
   clearSession,
@@ -61,6 +76,13 @@ import type {
 } from "./src/types";
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+  });
   const [appReady, setAppReady] = useState(false);
   const [authRoute, setAuthRoute] = useState<AuthRoute>("landing");
   const [patientRoute, setPatientRoute] = useState<PatientRoute>({
@@ -78,12 +100,16 @@ export default function App() {
   const [therapist, setTherapist] = useState<TherapistContact | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [patients, setPatients] = useState<PatientSummary[]>([]);
   const [loadError, setLoadError] = useState("");
   const [dataLoading, setDataLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [banner, setBanner] = useState("");
   const [moveError, setMoveError] = useState("");
   const [savingMove, setSavingMove] = useState(false);
   const [devOtp, setDevOtp] = useState<string | null>(null);
+  const tokenRef = useRef<string | null>(null);
+  tokenRef.current = session?.access_token ?? null;
 
   useEffect(() => {
     async function prepare() {
@@ -92,17 +118,14 @@ export default function App() {
       const stored = await loadStoredSession();
       if (stored) {
         try {
-          if (stored.role && stored.role !== "patient") {
-            await clearSession();
-            setSession(null);
-            setLoginError(
-              "This phone app is for patients. Therapists and admins use the web app.",
-            );
-            setAuthRoute("login");
-          } else if (!stored.status || stored.status === "active") {
+          if (!stored.status || stored.status === "active") {
             setSession(stored);
             if (stored.email) setEmail(stored.email);
-            await loadPatientData(stored.access_token);
+            if (stored.role === "physiotherapist") {
+              await loadTherapistData(stored.access_token);
+            } else {
+              await loadPatientData(stored.access_token);
+            }
             setPatientRoute({ name: "tab", tab: "home" });
             setAuthRoute("landing");
           } else if (stored.status === "pending_email") {
@@ -113,6 +136,10 @@ export default function App() {
             setSession(stored);
             if (stored.email) setEmail(stored.email);
             setAuthRoute("onboarding");
+          } else if (stored.status === "pending_approval") {
+            setSession(stored);
+            if (stored.email) setEmail(stored.email);
+            setAuthRoute("pendingApproval");
           } else {
             await clearSession();
             setSession(null);
@@ -219,8 +246,8 @@ export default function App() {
     );
   }, [appointments, patientRoute]);
 
-  async function loadPatientData(token: string) {
-    setDataLoading(true);
+  async function loadPatientData(token: string, opts?: { silent?: boolean }) {
+    if (!opts?.silent) setDataLoading(true);
     try {
       const [
         plans,
@@ -270,11 +297,33 @@ export default function App() {
         setAuthRoute("login");
         return;
       }
-      setLoadError(message);
+      if (!opts?.silent) setLoadError(message);
     } finally {
-      setDataLoading(false);
+      if (!opts?.silent) setDataLoading(false);
+      setRefreshing(false);
     }
   }
+
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (next) => {
+      if (next !== "active") return;
+      const token = tokenRef.current;
+      if (!token) return;
+      void loadPatientData(token, { silent: true });
+    });
+    return () => sub.remove();
+  }, []);
+
+  useEffect(() => {
+    if (!session?.access_token) return;
+    if (patientRoute.name !== "tab") return;
+    const timer = setInterval(() => {
+      const token = tokenRef.current;
+      if (!token) return;
+      void loadPatientData(token, { silent: true });
+    }, 20000);
+    return () => clearInterval(timer);
+  }, [session?.access_token, patientRoute.name]);
 
   function withEmail(next: AuthSession, fallbackEmail?: string): AuthSession {
     const emailValue = (fallbackEmail || next.email || email || "")
@@ -283,7 +332,52 @@ export default function App() {
     return emailValue ? { ...next, email: emailValue } : next;
   }
 
-  async function activatePatient(next: AuthSession) {
+  async function loadTherapistData(token: string, opts?: { silent?: boolean }) {
+    if (!opts?.silent) setDataLoading(true);
+    try {
+      const [patientRows, appts, userProfile] = await Promise.all([
+        fetchPatients(token),
+        fetchAppointments(token),
+        fetchProfile(token),
+      ]);
+      setPatients(patientRows);
+      setAppointments(appts);
+      setProfile(userProfile);
+      if (userProfile.email) setEmail(userProfile.email);
+      setSession((prev) => {
+        if (!prev) return prev;
+        const next = {
+          ...prev,
+          full_name: userProfile.full_name || prev.full_name,
+          email: userProfile.email || prev.email,
+          status: userProfile.status || prev.status,
+        };
+        void saveSession(next).catch(() => undefined);
+        return next;
+      });
+      setLoadError("");
+    } catch (err) {
+      const message = userFacingError(
+        err,
+        "Could not load your clinic workspace.",
+      );
+      if (
+        message.toLowerCase().includes("session has expired") ||
+        message.toLowerCase().includes("sign in again")
+      ) {
+        await signOut();
+        setLoginError("Your session expired. Please sign in again.");
+        setAuthRoute("login");
+        return;
+      }
+      if (!opts?.silent) setLoadError(message);
+    } finally {
+      if (!opts?.silent) setDataLoading(false);
+      setRefreshing(false);
+    }
+  }
+
+  async function activateSession(next: AuthSession) {
     const enriched = withEmail(next);
     try {
       await saveSession(enriched);
@@ -293,7 +387,11 @@ export default function App() {
     setSession(enriched);
     if (enriched.email) setEmail(enriched.email);
     setPassword("");
-    await loadPatientData(enriched.access_token);
+    if (enriched.role === "physiotherapist") {
+      await loadTherapistData(enriched.access_token);
+    } else {
+      await loadPatientData(enriched.access_token);
+    }
     setPatientRoute({ name: "tab", tab: "home" });
     setBanner("");
     setMoveError("");
@@ -306,7 +404,7 @@ export default function App() {
     void saveSession(enriched).catch(() => undefined);
     if (enriched.email) setEmail(enriched.email);
     if (!enriched.status || enriched.status === "active") {
-      void activatePatient(enriched);
+      void activateSession(enriched);
       return;
     }
     if (enriched.status === "pending_email") {
@@ -318,10 +416,7 @@ export default function App() {
       return;
     }
     if (enriched.status === "pending_approval") {
-      setLoginError(
-        "Your physiotherapist account is waiting for admin approval. Use the web app.",
-      );
-      setAuthRoute("login");
+      setAuthRoute("pendingApproval");
       return;
     }
     setLoginError(`Account status: ${enriched.status.replace(/_/g, " ")}.`);
@@ -335,10 +430,8 @@ export default function App() {
     console.log(`[Stride] UI: Sign in pressed · API=${API}`);
     try {
       const next = await signIn(email, password);
-      if (next.role !== "patient") {
-        setLoginError(
-          "This phone app is for patients. Therapists and admins use the web app.",
-        );
+      if (next.role === "admin") {
+        setLoginError("Admin accounts use the Stride web app.");
         return;
       }
       routeByStatus(next, email.trim().toLowerCase());
@@ -361,6 +454,7 @@ export default function App() {
     setTherapist(null);
     setProfile(null);
     setAppointments([]);
+    setPatients([]);
     setBanner("");
     setLoadError("");
     setMoveError("");
@@ -374,6 +468,19 @@ export default function App() {
     setPatientRoute({ name: "tab", tab });
     setMoveError("");
     if (tab !== "home") setBanner("");
+    if (session?.access_token) {
+      void loadPatientData(session.access_token, { silent: true });
+    }
+  }
+
+  function handlePullRefresh() {
+    if (!session?.access_token) return;
+    setRefreshing(true);
+    if (session.role === "physiotherapist") {
+      void loadTherapistData(session.access_token, { silent: true });
+    } else {
+      void loadPatientData(session.access_token, { silent: true });
+    }
   }
 
   async function handleFinishMove(reps: number, notes: string) {
@@ -408,6 +515,28 @@ export default function App() {
     switch (patientRoute.name) {
       case "tab":
         if (patientRoute.tab === "home") {
+          if (session!.role === "physiotherapist") {
+            return (
+              <TherapistHomeScreen
+                fullName={session!.full_name}
+                patients={patients}
+                appointments={appointments}
+                banner={banner}
+                error={loadError}
+                onOpenAccount={openAccount}
+                onOpenAppointments={() => {
+                  setPatientRoute({ name: "appointments" });
+                  if (session)
+                    void loadTherapistData(session.access_token, {
+                      silent: true,
+                    });
+                }}
+                onOpenConsult={(id) =>
+                  setPatientRoute({ name: "consult", appointmentId: id })
+                }
+              />
+            );
+          }
           return (
             <HomeScreen
               fullName={session!.full_name}
@@ -416,15 +545,19 @@ export default function App() {
               appointments={appointments}
               therapist={therapist}
               loading={dataLoading}
+              refreshing={refreshing}
               error={loadError}
               banner={banner}
+              onRefresh={handlePullRefresh}
               onRetry={() => {
                 if (session) void loadPatientData(session.access_token);
               }}
               onOpenAccount={openAccount}
-              onOpenAppointments={() =>
-                setPatientRoute({ name: "appointments" })
-              }
+              onOpenAppointments={() => {
+                setPatientRoute({ name: "appointments" });
+                if (session)
+                  void loadPatientData(session.access_token, { silent: true });
+              }}
               onOpenConsult={(id) =>
                 setPatientRoute({ name: "consult", appointmentId: id })
               }
@@ -432,7 +565,11 @@ export default function App() {
                 setPatientRoute({ name: "move", exerciseId: id })
               }
               onSeeAllExercises={() => goToTab("plan")}
-              onOpenProgress={() => setPatientRoute({ name: "progress" })}
+              onOpenProgress={() => {
+                setPatientRoute({ name: "progress" });
+                if (session)
+                  void loadPatientData(session.access_token, { silent: true });
+              }}
             />
           );
         }
@@ -443,8 +580,10 @@ export default function App() {
               sessions={sessions}
               therapist={therapist}
               loading={dataLoading}
+              refreshing={refreshing}
               error={loadError}
               onOpenAccount={openAccount}
+              onRefresh={handlePullRefresh}
               onRetry={() => {
                 if (session) void loadPatientData(session.access_token);
               }}
@@ -603,7 +742,8 @@ export default function App() {
     !!session &&
     (!session.status || session.status === "active") &&
     authRoute !== "verifyOtp" &&
-    authRoute !== "onboarding";
+    authRoute !== "onboarding" &&
+    authRoute !== "pendingApproval";
 
   const isLanding = !patientAppReady && authRoute === "landing";
   const isConsult = patientAppReady && patientRoute.name === "consult";
@@ -650,11 +790,36 @@ export default function App() {
       );
     }
     if (authRoute === "onboarding" && session) {
+      if (session.role === "physiotherapist") {
+        return (
+          <TherapistOnboardingScreen
+            accessToken={session.access_token}
+            onComplete={(next) => {
+              void activateSession(next);
+            }}
+          />
+        );
+      }
       return (
         <PatientOnboardingScreen
           accessToken={session.access_token}
           onComplete={(next) => {
-            void activatePatient(next);
+            void activateSession(next);
+          }}
+        />
+      );
+    }
+    if (authRoute === "pendingApproval" && session) {
+      return (
+        <PendingApprovalScreen
+          session={session}
+          email={email}
+          password={password}
+          onApproved={(next) => {
+            void activateSession(next);
+          }}
+          onSignOut={() => {
+            void signOut();
           }}
         />
       );
@@ -678,7 +843,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SessionStoreHost />
-      {!appReady ? (
+      {!appReady || !fontsLoaded ? (
         <>
           <StatusBar style="light" />
           <SplashScreenView />

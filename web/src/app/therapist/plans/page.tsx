@@ -36,7 +36,9 @@ export default function PlanBuilderPage() {
   const [library, setLibrary] = useState<Exercise[]>([]);
   const [patientId, setPatientId] = useState("");
   const [title, setTitle] = useState("Knee rehabilitation plan");
-  const [goal, setGoal] = useState("Restore safe sit-to-stand and walking confidence.");
+  const [goal, setGoal] = useState(
+    "Restore safe sit-to-stand and walking confidence.",
+  );
   const [weeks, setWeeks] = useState(4);
   const [activeWeek, setActiveWeek] = useState(1);
   const [activeDay, setActiveDay] = useState(0);
@@ -61,7 +63,10 @@ export default function PlanBuilderPage() {
   const dayItems = useMemo(
     () =>
       items
-        .filter((row) => row.week_number === activeWeek && row.day_of_week === activeDay)
+        .filter(
+          (row) =>
+            row.week_number === activeWeek && row.day_of_week === activeDay,
+        )
         .sort((a, b) => a.sort_order - b.sort_order),
     [items, activeWeek, activeDay],
   );
@@ -78,7 +83,9 @@ export default function PlanBuilderPage() {
         week_number: activeWeek,
         day_of_week: activeDay,
         session_type: sessionType,
-        sort_order: prev.filter((r) => r.week_number === activeWeek && r.day_of_week === activeDay).length,
+        sort_order: prev.filter(
+          (r) => r.week_number === activeWeek && r.day_of_week === activeDay,
+        ).length,
       },
     ]);
     setOk(`Added ${ex.name} to Week ${activeWeek} · ${DAYS[activeDay]}`);
@@ -101,7 +108,9 @@ export default function PlanBuilderPage() {
   }
 
   function updateItem(key: string, patch: Partial<DraftItem>) {
-    setItems((prev) => prev.map((row) => (row.key === key ? { ...row, ...patch } : row)));
+    setItems((prev) =>
+      prev.map((row) => (row.key === key ? { ...row, ...patch } : row)),
+    );
   }
 
   async function createOnTheFly(event: FormEvent) {
@@ -123,11 +132,15 @@ export default function PlanBuilderPage() {
           demo_cue: "Follow the therapist demonstration.",
         }),
       });
-      setLibrary((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+      setLibrary((prev) =>
+        [...prev, created].sort((a, b) => a.name.localeCompare(b.name)),
+      );
       addExercise(created);
       setQuickName("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not create exercise.");
+      setError(
+        err instanceof Error ? err.message : "Could not create exercise.",
+      );
     } finally {
       setCreating(false);
     }
@@ -163,7 +176,7 @@ export default function PlanBuilderPage() {
           })),
         }),
       });
-      setOk("Rehabilitation plan saved. The patient will see home and supervised days on their schedule.");
+      setOk("Rehabilitation plan saved.");
       setItems([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save plan.");
@@ -173,116 +186,144 @@ export default function PlanBuilderPage() {
   }
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <p className="greet-text">Rehabilitation plan</p>
-          <h1>Plan builder</h1>
-          <p className="subtitle" style={{ marginTop: 8 }}>
-            Build a multi-week rehabilitation plan. Add exercises to a day, then mark each day as home or supervised.
-          </p>
-        </div>
-      </header>
+    <div className="dashboard-page bento-page">
+      {(error || ok) && (
+        <p
+          className="page-status"
+          style={{ color: error ? "var(--danger)" : "var(--mint-deep)" }}
+        >
+          {error || ok}
+        </p>
+      )}
 
-      {error ? <p className="error">{error}</p> : null}
-      {ok ? <p className="subtitle" style={{ color: "var(--mint-deep)" }}>{ok}</p> : null}
-
-      <form onSubmit={savePlan} className="card" style={{ marginBottom: 20 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>
-          <div className="field">
-            <label>Patient</label>
-            <select value={patientId} onChange={(e) => setPatientId(e.target.value)} required>
-              {patients.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.full_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label>Title</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} required />
-          </div>
-          <div className="field">
-            <label>Duration (weeks)</label>
-            <input
-              type="number"
-              min={1}
-              max={16}
-              value={weeks}
-              onChange={(e) => {
-                const next = Number(e.target.value);
-                setWeeks(next);
-                if (activeWeek > next) setActiveWeek(next);
-              }}
-            />
-          </div>
-        </div>
-        <div className="field">
-          <label>Goal</label>
-          <input value={goal} onChange={(e) => setGoal(e.target.value)} />
-        </div>
-        <button className="btn btn-primary" type="submit" disabled={savingPlan || !items.length}>
-          {savingPlan ? "Saving…" : `Save rehabilitation plan (${items.length} exercises)`}
-        </button>
-      </form>
-
-      <div className="dashboard-grid-2">
-        <section className="card">
-          <h2>Library</h2>
-          <p className="subtitle">Drag onto the day board, or click Add.</p>
-          <ul style={{ listStyle: "none", padding: 0, margin: "16px 0 0", display: "grid", gap: 8 }}>
-            {library.map((ex) => (
-              <li
-                key={ex.id}
-                draggable
-                onDragStart={(e) => onDragStart(e, ex.id)}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 12,
-                  alignItems: "center",
-                  padding: "10px 12px",
-                  border: "1px solid var(--border)",
-                  borderRadius: 12,
-                  background: "var(--surface-muted)",
-                  cursor: "grab",
-                }}
+      <div className="bento-grid bento-plans">
+        <form onSubmit={savePlan} className="bento-tile tile-meta">
+          <div className="compact-form-row">
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>Patient</label>
+              <select
+                value={patientId}
+                onChange={(e) => setPatientId(e.target.value)}
+                required
               >
-                <div>
-                  <strong>{ex.name}</strong>
-                  <div className="subtitle">
-                    {ex.body_region} · {ex.default_sets}×{ex.default_repetitions}
-                    {ex.pose_recipe_key ? ` · pose:${ex.pose_recipe_key}` : ""}
-                  </div>
-                </div>
-                <button className="btn btn-outline btn-sm" type="button" onClick={() => addExercise(ex)}>
-                  Add
-                </button>
-              </li>
-            ))}
-          </ul>
+                {patients.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>Title</label>
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>Weeks</label>
+              <input
+                type="number"
+                min={1}
+                max={16}
+                value={weeks}
+                onChange={(e) => {
+                  const next = Number(e.target.value);
+                  setWeeks(next);
+                  if (activeWeek > next) setActiveWeek(next);
+                }}
+              />
+            </div>
+            <div
+              className="field"
+              style={{ marginBottom: 0, gridColumn: "span 2" }}
+            >
+              <label>Goal</label>
+              <input value={goal} onChange={(e) => setGoal(e.target.value)} />
+            </div>
+            <button
+              className="btn btn-primary btn-sm"
+              type="submit"
+              disabled={savingPlan || !items.length}
+            >
+              {savingPlan ? "Saving…" : `Save plan (${items.length})`}
+            </button>
+          </div>
+        </form>
 
-          <form onSubmit={createOnTheFly} style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
-            <h3>Create while planning</h3>
-            <div className="field">
+        <section className="bento-tile">
+          <div className="bento-tile-head">
+            <h2>Library</h2>
+            <span className="subtitle">{library.length} exercises</span>
+          </div>
+          <div className="bento-scroll">
+            <div className="exercise-bento">
+              {library.map((ex) => (
+                <div
+                  key={ex.id}
+                  className="exercise-bento-card"
+                  draggable
+                  onDragStart={(e) => onDragStart(e, ex.id)}
+                >
+                  <strong>{ex.name}</strong>
+                  <p className="subtitle">
+                    {ex.body_region} · {ex.default_sets}×
+                    {ex.default_repetitions}
+                  </p>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    type="button"
+                    onClick={() => addExercise(ex)}
+                  >
+                    Add
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <form
+            onSubmit={createOnTheFly}
+            className="compact-form-row"
+            style={{ marginTop: 8, flexShrink: 0 }}
+          >
+            <div className="field" style={{ marginBottom: 0 }}>
               <input
                 placeholder="New exercise name"
                 value={quickName}
                 onChange={(e) => setQuickName(e.target.value)}
               />
             </div>
-            <button className="btn btn-primary btn-sm" type="submit" disabled={creating}>
-              {creating ? "Creating…" : "Create & add to this day"}
+            <button
+              className="btn btn-primary btn-sm"
+              type="submit"
+              disabled={creating}
+            >
+              {creating ? "Creating…" : "Create & add"}
             </button>
           </form>
         </section>
 
-        <section className="card">
-          <h2>
-            Week {activeWeek} · {DAYS[activeDay]}
-          </h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+        <section className="bento-tile">
+          <div className="bento-tile-head">
+            <h2>
+              Week {activeWeek} · {DAYS[activeDay]}
+            </h2>
+            <select
+              className="day-session-select"
+              value={sessionType}
+              onChange={(e) =>
+                setSessionType(e.target.value as "home" | "supervised")
+              }
+            >
+              <option value="home">Home</option>
+              <option value="supervised">Supervised</option>
+            </select>
+          </div>
+          <div
+            className="compact-actions"
+            style={{ marginBottom: 8, flexShrink: 0 }}
+          >
             {Array.from({ length: weeks }, (_, i) => i + 1).map((w) => (
               <button
                 key={w}
@@ -294,7 +335,10 @@ export default function PlanBuilderPage() {
               </button>
             ))}
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+          <div
+            className="compact-actions"
+            style={{ marginBottom: 8, flexShrink: 0 }}
+          >
             {DAYS.map((label, index) => (
               <button
                 key={label}
@@ -306,72 +350,64 @@ export default function PlanBuilderPage() {
               </button>
             ))}
           </div>
-          <div className="field">
-            <label>Session type for new items</label>
-            <select value={sessionType} onChange={(e) => setSessionType(e.target.value as "home" | "supervised")}>
-              <option value="home">Home (unguided HEP)</option>
-              <option value="supervised">Supervised (clinic / video)</option>
-            </select>
-          </div>
-
           <div
+            className="day-drop-zone"
             onDragOver={(e) => e.preventDefault()}
             onDrop={onDrop}
-            style={{
-              minHeight: 220,
-              border: "2px dashed var(--border)",
-              borderRadius: 16,
-              padding: 16,
-              background: "var(--surface-muted)",
-            }}
           >
             {dayItems.length === 0 ? (
               <p className="subtitle">Drop exercises here for this day.</p>
             ) : (
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 10 }}>
+              <div className="exercise-bento">
                 {dayItems.map((row) => (
-                  <li
+                  <div
+                    className="exercise-bento-card is-scheduled"
                     key={row.key}
-                    style={{
-                      padding: 12,
-                      background: "var(--surface)",
-                      borderRadius: 12,
-                      border: "1px solid var(--border)",
-                    }}
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                      <strong>{row.exercise_name}</strong>
-                      <button className="btn btn-outline btn-sm" type="button" onClick={() => removeItem(row.key)}>
-                        Remove
-                      </button>
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 8 }}>
-                      <label className="subtitle">
-                        Sets
+                    <strong>{row.exercise_name}</strong>
+                    <p className="subtitle">
+                      {row.target_sets}×{row.target_repetitions} ·{" "}
+                      {row.session_type === "home" ? "Home" : "Supervised"}
+                    </p>
+                    <div className="day-item-controls">
+                      <label className="day-item-field">
+                        <span>Sets</span>
                         <input
                           type="number"
                           min={1}
                           max={10}
                           value={row.target_sets}
-                          onChange={(e) => updateItem(row.key, { target_sets: Number(e.target.value) })}
+                          onChange={(e) =>
+                            updateItem(row.key, {
+                              target_sets: Number(e.target.value),
+                            })
+                          }
                         />
                       </label>
-                      <label className="subtitle">
-                        Reps
+                      <label className="day-item-field">
+                        <span>Reps</span>
                         <input
                           type="number"
                           min={1}
                           max={50}
                           value={row.target_repetitions}
-                          onChange={(e) => updateItem(row.key, { target_repetitions: Number(e.target.value) })}
+                          onChange={(e) =>
+                            updateItem(row.key, {
+                              target_repetitions: Number(e.target.value),
+                            })
+                          }
                         />
                       </label>
-                      <label className="subtitle">
-                        Type
+                      <label className="day-item-field day-item-field-type">
+                        <span>Type</span>
                         <select
                           value={row.session_type}
                           onChange={(e) =>
-                            updateItem(row.key, { session_type: e.target.value as "home" | "supervised" })
+                            updateItem(row.key, {
+                              session_type: e.target.value as
+                                | "home"
+                                | "supervised",
+                            })
                           }
                         >
                           <option value="home">Home</option>
@@ -379,14 +415,18 @@ export default function PlanBuilderPage() {
                         </select>
                       </label>
                     </div>
-                  </li>
+                    <button
+                      className="btn btn-outline btn-sm"
+                      type="button"
+                      onClick={() => removeItem(row.key)}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
-          <p className="field-hint" style={{ marginTop: 12 }}>
-            Typical pattern: home HEP most days; one supervised day per week for video or clinic review.
-          </p>
         </section>
       </div>
     </div>

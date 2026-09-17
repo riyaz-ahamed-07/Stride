@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: C.border,
     borderRadius: 12,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: C.surfaceMuted,
     paddingHorizontal: 14,
     fontSize: 16,
     marginBottom: 4,
@@ -443,6 +443,6 @@ const styles = StyleSheet.create({
   },
   actionText: { fontSize: 16, fontWeight: "700", color: C.text },
   actionChevron: { fontSize: 18, color: C.muted },
-  actionDanger: { borderColor: "#FECACA", backgroundColor: C.dangerSoft },
+  actionDanger: { borderColor: C.dangerSoft, backgroundColor: C.dangerSoft },
   actionDangerText: { fontSize: 16, fontWeight: "700", color: C.danger },
 });

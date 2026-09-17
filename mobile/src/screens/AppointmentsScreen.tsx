@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { EmptyState, ErrorState, LoadingBlock } from "../components/AsyncState";
 import type { Appointment } from "../types";
-import { C } from "../theme";
+import { C, shadow } from "../theme";
 
 type Props = {
   appointments: Appointment[];
@@ -25,121 +25,104 @@ export function AppointmentsScreen({
       contentContainerStyle={styles.page}
       showsVerticalScrollIndicator={false}
     >
-      <Pressable onPress={onBack}>
-        <Text style={styles.back}>← Home</Text>
+      <Pressable onPress={onBack} hitSlop={8}>
+        <Text style={styles.back}>← Back</Text>
       </Pressable>
-      <Text style={styles.eyebrow}>Schedule</Text>
-      <Text style={styles.h1}>Appointments</Text>
-      <Text style={styles.intro}>
-        Join video consultations from your phone or tablet. Booking is managed
-        by your physiotherapist in the clinic portal.
-      </Text>
+      <Text style={styles.h1}>Visits</Text>
 
-      {loading ? <LoadingBlock label="Loading appointments…" /> : null}
+      {loading ? <LoadingBlock label="Loading…" /> : null}
       {error ? <ErrorState message={error} onRetry={onRetry} /> : null}
 
       {!loading && !error && appointments.length === 0 ? (
         <EmptyState
-          title="No appointments yet"
-          body="When your physiotherapist schedules an appointment, it will appear here so you can join the consultation."
-          actionLabel="Back to home"
+          title="No visits yet"
+          body="Your physiotherapist will schedule them."
+          actionLabel="Back"
           onAction={onBack}
         />
       ) : null}
 
       {!loading && !error
-        ? appointments.map((item) => (
-            <View key={item.id} style={styles.card}>
-              <View style={styles.row}>
-                <Text style={styles.avatar}>PT</Text>
+        ? appointments.map((item) => {
+            const when = new Date(item.scheduled_at);
+            const day = when.toLocaleDateString(undefined, {
+              weekday: "short",
+              day: "numeric",
+              month: "short",
+            });
+            const time = when.toLocaleTimeString(undefined, {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const canJoin = item.status === "scheduled";
+            return (
+              <Pressable
+                key={item.id}
+                style={styles.card}
+                onPress={
+                  canJoin ? () => onJoinConsult(item.id) : undefined
+                }
+                disabled={!canJoin}
+              >
+                <View style={styles.dateCol}>
+                  <Text style={styles.day}>{day}</Text>
+                  <Text style={styles.time}>{time}</Text>
+                </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.title}>Physiotherapy visit</Text>
-                  <Text style={styles.detail}>
-                    {new Date(item.scheduled_at).toLocaleString()}
+                  <Text style={styles.title} numberOfLines={1}>
+                    {item.reason ?? "Consultation"}
                   </Text>
-                  <Text style={styles.detail}>
-                    {item.reason ?? "General follow-up"}
+                  <Text style={styles.status}>
+                    {canJoin ? "Scheduled" : item.status}
                   </Text>
                 </View>
-              </View>
-              <View style={styles.actions}>
-                {item.status === "scheduled" ? (
-                  <>
-                    <View style={styles.badge}>
-                      <Text style={styles.badgeText}>Scheduled</Text>
-                    </View>
-                    <Pressable
-                      style={styles.btnPrimary}
-                      onPress={() => onJoinConsult(item.id)}
-                    >
-                      <Text style={styles.btnPrimaryText}>Join video call</Text>
-                    </Pressable>
-                  </>
-                ) : (
-                  <View style={styles.badgeSuccess}>
-                    <Text style={styles.badgeSuccessText}>{item.status}</Text>
+                {canJoin ? (
+                  <View style={styles.joinPill}>
+                    <Text style={styles.joinText}>Join</Text>
                   </View>
-                )}
-              </View>
-            </View>
-          ))
+                ) : null}
+              </Pressable>
+            );
+          })
         : null}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { padding: 20, paddingBottom: 32 },
-  back: { color: C.primary, fontWeight: "700", marginBottom: 16, fontSize: 16 },
-  eyebrow: { fontSize: 14, color: C.muted, marginBottom: 4 },
-  h1: { fontSize: 28, fontWeight: "800", color: C.text, marginBottom: 10 },
-  intro: { fontSize: 16, color: C.muted, lineHeight: 24, marginBottom: 20 },
-  card: {
-    backgroundColor: C.surface,
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: C.border,
-  },
-  row: { flexDirection: "row", gap: 14, marginBottom: 14 },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: "hidden",
-    textAlign: "center",
-    lineHeight: 40,
-    fontSize: 14,
+  page: { padding: 20, paddingBottom: 110, gap: 10 },
+  back: { color: C.primary, fontWeight: "700", fontSize: 15 },
+  h1: {
+    fontSize: 30,
     fontWeight: "800",
-    color: C.primary,
-    backgroundColor: C.blueGrad,
+    color: C.text,
+    letterSpacing: -0.5,
+    marginBottom: 6,
   },
-  title: { fontSize: 17, fontWeight: "800", color: C.text, marginBottom: 6 },
-  detail: { fontSize: 14, color: C.muted, lineHeight: 20 },
-  actions: { gap: 10 },
-  badge: {
-    alignSelf: "flex-start",
-    backgroundColor: C.warningSoft,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-  badgeText: { fontSize: 12, fontWeight: "700", color: "#B45309" },
-  badgeSuccess: {
-    alignSelf: "flex-start",
-    backgroundColor: C.successSoft,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-  badgeSuccessText: { fontSize: 12, fontWeight: "700", color: C.success },
-  btnPrimary: {
-    minHeight: 48,
-    backgroundColor: C.primary,
-    borderRadius: 999,
+  card: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    gap: 12,
+    backgroundColor: C.surface,
+    borderRadius: 22,
+    padding: 14,
+    ...shadow.sm,
   },
-  btnPrimaryText: { color: "white", fontWeight: "700", fontSize: 16 },
+  dateCol: { minWidth: 72 },
+  day: { fontSize: 13, fontWeight: "800", color: C.text },
+  time: { fontSize: 12, color: C.muted, marginTop: 2 },
+  title: { fontSize: 15, fontWeight: "800", color: C.text },
+  status: {
+    fontSize: 12,
+    color: C.muted,
+    marginTop: 2,
+    textTransform: "capitalize",
+  },
+  joinPill: {
+    backgroundColor: C.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 999,
+  },
+  joinText: { color: "#fff", fontWeight: "800", fontSize: 13 },
 });

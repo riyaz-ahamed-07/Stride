@@ -84,6 +84,7 @@ class PatientOnboardingIn(BaseModel):
     full_name: str = Field(min_length=1, max_length=255)
     date_of_birth: date | None = None
     phone: str | None = Field(default=None, max_length=32)
+    gender: str | None = Field(default=None, max_length=32)
     body_region: BodyRegion
     rehab_goal: str = Field(min_length=1, max_length=280)
     notes: str | None = Field(default=None, max_length=500)
@@ -98,13 +99,23 @@ class PatientOnboardingIn(BaseModel):
             raise ValueError("This field is required.")
         return cleaned
 
-    @field_validator("phone", "notes")
+    @field_validator("phone", "notes", "gender")
     @classmethod
     def strip_optional_text(cls, value: str | None) -> str | None:
         if value is None:
             return None
         cleaned = value.strip()
         return cleaned or None
+
+    @field_validator("gender")
+    @classmethod
+    def validate_gender(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        allowed = {"male", "female", "prefer_not_to_say"}
+        if value not in allowed:
+            raise ValueError("Choose a valid gender option.")
+        return value
 
     @field_validator("phone")
     @classmethod
@@ -184,6 +195,7 @@ class UserOut(BaseModel):
     therapist_id: str | None = None
     body_region: str | None = None
     rehab_goal: str | None = None
+    gender: str | None = None
     notes: str | None = None
     phone: str | None = None
     license_number: str | None = None
@@ -202,6 +214,11 @@ class TherapistContactOut(BaseModel):
 
 class ChangeTherapistIn(BaseModel):
     therapist_invite_code: str = Field(min_length=4, max_length=16)
+
+
+class InviteValidateOut(BaseModel):
+    valid: bool = True
+    therapist_name: str
 
 
 class PatientProfileUpdateIn(BaseModel):

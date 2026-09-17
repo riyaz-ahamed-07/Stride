@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { StrideLogoMark } from "@/components/StrideLogo";
 
 export function AuthBrandPanel({
   title,
@@ -11,7 +12,7 @@ export function AuthBrandPanel({
   return (
     <div className="auth-visual">
       <Link className="logo auth-logo" href="/">
-        <span className="logo-mark">S</span>
+        <StrideLogoMark size={40} variant="icon-white" />
         Stride
       </Link>
       <h1>{title}</h1>

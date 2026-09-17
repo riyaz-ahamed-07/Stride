@@ -83,6 +83,7 @@ class User(Base):
     therapist_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("users.id"), nullable=True)
     body_region: Mapped[str | None] = mapped_column(String(40), nullable=True)
     rehab_goal: Mapped[str | None] = mapped_column(String(280), nullable=True)
+    gender: Mapped[str | None] = mapped_column(String(32), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

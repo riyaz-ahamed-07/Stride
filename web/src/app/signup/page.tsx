@@ -1,10 +1,26 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { AuthBrandPanel } from "@/components/AuthBrandPanel";
 import { registerAccount, routeAfterAuth } from "@/lib/authFlow";
 import { passwordRules, passwordValid } from "@/lib/passwordStrength";
+
+const ROLES = [
+  {
+    id: "patient" as const,
+    label: "I am a Patient",
+    hint: "Home exercises & video visits",
+    art: "/onboarding/role-patient.jpg",
+  },
+  {
+    id: "physiotherapist" as const,
+    label: "I am a Physiotherapist",
+    hint: "Clinic plans & consultations",
+    art: "/onboarding/role-therapist.jpg",
+  },
+];
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -44,21 +60,40 @@ export default function SignUpPage() {
         <div className="login-card auth-card">
           <h2>Create your account</h2>
           <p className="subtitle">
-            Patients join with a physiotherapist invite code after verification.
-            Physiotherapists wait for administrator approval.
+            Choose how you will use Stride, then create your login.
           </p>
           <form onSubmit={onSubmit}>
             <div className="field">
-              <label>I am a</label>
-              <select
-                value={role}
-                onChange={(e) =>
-                  setRole(e.target.value as "patient" | "physiotherapist")
-                }
-              >
-                <option value="patient">Patient</option>
-                <option value="physiotherapist">Physiotherapist</option>
-              </select>
+              <label>Are you a patient or physiotherapist?</label>
+              <div className="role-cards" role="radiogroup">
+                {ROLES.map((item) => {
+                  const selected = role === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      className={`role-card${selected ? " is-selected" : ""}`}
+                      onClick={() => setRole(item.id)}
+                      disabled={busy}
+                    >
+                      <div className="role-card-art">
+                        <Image
+                          src={item.art}
+                          alt=""
+                          width={280}
+                          height={280}
+                          className="role-card-img"
+                          priority
+                        />
+                      </div>
+                      <strong>{item.label}</strong>
+                      <small>{item.hint}</small>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <div className="field">
               <label htmlFor="email">Email</label>
@@ -97,7 +132,7 @@ export default function SignUpPage() {
                   <li
                     key={rule.id}
                     style={{
-                      color: rule.ok ? "var(--mint-deep)" : "var(--text-muted)",
+                      color: rule.ok ? "var(--success)" : "var(--text-muted)",
                     }}
                   >
                     {rule.ok ? "✓" : "○"} {rule.label}

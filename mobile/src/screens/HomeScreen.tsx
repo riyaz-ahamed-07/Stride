@@ -1,5 +1,21 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import {
+  CalendarDays,
+  Check,
+  ClipboardList,
+  LineChart,
+  Play,
+  UserRound,
+} from "lucide-react-native";
 import { AccountGearButton } from "../components/AccountGearButton";
+import { IconBubble, MetricTile, SoftCard } from "../components/ui";
 import {
   dosageLabel,
   filterTodayHome,
@@ -15,7 +31,7 @@ import type {
   Plan,
   TherapistContact,
 } from "../types";
-import { C } from "../theme";
+import { C, colors, radius, shadow, space } from "../theme";
 
 type Props = {
   fullName: string;
@@ -24,8 +40,10 @@ type Props = {
   appointments: Appointment[];
   therapist: TherapistContact | null;
   loading: boolean;
+  refreshing?: boolean;
   error: string;
   banner: string;
+  onRefresh?: () => void;
   onRetry: () => void;
   onOpenAccount: () => void;
   onOpenAppointments: () => void;
@@ -42,8 +60,10 @@ export function HomeScreen({
   appointments,
   therapist,
   loading,
+  refreshing = false,
   error,
   banner,
+  onRefresh,
   onRetry,
   onOpenAccount,
   onOpenAppointments,
@@ -59,170 +79,221 @@ export function HomeScreen({
   const remaining = today.filter(
     (item) => !isExerciseCompleted(item.id, sessions),
   ).length;
+  const doneCount = today.length - remaining;
+  const firstName = fullName.trim().split(/\s+/)[0] || "there";
+  const initials = fullName
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
 
   return (
     <ScrollView
       contentContainerStyle={styles.page}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        ) : undefined
+      }
     >
       <View style={styles.headerRow}>
         <View style={{ flex: 1 }}>
           <Text style={styles.kicker}>{greeting()}</Text>
-          <Text style={styles.name}>{fullName || "Welcome"}</Text>
+          <Text style={styles.name}>{firstName}</Text>
         </View>
-        <AccountGearButton onOpenAccount={onOpenAccount} />
+        <View style={styles.headerActions}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{initials || "S"}</Text>
+          </View>
+          <AccountGearButton onOpenAccount={onOpenAccount} />
+        </View>
       </View>
 
-      {loading ? (
-        <Text style={styles.status}>Loading your rehabilitation…</Text>
-      ) : null}
+      {loading ? <Text style={styles.status}>Loading…</Text> : null}
 
       {error ? (
-        <View style={styles.errorBox}>
+        <SoftCard style={styles.errorCard}>
           <Text style={styles.errorText}>{error}</Text>
           <Pressable style={styles.primary} onPress={onRetry}>
-            <Text style={styles.primaryText}>Try again</Text>
+            <Text style={styles.primaryText}>Retry</Text>
           </Pressable>
-        </View>
+        </SoftCard>
       ) : null}
 
       {banner ? (
-        <View style={styles.banner}>
-          <Text style={styles.bannerText}>{banner}</Text>
+        <View style={styles.bannerPill}>
+          <Check size={16} color={C.success} strokeWidth={3} />
+          <Text style={styles.bannerText} numberOfLines={1}>
+            {banner}
+          </Text>
         </View>
       ) : null}
 
       {!loading && !error && !plan ? (
-        <View style={styles.section}>
-          <Text style={styles.h2}>No rehabilitation plan yet</Text>
-          <Text style={styles.body}>
-            Your physiotherapist has not assigned a rehabilitation plan. Check back
-            after your next appointment.
-          </Text>
-        </View>
+        <SoftCard style={styles.centerCard}>
+          <Text style={styles.emptyTitle}>No plan yet</Text>
+          <Pressable style={styles.primary} onPress={onOpenAppointments}>
+            <Text style={styles.primaryText}>View visits</Text>
+          </Pressable>
+        </SoftCard>
       ) : null}
 
       {!loading && plan ? (
         <>
-          <Text style={styles.program}>
-            {plan.title}
-            {plan.duration_weeks
-              ? ` · Week ${week} of ${plan.duration_weeks}`
-              : ""}
-            {therapist ? ` · Prescribed by ${therapist.full_name}` : ""}
-          </Text>
-
-          <View style={styles.section}>
-            <Text style={styles.h2}>Today</Text>
-            {today.length === 0 ? (
-              <Text style={styles.body}>
-                No home exercises are scheduled for today. Open your plan to
-                review other days, or rest as advised.
-              </Text>
-            ) : remaining === 0 ? (
-              <Text style={styles.body}>
-                You have completed today's home exercises.
-              </Text>
-            ) : (
-              <Text style={styles.lede}>
-                {remaining === 1
-                  ? "One home exercise remaining."
-                  : `${remaining} home exercises remaining.`}
-              </Text>
-            )}
-
-            {today.map((item) => {
-              const done = isExerciseCompleted(item.id, sessions);
-              return (
-                <View key={item.id} style={styles.row}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.exercise}>{item.exercise_name}</Text>
-                    <Text style={styles.meta}>{dosageLabel(item)}</Text>
-                  </View>
-                  <Text style={[styles.flag, done && styles.flagDone]}>
-                    {done ? "Completed" : "To do"}
-                  </Text>
-                </View>
-              );
-            })}
-
-            {nextUp ? (
-              <Pressable
-                style={styles.primary}
-                onPress={() => onStartExercise(nextUp.id)}
-              >
-                <Text style={styles.primaryText}>
-                  Begin today's rehabilitation
-                </Text>
-              </Pressable>
-            ) : today.length === 0 ? (
-              <Pressable style={styles.primary} onPress={onSeeAllExercises}>
-                <Text style={styles.primaryText}>Open your plan</Text>
-              </Pressable>
-            ) : (
-              <Pressable style={styles.primary} onPress={onOpenProgress}>
-                <Text style={styles.primaryText}>View progress</Text>
-              </Pressable>
-            )}
-
-            {today.length > 0 ? (
-              <Text style={styles.meta}>
-                Today’s completion (system-derived): {today.length - remaining}{" "}
-                of {today.length} home exercises.
-              </Text>
-            ) : null}
+          <View style={styles.metricRow}>
+            <MetricTile
+              label="Today"
+              value={today.length === 0 ? "—" : `${doneCount}/${today.length}`}
+              hint={
+                today.length === 0
+                  ? "Rest"
+                  : remaining === 0
+                    ? "Done"
+                    : `${remaining} left`
+              }
+              accent="accent"
+            />
+            <MetricTile
+              label="Week"
+              value={`${week}/${plan.duration_weeks}`}
+              hint={plan.title}
+              accent="primary"
+            />
           </View>
+
+          {nextUp ? (
+            <Pressable
+              style={styles.heroCta}
+              onPress={() => onStartExercise(nextUp.id)}
+            >
+              <View style={styles.heroPlay}>
+                <Play
+                  size={22}
+                  color={colors.brand.primary}
+                  fill={colors.brand.primary}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.heroEyebrow}>Start next</Text>
+                <Text style={styles.heroTitle} numberOfLines={1}>
+                  {nextUp.exercise_name}
+                </Text>
+                <Text style={styles.heroMeta}>{dosageLabel(nextUp)}</Text>
+              </View>
+            </Pressable>
+          ) : null}
+
+          <View style={styles.blockHead}>
+            <Text style={styles.blockTitle}>Exercises</Text>
+            <Pressable onPress={onSeeAllExercises} hitSlop={8}>
+              <Text style={styles.blockLink}>All</Text>
+            </Pressable>
+          </View>
+
+          {today.length === 0 ? (
+            <SoftCard>
+              <Text style={styles.muted}>Nothing scheduled today</Text>
+              <Pressable style={styles.outlineBtn} onPress={onSeeAllExercises}>
+                <Text style={styles.outlineBtnText}>Open plan</Text>
+              </Pressable>
+            </SoftCard>
+          ) : (
+            <View style={styles.list}>
+              {today.map((item) => {
+                const done = isExerciseCompleted(item.id, sessions);
+                return (
+                  <Pressable
+                    key={item.id}
+                    style={[styles.exerciseRow, done && styles.exerciseRowDone]}
+                    onPress={() => onStartExercise(item.id)}
+                  >
+                    <View
+                      style={[styles.dot, done && styles.dotDone]}
+                      accessibilityElementsHidden
+                    >
+                      {done ? (
+                        <Check size={14} color="#fff" strokeWidth={3} />
+                      ) : (
+                        <Play
+                          size={12}
+                          color={colors.brand.primary}
+                          fill={colors.brand.primary}
+                        />
+                      )}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.exercise} numberOfLines={1}>
+                        {item.exercise_name}
+                      </Text>
+                      <Text style={styles.meta}>{dosageLabel(item)}</Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
         </>
       ) : null}
 
       {!loading && !error ? (
         <>
-          <View style={styles.section}>
-            <Text style={styles.h2}>Next appointment</Text>
-            {nextAppt ? (
-              <>
-                <Text style={styles.body}>
+          {nextAppt ? (
+            <Pressable
+              style={styles.apptRow}
+              onPress={() => onOpenConsult(nextAppt.id)}
+            >
+              <IconBubble>
+                <CalendarDays size={20} color={colors.brand.primary} />
+              </IconBubble>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.careTitle}>Next visit</Text>
+                <Text style={styles.meta}>
                   {new Date(nextAppt.scheduled_at).toLocaleString(undefined, {
-                    weekday: "long",
+                    weekday: "short",
                     day: "numeric",
-                    month: "long",
+                    month: "short",
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                  {nextAppt.reason ? ` · ${nextAppt.reason}` : ""}
                 </Text>
-                <Pressable onPress={() => onOpenConsult(nextAppt.id)}>
-                  <Text style={styles.link}>Join consultation</Text>
-                </Pressable>
-              </>
-            ) : (
-              <Text style={styles.body}>No appointment is currently scheduled.</Text>
-            )}
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.h2}>Your physiotherapist</Text>
-            {therapist ? (
-              <>
-                <Text style={styles.body}>
-                  {therapist.full_name}
-                  {therapist.clinic_name ? ` · ${therapist.clinic_name}` : ""}
-                </Text>
-                {therapist.phone ? (
-                  <Text style={styles.meta}>{therapist.phone}</Text>
-                ) : null}
-              </>
-            ) : (
-              <Text style={styles.body}>
-                Physiotherapist details are not available yet. Ask the clinic if
-                you need to confirm who is supervising your plan.
-              </Text>
-            )}
-            <Pressable onPress={onOpenAppointments} style={{ marginTop: 12 }}>
-              <Text style={styles.link}>Appointments</Text>
+              </View>
+              <View style={styles.miniBtn}>
+                <Text style={styles.miniBtnText}>Join</Text>
+              </View>
             </Pressable>
-            <Pressable onPress={onOpenProgress} style={{ marginTop: 12 }}>
-              <Text style={styles.link}>View progress</Text>
+          ) : null}
+
+          {therapist ? (
+            <View style={styles.apptRow}>
+              <IconBubble color={colors.brand.accentSoft}>
+                <UserRound size={20} color={colors.brand.accent} />
+              </IconBubble>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.careTitle} numberOfLines={1}>
+                  {therapist.full_name}
+                </Text>
+                <Text style={styles.meta} numberOfLines={1}>
+                  {therapist.clinic_name || "Physiotherapist"}
+                </Text>
+              </View>
+            </View>
+          ) : null}
+
+          <View style={styles.quickRow}>
+            <Pressable style={styles.quickTile} onPress={onSeeAllExercises}>
+              <ClipboardList size={22} color={colors.brand.primary} />
+              <Text style={styles.quickLabel}>Plan</Text>
+            </Pressable>
+            <Pressable style={styles.quickTile} onPress={onOpenProgress}>
+              <LineChart size={22} color={colors.brand.accent} />
+              <Text style={styles.quickLabel}>Progress</Text>
+            </Pressable>
+            <Pressable style={styles.quickTile} onPress={onOpenAppointments}>
+              <CalendarDays size={22} color={colors.semantic.info} />
+              <Text style={styles.quickLabel}>Visits</Text>
             </Pressable>
           </View>
         </>
@@ -232,61 +303,182 @@ export function HomeScreen({
 }
 
 const styles = StyleSheet.create({
-  page: { padding: 24, paddingBottom: 32 },
+  page: {
+    padding: space[5],
+    paddingBottom: 110,
+    gap: space[3],
+  },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 24,
-    gap: 12,
+    alignItems: "center",
+    marginBottom: space[1],
+    gap: space[3],
   },
-  kicker: { fontSize: 16, fontWeight: "600", color: C.muted, marginBottom: 4 },
-  name: { fontSize: 32, fontWeight: "800", color: C.text, letterSpacing: -0.4 },
-  status: { fontSize: 17, color: C.muted, marginBottom: 20 },
-  errorBox: {
-    backgroundColor: C.dangerSoft,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 24,
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space[2],
   },
+  kicker: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: C.muted,
+  },
+  name: {
+    fontSize: 30,
+    fontWeight: "800",
+    color: C.text,
+    letterSpacing: -0.7,
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 16,
+    backgroundColor: colors.brand.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarText: { color: "#fff", fontWeight: "800", fontSize: 15 },
+  status: { fontSize: 15, color: C.muted },
+  errorCard: { backgroundColor: C.dangerSoft },
   errorText: {
     color: C.danger,
     fontWeight: "700",
-    fontSize: 16,
-    marginBottom: 12,
+    fontSize: 14,
+    marginBottom: space[3],
   },
-  banner: {
-    backgroundColor: C.successSoft,
-    padding: 14,
-    borderRadius: 14,
-    marginBottom: 20,
-  },
-  bannerText: { color: C.success, fontWeight: "600", fontSize: 15 },
-  program: { fontSize: 17, lineHeight: 24, color: C.text, marginBottom: 28 },
-  section: { marginBottom: 36 },
-  h2: { fontSize: 22, fontWeight: "800", color: C.text, marginBottom: 12 },
-  lede: { fontSize: 17, color: C.muted, marginBottom: 16, lineHeight: 24 },
-  body: { fontSize: 17, color: C.text, lineHeight: 26, marginBottom: 8 },
-  row: {
+  bannerPill: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 12,
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
+    alignItems: "center",
+    gap: 8,
+    alignSelf: "flex-start",
+    backgroundColor: C.successSoft,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: radius.full,
   },
-  exercise: { fontSize: 18, fontWeight: "700", color: C.text, marginBottom: 4 },
-  meta: { fontSize: 15, color: C.muted },
-  flag: { fontSize: 13, fontWeight: "700", color: C.muted, marginTop: 4 },
-  flagDone: { color: C.teal },
-  primary: {
-    minHeight: 56,
-    backgroundColor: C.primary,
-    borderRadius: 999,
+  bannerText: {
+    color: C.success,
+    fontWeight: "700",
+    fontSize: 13,
+    flexShrink: 1,
+  },
+  centerCard: { alignItems: "stretch", gap: space[3] },
+  emptyTitle: { fontSize: 17, fontWeight: "800", color: C.text },
+  metricRow: { flexDirection: "row", gap: space[3] },
+  heroCta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space[3],
+    backgroundColor: colors.brand.primary,
+    borderRadius: radius.xl,
+    padding: space[4],
+    ...shadow.md,
+  },
+  heroPlay: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
   },
-  primaryText: { color: "white", fontSize: 17, fontWeight: "700" },
-  link: { color: C.primary, fontWeight: "700", fontSize: 16, marginTop: 6 },
+  heroEyebrow: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 12,
+    fontWeight: "700",
+    marginBottom: 2,
+  },
+  heroTitle: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "800",
+  },
+  heroMeta: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 13,
+    marginTop: 2,
+  },
+  blockHead: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: space[1],
+  },
+  blockTitle: { fontSize: 17, fontWeight: "800", color: C.text },
+  blockLink: { fontSize: 14, fontWeight: "700", color: colors.brand.primary },
+  list: { gap: space[2] },
+  muted: { fontSize: 14, color: C.muted, marginBottom: space[3] },
+  exerciseRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space[3],
+    padding: space[3],
+    borderRadius: radius.lg,
+    backgroundColor: colors.surface.card,
+    ...shadow.sm,
+  },
+  exerciseRowDone: {
+    backgroundColor: colors.semantic.successSoft,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  dot: {
+    width: 32,
+    height: 32,
+    borderRadius: 12,
+    backgroundColor: colors.brand.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dotDone: { backgroundColor: colors.semantic.success },
+  exercise: { fontSize: 15, fontWeight: "700", color: C.text },
+  meta: { fontSize: 12, color: C.muted, marginTop: 2 },
+  primary: {
+    minHeight: 50,
+    backgroundColor: C.primary,
+    borderRadius: radius.full,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  primaryText: { color: "white", fontSize: 15, fontWeight: "800" },
+  outlineBtn: {
+    minHeight: 44,
+    borderRadius: radius.full,
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.surface.card,
+  },
+  outlineBtnText: { fontWeight: "800", color: C.text, fontSize: 14 },
+  apptRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space[3],
+    backgroundColor: colors.surface.card,
+    borderRadius: radius.xl,
+    padding: space[4],
+    ...shadow.sm,
+  },
+  careTitle: { fontSize: 15, fontWeight: "800", color: C.text },
+  miniBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: radius.full,
+    backgroundColor: colors.brand.primary,
+  },
+  miniBtnText: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  quickRow: { flexDirection: "row", gap: space[3], marginTop: space[1] },
+  quickTile: {
+    flex: 1,
+    backgroundColor: colors.surface.card,
+    borderRadius: radius.xl,
+    paddingVertical: space[4],
+    alignItems: "center",
+    gap: space[2],
+    ...shadow.sm,
+  },
+  quickLabel: { fontSize: 13, fontWeight: "800", color: C.text },
 });

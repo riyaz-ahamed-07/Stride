@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Play } from "lucide-react-native";
 import { AccountGearButton } from "../components/AccountGearButton";
 import {
   DAY_LABELS,
-  dayLabel,
   dosageLabel,
   groupByDay,
   isExerciseCompleted,
@@ -16,20 +23,22 @@ import type {
   PlanItem,
   TherapistContact,
 } from "../types";
-import { C } from "../theme";
+import { C, colors, radius, shadow } from "../theme";
 
 type Props = {
   plan: Plan | null;
   sessions: ExerciseSession[];
   therapist: TherapistContact | null;
   loading: boolean;
+  refreshing?: boolean;
   error: string;
   onStartExercise: (exerciseId: string) => void;
   onOpenAccount: () => void;
+  onRefresh?: () => void;
   onRetry?: () => void;
 };
 
-function ExerciseCard({
+function ExerciseRow({
   item,
   done,
   onStart,
@@ -38,38 +47,38 @@ function ExerciseCard({
   done: boolean;
   onStart: () => void;
 }) {
-  const sessionLabel =
-    item.session_type === "supervised" ? "Supervised" : "Home";
+  const supervised = item.session_type === "supervised";
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHead}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{sessionLabel}</Text>
-        </View>
+    <Pressable
+      style={[styles.row, done && styles.rowDone]}
+      onPress={supervised ? undefined : onStart}
+      disabled={supervised}
+    >
+      <View style={[styles.playDot, done && styles.playDotDone]}>
         {done ? (
-          <View style={styles.donePill}>
-            <Text style={styles.donePillText}>Completed</Text>
-          </View>
-        ) : null}
+          <Text style={styles.check}>✓</Text>
+        ) : (
+          <Play
+            size={12}
+            color={colors.brand.primary}
+            fill={colors.brand.primary}
+          />
+        )}
       </View>
-      <Text style={styles.dayMeta}>
-        Week {item.week_number} · {dayLabel(item.day_of_week)}
-      </Text>
-      <Text style={styles.exerciseName}>{item.exercise_name}</Text>
-      <Text style={styles.body} numberOfLines={4}>
-        {item.instructions}
-      </Text>
-      <Text style={styles.meta}>{dosageLabel(item)}</Text>
-      <View style={styles.alert}>
-        <Text style={styles.alertTitle}>Stop if you feel pain</Text>
-        <Text style={styles.alertBody}>{item.safety_notes}</Text>
-      </View>
-      <Pressable style={styles.btnPrimary} onPress={onStart}>
-        <Text style={styles.btnPrimaryText}>
-          {done ? "Do again" : "Start exercise"}
+      <View style={{ flex: 1 }}>
+        <Text style={styles.exerciseName} numberOfLines={1}>
+          {item.exercise_name}
         </Text>
-      </Pressable>
-    </View>
+        <Text style={styles.meta} numberOfLines={1}>
+          {supervised ? "In clinic" : "Home"} · {dosageLabel(item)}
+        </Text>
+      </View>
+      {!supervised ? (
+        <Text style={styles.startLabel}>{done ? "Again" : "Start"}</Text>
+      ) : (
+        <Text style={styles.clinicLabel}>Clinic</Text>
+      )}
+    </Pressable>
   );
 }
 
@@ -78,9 +87,11 @@ export function PlanScreen({
   sessions,
   therapist,
   loading,
+  refreshing = false,
   error,
   onStartExercise,
   onOpenAccount,
+  onRefresh,
   onRetry,
 }: Props) {
   const defaultWeek = plan ? planWeek(plan.start_date, plan.duration_weeks) : 1;
@@ -114,45 +125,47 @@ export function PlanScreen({
     <ScrollView
       contentContainerStyle={styles.page}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        ) : undefined
+      }
     >
       <View style={styles.topRow}>
-        <View style={{ flex: 1 }} />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.h1} numberOfLines={1}>
+            {plan?.title ?? "Plan"}
+          </Text>
+          {plan ? (
+            <Text style={styles.sub} numberOfLines={1}>
+              Week {weekFilter}
+              {therapist ? ` · ${therapist.full_name}` : ""}
+            </Text>
+          ) : null}
+        </View>
         <AccountGearButton onOpenAccount={onOpenAccount} />
       </View>
-      <Text style={styles.eyebrow}>Rehabilitation plan</Text>
-      <Text style={styles.h1}>{plan?.title ?? "Your plan"}</Text>
 
-      {loading ? <Text style={styles.body}>Loading your rehabilitation plan…</Text> : null}
+      {loading ? <Text style={styles.body}>Loading…</Text> : null}
       {error ? (
         <View style={{ marginBottom: 12 }}>
           <Text style={styles.error}>{error}</Text>
           {onRetry ? (
             <Pressable style={styles.btnPrimary} onPress={onRetry}>
-              <Text style={styles.btnPrimaryText}>Try again</Text>
+              <Text style={styles.btnPrimaryText}>Retry</Text>
             </Pressable>
           ) : null}
         </View>
       ) : null}
 
       {!loading && !error && !plan ? (
-        <View style={styles.card}>
-          <Text style={styles.body}>
-            No active rehabilitation plan yet. Your physiotherapist will assign exercises
-            here.
-          </Text>
+        <View style={styles.emptyCard}>
+          <Text style={styles.body}>No plan assigned yet</Text>
         </View>
       ) : null}
 
       {plan ? (
         <>
-          <Text style={styles.heroMeta}>
-            {therapist
-              ? `Prescribed by ${therapist.full_name}`
-              : "Prescribing physiotherapist details are not available."}
-            {plan.duration_weeks ? ` · ${plan.duration_weeks} weeks` : ""}
-          </Text>
-          {plan.goal ? <Text style={styles.heroGoal}>{plan.goal}</Text> : null}
-
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -160,7 +173,6 @@ export function PlanScreen({
           >
             {weeks.map((week) => {
               const active = weekFilter === week;
-              const isCurrent = week === defaultWeek;
               return (
                 <Pressable
                   key={week}
@@ -173,8 +185,7 @@ export function PlanScreen({
                       active && styles.weekChipTextActive,
                     ]}
                   >
-                    Week {week}
-                    {isCurrent ? " · now" : ""}
+                    W{week}
                   </Text>
                 </Pressable>
               );
@@ -182,23 +193,23 @@ export function PlanScreen({
           </ScrollView>
 
           {daySections.length === 0 ? (
-            <View style={styles.card}>
-              <Text style={styles.body}>
-                No exercises assigned for week {weekFilter}.
-              </Text>
+            <View style={styles.emptyCard}>
+              <Text style={styles.body}>No exercises this week</Text>
             </View>
           ) : (
             daySections.map((section) => (
               <View key={String(section.key)} style={styles.dayBlock}>
                 <Text style={styles.dayHeading}>{section.label}</Text>
-                {section.items.map((item) => (
-                  <ExerciseCard
-                    key={item.id}
-                    item={item}
-                    done={isExerciseCompleted(item.id, sessions)}
-                    onStart={() => onStartExercise(item.id)}
-                  />
-                ))}
+                <View style={styles.dayList}>
+                  {section.items.map((item) => (
+                    <ExerciseRow
+                      key={item.id}
+                      item={item}
+                      done={isExerciseCompleted(item.id, sessions)}
+                      onStart={() => onStartExercise(item.id)}
+                    />
+                  ))}
+                </View>
               </View>
             ))
           )}
@@ -209,110 +220,90 @@ export function PlanScreen({
 }
 
 const styles = StyleSheet.create({
-  page: { padding: 20, paddingBottom: 24 },
+  page: { padding: 20, paddingBottom: 110, gap: 12 },
   topRow: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 12,
     marginBottom: 4,
   },
-  eyebrow: { fontSize: 14, color: C.muted, marginBottom: 4 },
-  h1: { fontSize: 28, fontWeight: "800", color: C.text, marginBottom: 20 },
-  error: { color: C.danger, fontWeight: "600", marginBottom: 12 },
-  heroCard: {
-    backgroundColor: C.mintGrad,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#D1FAE5",
-  },
-  heroTitle: {
-    fontSize: 20,
+  h1: {
+    fontSize: 28,
     fontWeight: "800",
     color: C.text,
-    marginBottom: 6,
+    letterSpacing: -0.5,
   },
-  heroMeta: { fontSize: 15, color: C.muted, marginBottom: 4 },
-  heroGoal: { fontSize: 14, color: C.text, lineHeight: 20, marginTop: 6 },
-  weekRow: { gap: 8, paddingBottom: 16 },
+  sub: { fontSize: 13, color: C.muted, marginTop: 2 },
+  error: { color: C.danger, fontWeight: "600", marginBottom: 12 },
+  weekRow: { gap: 8, paddingBottom: 4 },
   weekChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    minWidth: 48,
+    height: 44,
+    paddingHorizontal: 14,
     borderRadius: 999,
     backgroundColor: C.surface,
-    borderWidth: 1,
-    borderColor: C.border,
+    alignItems: "center",
+    justifyContent: "center",
+    ...shadow.sm,
   },
-  weekChipActive: { backgroundColor: C.primary, borderColor: C.primary },
-  weekChipText: { fontSize: 14, fontWeight: "700", color: C.text },
+  weekChipActive: { backgroundColor: C.primary },
+  weekChipText: { fontSize: 14, fontWeight: "800", color: C.text },
   weekChipTextActive: { color: "white" },
-  dayBlock: { marginBottom: 8 },
+  dayBlock: { gap: 8 },
   dayHeading: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "800",
-    color: C.text,
-    marginBottom: 10,
-    marginTop: 4,
+    color: C.muted,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
   },
-  card: {
+  dayList: { gap: 8 },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: C.surface,
+    borderRadius: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    ...shadow.sm,
+  },
+  rowDone: {
+    backgroundColor: C.successSoft,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  playDot: {
+    width: 32,
+    height: 32,
+    borderRadius: 12,
+    backgroundColor: colors.brand.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playDotDone: { backgroundColor: C.success },
+  check: { color: "#fff", fontWeight: "800", fontSize: 14 },
+  exerciseName: { fontSize: 15, fontWeight: "800", color: C.text },
+  meta: { fontSize: 12, color: C.muted, marginTop: 2 },
+  startLabel: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.brand.primary,
+  },
+  clinicLabel: { fontSize: 12, fontWeight: "700", color: C.muted },
+  body: { fontSize: 15, color: C.text },
+  emptyCard: {
     backgroundColor: C.surface,
     borderRadius: 20,
     padding: 18,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: C.border,
+    ...shadow.sm,
   },
-  cardHead: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  badge: {
-    alignSelf: "flex-start",
-    backgroundColor: C.warningSoft,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-  badgeText: { fontSize: 13, fontWeight: "700", color: "#B45309" },
-  donePill: {
-    backgroundColor: C.successSoft,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
-  },
-  donePillText: { fontSize: 12, fontWeight: "700", color: C.success },
-  dayMeta: { fontSize: 13, color: C.muted, fontWeight: "600", marginBottom: 6 },
-  exerciseName: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: C.text,
-    marginBottom: 8,
-  },
-  body: { fontSize: 16, color: C.text, lineHeight: 24, marginBottom: 10 },
-  meta: { fontSize: 14, color: C.muted, marginBottom: 12, fontWeight: "600" },
-  alert: {
-    backgroundColor: C.dangerSoft,
-    borderRadius: 14,
-    padding: 14,
-    borderLeftWidth: 4,
-    borderLeftColor: C.danger,
-    marginBottom: 16,
-  },
-  alertTitle: {
-    fontWeight: "800",
-    color: C.danger,
-    marginBottom: 4,
-    fontSize: 15,
-  },
-  alertBody: { fontSize: 14, color: C.text, lineHeight: 20 },
   btnPrimary: {
-    minHeight: 54,
+    minHeight: 48,
     backgroundColor: C.primary,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
   },
-  btnPrimaryText: { color: "white", fontSize: 17, fontWeight: "700" },
+  btnPrimaryText: { color: "white", fontSize: 15, fontWeight: "700" },
 });

@@ -1,7 +1,15 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { PasswordField } from "../components/PasswordField";
 import { StrideLogo } from "../components/StrideLogo";
-import { C } from "../theme";
+import { IconField } from "../components/ui/IconField";
+import { MailFieldIcon } from "../components/icons/AuthFieldIcons";
+import { C, colors, type as typography } from "../theme";
 
 type Props = {
   email: string;
@@ -34,33 +42,50 @@ export function LoginScreen({
         <Text style={styles.backText}>← Back</Text>
       </Pressable>
       <View style={styles.page}>
-        <View style={styles.card}>
-          <View style={styles.logoRow}>
-            <StrideLogo size={44} />
-            <Text style={styles.logoText}>Stride</Text>
-          </View>
-          <Text style={styles.h1}>Welcome back</Text>
-          <Text style={styles.sub}>Sign in to follow your home exercise plan.</Text>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={[styles.input, loading && styles.inputDisabled]}
+        <View style={styles.logoRow}>
+          <StrideLogo size={48} />
+        </View>
+        <Text style={styles.h1}>Sign In</Text>
+        <Text style={styles.sub}>Let&apos;s continue your rehab journey.</Text>
+
+        <View style={styles.form}>
+          <IconField
+            label="Email Address"
+            leftIcon={<MailFieldIcon />}
             value={email}
             onChangeText={onEmailChange}
             autoCapitalize="none"
             keyboardType="email-address"
             editable={!loading}
-            placeholderTextColor={C.muted}
+            placeholder="Enter your email..."
+            textContentType="emailAddress"
+            autoComplete="email"
           />
-          <Text style={styles.label}>Password</Text>
-          <PasswordField
-            value={password}
-            onChangeText={onPasswordChange}
-            editable={!loading}
-          />
-          <Pressable style={styles.forgotRow} onPress={onForgotPassword} disabled={loading}>
-            <Text style={styles.forgotText}>Forgot password?</Text>
-          </Pressable>
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          <View style={styles.fieldBlock}>
+            <Text style={styles.label}>Password</Text>
+            <PasswordField
+              value={password}
+              onChangeText={onPasswordChange}
+              editable={!loading}
+            />
+          </View>
+
+          <View style={styles.footerLinks}>
+            <Pressable onPress={onSignUp} disabled={loading}>
+              <Text style={styles.linkMuted}>Sign Up</Text>
+            </Pressable>
+            <Pressable onPress={onForgotPassword} disabled={loading}>
+              <Text style={styles.linkPrimary}>Forgot your password?</Text>
+            </Pressable>
+          </View>
+
+          {error ? (
+            <View style={styles.errorBanner}>
+              <Text style={styles.errorBannerText}>ERROR: {error}</Text>
+            </View>
+          ) : null}
+
           <Pressable
             style={[styles.btnPrimary, loading && styles.btnDisabled]}
             onPress={onSignIn}
@@ -72,15 +97,9 @@ export function LoginScreen({
                 <Text style={styles.btnPrimaryText}>Signing in…</Text>
               </View>
             ) : (
-              <Text style={styles.btnPrimaryText}>Sign in</Text>
+              <Text style={styles.btnPrimaryText}>Sign In →</Text>
             )}
           </Pressable>
-          <View style={styles.signUpRow}>
-            <Text style={styles.signUpMuted}>Don&apos;t have an account? </Text>
-            <Pressable onPress={onSignUp} disabled={loading}>
-              <Text style={styles.signUpLink}>Sign up</Text>
-            </Pressable>
-          </View>
         </View>
       </View>
     </View>
@@ -88,63 +107,65 @@ export function LoginScreen({
 }
 
 const styles = StyleSheet.create({
-  shell: { flex: 1 },
-  back: { paddingHorizontal: 20, paddingVertical: 8 },
+  shell: { flex: 1, backgroundColor: colors.surface.page },
+  back: { paddingHorizontal: 24, paddingVertical: 8 },
   backText: { color: C.primary, fontWeight: "700", fontSize: 16 },
-  page: { flex: 1, justifyContent: "center", padding: 20, paddingTop: 0 },
-  card: {
-    backgroundColor: C.surface,
-    borderRadius: 28,
-    padding: 28,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 4,
+  page: { flex: 1, paddingHorizontal: 24, paddingTop: 8 },
+  logoRow: { alignItems: "center", marginBottom: 20 },
+  h1: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.text.primary,
+    textAlign: "center",
+    fontFamily: typography.fontFamilyExtraBold,
+    letterSpacing: -0.4,
   },
-  logoRow: {
+  sub: {
+    fontSize: 15,
+    color: colors.text.muted,
+    textAlign: "center",
+    marginTop: 8,
+    marginBottom: 28,
+    lineHeight: 22,
+  },
+  form: { gap: 18 },
+  fieldBlock: { gap: 8 },
+  label: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.text.primary,
+    fontFamily: typography.fontFamilyBold,
+  },
+  footerLinks: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    gap: 10,
-    marginBottom: 24,
-    justifyContent: "center",
+    marginTop: -4,
   },
-  logoText: { fontSize: 24, fontWeight: "800", color: C.primary },
-  h1: { fontSize: 28, fontWeight: "800", color: C.text, marginBottom: 8 },
-  sub: { fontSize: 16, color: C.muted, marginBottom: 24, lineHeight: 24 },
-  label: { fontSize: 14, fontWeight: "600", color: C.text, marginBottom: 8, marginTop: 8 },
-  input: {
-    minHeight: 52,
-    borderWidth: 1.5,
-    borderColor: C.border,
+  linkMuted: { color: colors.text.muted, fontWeight: "600", fontSize: 14 },
+  linkPrimary: { color: C.primary, fontWeight: "700", fontSize: 14 },
+  errorBanner: {
+    backgroundColor: colors.semantic.errorSoft,
+    borderWidth: 1,
+    borderColor: colors.semantic.error,
     borderRadius: 14,
-    backgroundColor: "#F8FAFC",
-    paddingHorizontal: 16,
-    fontSize: 17,
-    color: C.text,
-    marginBottom: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
   },
-  inputDisabled: { opacity: 0.7 },
-  forgotRow: { alignSelf: "flex-end", marginTop: 8, marginBottom: 4 },
-  forgotText: { color: C.primary, fontWeight: "700", fontSize: 15 },
+  errorBannerText: {
+    color: colors.semantic.error,
+    fontWeight: "700",
+    fontSize: 14,
+  },
   btnPrimary: {
-    minHeight: 54,
-    backgroundColor: C.primary,
+    minHeight: 56,
     borderRadius: 999,
+    backgroundColor: C.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 8,
   },
-  btnDisabled: { opacity: 0.85 },
+  btnDisabled: { opacity: 0.6 },
   btnLoading: { flexDirection: "row", alignItems: "center", gap: 10 },
-  btnPrimaryText: { color: "white", fontSize: 17, fontWeight: "700" },
-  error: { color: C.danger, fontWeight: "600", marginTop: 8, lineHeight: 22 },
-  signUpRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 18,
-    flexWrap: "wrap",
-  },
-  signUpMuted: { fontSize: 15, color: C.muted },
-  signUpLink: { fontSize: 15, color: C.primary, fontWeight: "700" },
+  btnPrimaryText: { color: "#fff", fontWeight: "800", fontSize: 17 },
 });

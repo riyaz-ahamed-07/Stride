@@ -199,12 +199,39 @@ export async function resendEmailOtp(
   };
 }
 
+export async function validateTherapistInvite(
+  token: string,
+  inviteCode: string,
+): Promise<{ valid: boolean; therapist_name: string }> {
+  const response = await loggedFetch(
+    "validate-invite",
+    `${API}/auth/validate-invite`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        therapist_invite_code: inviteCode.trim().toUpperCase(),
+      }),
+    },
+  );
+  if (!response.ok) {
+    throw new Error(
+      await readErrorDetail(response, "That invite code was not found."),
+    );
+  }
+  return (await response.json()) as { valid: boolean; therapist_name: string };
+}
+
 export async function completePatientOnboarding(
   token: string,
   payload: {
     full_name: string;
     date_of_birth?: string | null;
     phone?: string | null;
+    gender?: string | null;
     body_region: string;
     rehab_goal: string;
     notes?: string | null;
@@ -225,6 +252,7 @@ export async function completePatientOnboarding(
         full_name: payload.full_name.trim(),
         date_of_birth: payload.date_of_birth || null,
         phone: payload.phone?.trim() || null,
+        gender: payload.gender || null,
         body_region: payload.body_region,
         rehab_goal: payload.rehab_goal.trim(),
         notes: payload.notes?.trim() || null,

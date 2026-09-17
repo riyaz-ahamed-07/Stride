@@ -106,136 +106,124 @@ export default function TherapistAppointmentsPage() {
   );
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <p className="greet-text">Clinic schedule</p>
-          <h1>Appointments</h1>
-        </div>
-      </header>
-
-      {loading ? <p className="subtitle">Loading schedule…</p> : null}
+    <div className="dashboard-page bento-page">
       {error ? (
-        <div className="care-alert" role="alert">
-          <p>{error}</p>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={() => {
-              setLoading(true);
-              setError("");
-              refresh()
-                .catch((err: Error) => setError(err.message))
-                .finally(() => setLoading(false));
-            }}
-          >
-            Try again
-          </button>
-        </div>
-      ) : null}
-
-      <section className="card" style={{ marginBottom: 20 }}>
-        <h2>Schedule a visit</h2>
-        <p className="subtitle">
-          Book a video consultation with one of your patients.
+        <p className="page-status" style={{ color: "var(--danger)" }}>
+          {error}
         </p>
-        {patients.length === 0 && !loading ? (
-          <p className="subtitle">Add an active patient before scheduling.</p>
-        ) : (
-          <form className="stack-form" onSubmit={createVisit}>
-            <label>
-              Patient
-              <select
-                value={patientId}
-                onChange={(e) => setPatientId(e.target.value)}
-                required
-                disabled={submitting || patients.length === 0}
+      ) : null}
+      {loading ? <p className="page-status">Loading…</p> : null}
+
+      <div className="bento-grid bento-appointments">
+        <section className="bento-tile tile-schedule">
+          <div className="bento-tile-head">
+            <h2>Schedule a visit</h2>
+            <span className="patient-chip">{patients.length} patients</span>
+          </div>
+          {patients.length === 0 && !loading ? (
+            <p className="subtitle">Add an active patient before scheduling.</p>
+          ) : (
+            <form onSubmit={createVisit} className="appt-schedule-form">
+              <div className="field">
+                <label>Patient</label>
+                <select
+                  value={patientId}
+                  onChange={(e) => setPatientId(e.target.value)}
+                  required
+                  disabled={submitting || patients.length === 0}
+                >
+                  {patients.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.full_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <label>Date and time</label>
+                <input
+                  type="datetime-local"
+                  value={when}
+                  onChange={(e) => setWhen(e.target.value)}
+                  required
+                  disabled={submitting}
+                />
+              </div>
+              <div className="field field-reason">
+                <label>Reason</label>
+                <input
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  maxLength={500}
+                  disabled={submitting}
+                />
+              </div>
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={submitting || !patientId}
               >
-                {patients.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.full_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Date and time
-              <input
-                type="datetime-local"
-                value={when}
-                onChange={(e) => setWhen(e.target.value)}
-                required
-                disabled={submitting}
-              />
-            </label>
-            <label>
-              Reason
-              <input
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                maxLength={500}
-                disabled={submitting}
-              />
-            </label>
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={submitting || !patientId}
-            >
-              {submitting ? "Scheduling…" : "Schedule visit"}
-            </button>
-          </form>
-        )}
-      </section>
+                {submitting ? "Scheduling…" : "Schedule"}
+              </button>
+            </form>
+          )}
+        </section>
 
-      <section className="card" style={{ marginBottom: 20 }}>
-        <h2>Today</h2>
-        {today.length === 0 ? (
-          <p className="subtitle">No visits scheduled for today.</p>
-        ) : (
-          <div className="appointment-list">
-            {today.map((item) => (
-              <VisitRow
-                key={item.id}
-                item={item}
-                busy={updatingId === item.id}
-                onComplete={() => setStatus(item.id, "completed")}
-                onCancel={() => setStatus(item.id, "cancelled")}
-              />
-            ))}
+        <section className="bento-tile tile-agenda">
+          <div className="bento-tile-head">
+            <h2>Agenda</h2>
+            <span className="patient-chip">
+              {today.length} today · {later.length} later
+            </span>
           </div>
-        )}
-      </section>
-
-      <section className="card" style={{ marginBottom: 20 }}>
-        <h2>Upcoming</h2>
-        {later.length === 0 ? (
-          <p className="subtitle">No later visits scheduled.</p>
-        ) : (
-          <div className="appointment-list">
-            {later.map((item) => (
-              <VisitRow
-                key={item.id}
-                item={item}
-                busy={updatingId === item.id}
-                onComplete={() => setStatus(item.id, "completed")}
-                onCancel={() => setStatus(item.id, "cancelled")}
-              />
-            ))}
+          <div className="bento-scroll appt-agenda">
+            <div className="appt-agenda-block">
+              <h3 className="appt-agenda-label">Today</h3>
+              {today.length === 0 ? (
+                <p className="subtitle">No visits today.</p>
+              ) : (
+                today.map((item) => (
+                  <VisitRow
+                    key={item.id}
+                    item={item}
+                    busy={updatingId === item.id}
+                    emphasis
+                    onComplete={() => setStatus(item.id, "completed")}
+                    onCancel={() => setStatus(item.id, "cancelled")}
+                  />
+                ))
+              )}
+            </div>
+            <div className="appt-agenda-block">
+              <h3 className="appt-agenda-label">Later</h3>
+              {later.length === 0 ? (
+                <p className="subtitle">No later visits.</p>
+              ) : (
+                later.map((item) => (
+                  <VisitRow
+                    key={item.id}
+                    item={item}
+                    busy={updatingId === item.id}
+                    onComplete={() => setStatus(item.id, "completed")}
+                    onCancel={() => setStatus(item.id, "cancelled")}
+                  />
+                ))
+              )}
+            </div>
           </div>
-        )}
-      </section>
+        </section>
 
-      <section className="card">
-        <h2>Past</h2>
-        {past.length === 0 ? (
-          <p className="subtitle">No past visits yet.</p>
-        ) : (
-          <div className="appointment-list">
-            {past.map((item) => (
-              <article className="card appt-row" key={item.id}>
-                <div className="appt-row-main">
-                  <div className="appt-avatar">🧑‍🦳</div>
+        <section className="bento-tile tile-past">
+          <div className="bento-tile-head">
+            <h2>Past</h2>
+            <span className="patient-chip">{past.length}</span>
+          </div>
+          <div className="bento-scroll">
+            {past.length === 0 ? (
+              <p className="subtitle">No past visits yet.</p>
+            ) : (
+              past.map((item) => (
+                <div className="appt-row-compact" key={item.id}>
                   <div>
                     <h3>{item.patient_name ?? "Patient"}</h3>
                     <p className="appt-detail">
@@ -243,13 +231,13 @@ export default function TherapistAppointmentsPage() {
                     </p>
                     <p className="appt-detail">{item.reason ?? "Follow-up"}</p>
                   </div>
+                  <span className="badge badge-success">{item.status}</span>
                 </div>
-                <span className="badge badge-success">{item.status}</span>
-              </article>
-            ))}
+              ))
+            )}
           </div>
-        )}
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
@@ -257,41 +245,54 @@ export default function TherapistAppointmentsPage() {
 function VisitRow({
   item,
   busy,
+  emphasis,
   onComplete,
   onCancel,
 }: {
   item: Appointment;
   busy: boolean;
+  emphasis?: boolean;
   onComplete: () => void;
   onCancel: () => void;
 }) {
   return (
-    <article className="card appt-row">
+    <div
+      className={
+        emphasis ? "appt-row-card appt-row-card-today" : "appt-row-card"
+      }
+    >
       <div className="appt-row-main">
-        <div className="appt-avatar">🧑‍🦳</div>
+        <div className="appt-avatar" aria-hidden="true">
+          {(item.patient_name ?? "P")
+            .split(/\s+/)
+            .slice(0, 2)
+            .map((part) => part[0])
+            .join("")
+            .toUpperCase()}
+        </div>
         <div>
           <h3>{item.patient_name ?? "Patient"}</h3>
           <p className="appt-detail">{formatVisitWhen(item.scheduled_at)}</p>
           <p className="appt-detail">{item.reason ?? "Follow-up"}</p>
         </div>
       </div>
-      <div className="appt-row-actions">
+      <div className="compact-actions">
         <Link
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
           href={`/therapist/consult/${item.id}`}
         >
-          Join consultation
+          Join
         </Link>
         <button
-          className="btn btn-outline"
+          className="btn btn-outline btn-sm"
           type="button"
           disabled={busy}
           onClick={onComplete}
         >
-          Mark completed
+          Done
         </button>
         <button
-          className="btn btn-outline"
+          className="btn btn-outline btn-sm"
           type="button"
           disabled={busy}
           onClick={onCancel}
@@ -299,6 +300,6 @@ function VisitRow({
           Cancel
         </button>
       </div>
-    </article>
+    </div>
   );
 }

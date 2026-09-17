@@ -9,34 +9,39 @@ import {
 } from "react-native";
 
 import { KinoveaHumanModelView } from "./KinoveaHumanModelView";
-import { variantForRecipe, kinoveaPointsForVariant } from "../lib/kinovea/postureVariants";
+import { StrideGuideCharacter } from "./StrideGuideCharacter";
+import {
+  variantForRecipe,
+  kinoveaPointsForVariant,
+} from "../lib/kinovea/postureVariants";
 import { C } from "../theme";
 
 type Props = {
   style?: StyleProp<ViewStyle>;
   compact?: boolean;
-  /** Exercise pose recipe — picks Kinovea demo posture variant. */
   poseRecipeKey?: string | null;
 };
 
+function usesStrideGuide(recipeKey?: string | null): boolean {
+  return recipeKey === "mini_squat" || recipeKey === "sit_to_stand";
+}
+
 /**
- * Kinovea human-model form guide — separate from live PoseSkeletonCamera overlay.
- * Uses joint topology from Kinovea/Kinovea (see lib/kinovea/ATTRIBUTION.md).
+ * Form guide — Stride character for squat/sit-to-stand demo;
+ * Kinovea stick figure for other recipes until more poses are exported.
  */
 export function DemoFigurePanel({ style, compact, poseRecipeKey }: Props) {
   const [collapsed, setCollapsed] = useState(false);
+  const strideGuide = usesStrideGuide(poseRecipeKey);
   const variant = variantForRecipe(poseRecipeKey);
-  const points = useMemo(
-    () => kinoveaPointsForVariant(variant),
-    [variant],
-  );
+  const points = useMemo(() => kinoveaPointsForVariant(variant), [variant]);
 
   if (collapsed) {
     return (
       <Pressable
         style={[styles.collapsedChip, style]}
         onPress={() => setCollapsed(false)}
-        accessibilityLabel="Expand Kinovea form guide"
+        accessibilityLabel="Expand form guide"
         accessibilityRole="button"
       >
         <Text style={styles.collapsedText}>Form guide</Text>
@@ -50,7 +55,7 @@ export function DemoFigurePanel({ style, compact, poseRecipeKey }: Props) {
   return (
     <View
       style={[styles.panel, compact && styles.panelCompact, style]}
-      accessibilityLabel="Kinovea form guide demo figure"
+      accessibilityLabel="Stride form guide"
       pointerEvents="box-none"
     >
       <Pressable
@@ -61,13 +66,23 @@ export function DemoFigurePanel({ style, compact, poseRecipeKey }: Props) {
       >
         <View style={styles.headerCopy}>
           <Text style={styles.headerTitle}>Form guide</Text>
-          <Text style={styles.headerSub}>Kinovea model · not live tracking</Text>
+          <Text style={styles.headerSub}>
+            {strideGuide ? "Stride character · demo" : "Reference pose"}
+          </Text>
         </View>
         <Text style={styles.minimize}>−</Text>
       </Pressable>
 
       <View style={[styles.figureStage, compact && styles.figureStageCompact]}>
-        <KinoveaHumanModelView points={points} width={figureW} height={figureH} />
+        {strideGuide ? (
+          <StrideGuideCharacter width={figureW} height={figureH} />
+        ) : (
+          <KinoveaHumanModelView
+            points={points}
+            width={figureW}
+            height={figureH}
+          />
+        )}
       </View>
     </View>
   );
@@ -79,7 +94,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.94)",
     borderRadius: 18,
     borderWidth: 1.5,
-    borderColor: "rgba(37, 99, 235, 0.35)",
+    borderColor: "rgba(0, 88, 184, 0.35)",
     paddingBottom: 8,
     shadowColor: "#0F172A",
     shadowOpacity: 0.22,
@@ -136,7 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: "rgba(37, 99, 235, 0.4)",
+    borderColor: "rgba(0, 88, 184, 0.4)",
     elevation: 6,
   },
   collapsedText: {

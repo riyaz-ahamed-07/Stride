@@ -24,7 +24,7 @@ import { DemoFigurePanel } from "../components/DemoFigurePanel";
 import type { PlanItem } from "../types";
 
 import { C } from "../theme";
-import { dosageLabel, exercisePurpose, setupCues } from "../lib/planSchedule";
+import { dosageLabel, setupCues } from "../lib/planSchedule";
 
 type Props = {
   item: PlanItem | null;
@@ -166,8 +166,8 @@ function CameraStage({
       <View style={[styles.permBox, full && styles.permBoxFull]}>
         <Text style={styles.permText}>
           Allow camera access for live movement guidance. If you already denied
-          permission, open phone Settings → Apps → Stride → Permissions and enable
-          Camera, then return here.
+          permission, open phone Settings → Apps → Stride → Permissions and
+          enable Camera, then return here.
         </Text>
 
         <Pressable style={styles.btnPrimary} onPress={onRequestPermission}>
@@ -238,8 +238,8 @@ export function MoveScreen({ item, saving, error, onBack, onFinish }: Props) {
     return (
       <View style={styles.missing}>
         <Text style={styles.missingText}>
-          This exercise is not on your current plan. It may have been updated by your
-          physiotherapist.
+          This exercise is not on your current plan. It may have been updated by
+          your physiotherapist.
         </Text>
 
         <Pressable onPress={onBack}>
@@ -264,7 +264,6 @@ export function MoveScreen({ item, saving, error, onBack, onFinish }: Props) {
     }
   }
 
-  const purpose = exercisePurpose(item, undefined);
   const cues = setupCues(item.demo_cue);
 
   function requestBack() {
@@ -291,44 +290,35 @@ export function MoveScreen({ item, saving, error, onBack, onFinish }: Props) {
         ]}
       >
         <Pressable onPress={requestBack}>
-          <Text style={styles.back}>← Program</Text>
+          <Text style={styles.back}>← Back</Text>
         </Pressable>
-        <Text style={styles.kicker}>Home exercise</Text>
         <Text style={styles.h1}>{item.exercise_name}</Text>
-        {purpose ? (
-          <>
-            <Text style={styles.sectionLabel}>Purpose</Text>
-            <Text style={styles.body}>{purpose}</Text>
-          </>
-        ) : null}
+        <Text style={styles.dosage}>{dosageLabel(item)}</Text>
         <View style={styles.briefFigure}>
           <DemoFigurePanel poseRecipeKey={item.pose_recipe_key} />
         </View>
         {cues.length ? (
-          <>
-            <Text style={styles.sectionLabel}>Setup and demonstration</Text>
-            {cues.map((cue) => (
-              <Text key={cue} style={styles.body}>
-                {cue}
+          <View style={styles.cueList}>
+            {cues.slice(0, 3).map((cue) => (
+              <Text key={cue} style={styles.cueLine} numberOfLines={2}>
+                • {cue}
               </Text>
             ))}
-          </>
-        ) : null}
-        <Text style={styles.sectionLabel}>Movement</Text>
-        <Text style={styles.body}>{item.instructions}</Text>
-        <View style={styles.alert}>
-          <Text style={styles.alertTitle}>
-            Stop if you feel pain, dizziness, or unsteadiness
+          </View>
+        ) : (
+          <Text style={styles.bodyCompact} numberOfLines={3}>
+            {item.instructions}
           </Text>
-          <Text style={styles.alertBody}>{item.safety_notes}</Text>
+        )}
+        <View style={styles.alert}>
+          <Text style={styles.alertTitle}>Stop if pain or dizziness</Text>
         </View>
-        <Text style={styles.dosage}>{dosageLabel(item)}</Text>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Pressable
           style={styles.btnPrimary}
           onPress={() => setSessionStarted(true)}
         >
-          <Text style={styles.btnPrimaryText}>Start exercise</Text>
+          <Text style={styles.btnPrimaryText}>Start</Text>
         </Pressable>
       </ScrollView>
     );
@@ -365,7 +355,11 @@ export function MoveScreen({ item, saving, error, onBack, onFinish }: Props) {
           style={[styles.fullTopBar, { paddingTop: insets.top + 8 }]}
           pointerEvents="box-none"
         >
-          <Pressable onPress={requestBack} hitSlop={12} style={styles.fullBackBtn}>
+          <Pressable
+            onPress={requestBack}
+            hitSlop={12}
+            style={styles.fullBackBtn}
+          >
             <Text style={styles.fullLink}>← Back</Text>
           </Pressable>
 
@@ -405,7 +399,9 @@ export function MoveScreen({ item, saving, error, onBack, onFinish }: Props) {
             >
               <View style={styles.sheetHandle} />
 
-              <Text style={styles.sheetHint}>{item.instructions}</Text>
+              <Text style={styles.sheetHint} numberOfLines={2}>
+                {dosageLabel(item)}
+              </Text>
 
               <SessionLogForm
                 reps={reps}
@@ -441,22 +437,15 @@ export function MoveScreen({ item, saving, error, onBack, onFinish }: Props) {
 
       <View style={styles.badge}>
         <Text style={styles.badgeText}>
-          {hasPoseAssist
-            ? "Guided · live skeleton on you"
-            : "Live skeleton on you · form guide in corner"}
+          {hasPoseAssist ? "Guided · skeleton on" : "Skeleton on"}
         </Text>
       </View>
 
       <Text style={styles.h1}>{item.exercise_name}</Text>
-
-      <Text style={styles.body}>{item.instructions}</Text>
+      <Text style={styles.dosage}>{dosageLabel(item)}</Text>
 
       <View style={styles.alert}>
-        <Text style={styles.alertTitle}>Stop immediately if you feel pain</Text>
-
-        <Text style={styles.alertBody}>
-          Dizziness or unsteadiness means stop and rest. {item.safety_notes}
-        </Text>
+        <Text style={styles.alertTitle}>Stop if pain or dizziness</Text>
       </View>
 
       <View style={styles.cameraCard}>
@@ -523,22 +512,25 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  badgeText: { fontSize: 13, fontWeight: "700", color: "#B45309" },
+  badgeText: { fontSize: 13, fontWeight: "700", color: C.warning },
 
   h1: { fontSize: 28, fontWeight: "800", color: C.text, marginBottom: 12 },
 
   body: { fontSize: 17, color: C.text, lineHeight: 26, marginBottom: 16 },
-
+  bodyCompact: {
+    fontSize: 15,
+    color: C.text,
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  cueList: { gap: 8, marginBottom: 16 },
+  cueLine: { fontSize: 14, color: C.text, lineHeight: 20 },
   alert: {
     backgroundColor: C.dangerSoft,
 
     borderRadius: 14,
 
-    padding: 16,
-
-    borderLeftWidth: 4,
-
-    borderLeftColor: C.danger,
+    padding: 14,
 
     marginBottom: 20,
   },
@@ -546,8 +538,7 @@ const styles = StyleSheet.create({
   alertTitle: {
     fontWeight: "800",
     color: C.danger,
-    marginBottom: 6,
-    fontSize: 16,
+    fontSize: 14,
   },
 
   alertBody: { fontSize: 15, color: C.text, lineHeight: 22 },
@@ -591,12 +582,21 @@ const styles = StyleSheet.create({
   cameraWrapMini: { height: 320 },
 
   cameraWrapFull: {
-    ...StyleSheet.absoluteFillObject,
-
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     borderRadius: 0,
   },
 
-  cameraFill: { ...StyleSheet.absoluteFillObject },
+  cameraFill: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
 
   demoFigurePanel: {
     position: "absolute",
@@ -699,7 +699,7 @@ const styles = StyleSheet.create({
 
     borderRadius: 14,
 
-    backgroundColor: "#F8FAFC",
+    backgroundColor: C.surfaceMuted,
 
     paddingHorizontal: 16,
 
@@ -827,15 +827,21 @@ const styles = StyleSheet.create({
   logFabText: { color: "white", fontWeight: "800", fontSize: 16 },
 
   sheetBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     zIndex: 5,
-
     justifyContent: "flex-end",
   },
 
   sheetDismiss: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     backgroundColor: "rgba(0,0,0,0.45)",
   },
 

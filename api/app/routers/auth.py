@@ -18,6 +18,7 @@ from app.otp_service import (
 from app.schemas import (
     ChangeTherapistIn,
     ForgotPasswordIn,
+    InviteValidateOut,
     ForgotPasswordOut,
     GoogleAuthIn,
     PasswordCheckOut,
@@ -165,6 +166,7 @@ def onboarding_patient(payload: PatientOnboardingIn, user: AuthenticatedUser, db
     user.phone = payload.phone
     user.body_region = payload.body_region
     user.rehab_goal = payload.rehab_goal
+    user.gender = payload.gender
     user.notes = payload.notes
     user.therapist_id = therapist.id
     user.status = AccountStatus.active
@@ -249,6 +251,21 @@ def _resolve_therapist(db: Session, invite_code: str) -> User:
             detail="This physiotherapist account is not active yet. Ask them to confirm their clinic access.",
         )
     return therapist
+
+
+@router.post("/validate-invite", response_model=InviteValidateOut)
+def validate_invite(
+    payload: ChangeTherapistIn,
+    user: AuthenticatedUser,
+    db: Session = Depends(get_db),
+) -> InviteValidateOut:
+    if user.role != UserRole.patient:
+        raise HTTPException(status_code=403, detail="Only patients can validate a therapist invite code.")
+    therapist = _resolve_therapist(db, payload.therapist_invite_code)
+    return InviteValidateOut(
+        valid=True,
+        therapist_name=therapist.full_name or "Your physiotherapist",
+    )
 
 
 @router.patch("/me", response_model=UserOut)

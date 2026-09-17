@@ -18,8 +18,8 @@ Stride connects patients and physiotherapists in one care workflow: prescribe ex
 
 **Approach.** A modular clinic stack:
 
-| Client                 | Role                                         |
-| ---------------------- | -------------------------------------------- |
+| Client             | Role                                         |
+| ------------------ | -------------------------------------------- |
 | Web (`web/`)       | Patient, physiotherapist, and admin portals  |
 | Mobile (`mobile/`) | Patient companion (plans, sessions, consult) |
 | API (`api/`)       | FastAPI care workflow + auth                 |

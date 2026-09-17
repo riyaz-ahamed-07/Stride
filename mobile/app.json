@@ -2,14 +2,14 @@
   "expo": {
     "name": "Stride",
     "slug": "stride-clinic",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "orientation": "portrait",
     "scheme": "stride",
     "userInterfaceStyle": "light",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/brand/icon.png",
     "splash": {
-      "image": "./assets/icon.png",
-      "backgroundColor": "#2563EB",
+      "image": "./assets/brand/icon.png",
+      "backgroundColor": "#FFFFFF",
       "resizeMode": "contain"
     },
     "ios": {
@@ -22,10 +22,9 @@
     },
     "android": {
       "package": "clinic.stride.app",
-      "usesCleartextTraffic": true,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#2563EB"
+        "foregroundImage": "./assets/brand/icon.png",
+        "backgroundColor": "#FFFFFF"
       },
       "permissions": [
         "CAMERA",
@@ -45,7 +44,8 @@
           "android": {
             "minSdkVersion": 24,
             "compileSdkVersion": 36,
-            "targetSdkVersion": 35
+            "targetSdkVersion": 35,
+            "usesCleartextTraffic": true
           },
           "ios": {
             "deploymentTarget": "15.1"
@@ -67,7 +67,8 @@
           "microphonePermission": "Stride uses the microphone for your video visit with the physiotherapist.",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
