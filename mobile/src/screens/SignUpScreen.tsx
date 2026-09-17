@@ -5,15 +5,20 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { registerAccount } from "../api";
 import { PasswordField } from "../components/PasswordField";
 import { StrideLogo } from "../components/StrideLogo";
+import { IconField } from "../components/ui/IconField";
+import { MailFieldIcon } from "../components/icons/AuthFieldIcons";
+import {
+  AccountTypeCards,
+  type AccountRole,
+} from "../components/onboarding/AccountTypeCards";
 import { passwordRules, passwordValid } from "../lib/passwordStrength";
 import type { AuthSession } from "../types";
-import { C } from "../theme";
+import { C, colors, type as typography } from "../theme";
 
 type Props = {
   onBack: () => void;
@@ -22,63 +27,91 @@ type Props = {
 };
 
 export function SignUpScreen({ onBack, onRegistered, onGoLogin }: Props) {
+  const [role, setRole] = useState<AccountRole | "">("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const rules = useMemo(() => passwordRules(password), [password]);
+  const canSubmit =
+    role !== "" &&
+    email.trim().length > 0 &&
+    passwordValid(password) &&
+    password === confirm &&
+    confirm.length > 0;
 
   async function handleSubmit() {
-    if (busy) return;
-    if (!email.trim()) {
-      setError("Enter your email.");
-      return;
-    }
-    if (!passwordValid(password)) {
-      setError("Please meet all password requirements.");
-      return;
-    }
+    if (busy || !canSubmit) return;
+    const selectedRole = role as AccountRole;
     setBusy(true);
     setError("");
     try {
-      const session = await registerAccount(email, password, "patient");
+      const apiRole =
+        selectedRole === "therapist" ? "physiotherapist" : "patient";
+      const session = await registerAccount(email, password, apiRole);
       onRegistered(session, email.trim().toLowerCase());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not create account.");
+      setError(
+        err instanceof Error ? err.message : "Could not create account.",
+      );
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      contentContainerStyle={styles.page}
+      keyboardShouldPersistTaps="handled"
+    >
       <Pressable style={styles.back} onPress={onBack} disabled={busy}>
         <Text style={styles.backText}>← Back</Text>
       </Pressable>
-      <View style={styles.card}>
-        <View style={styles.logoRow}>
-          <StrideLogo size={44} />
-          <Text style={styles.logoText}>Stride</Text>
-        </View>
-        <Text style={styles.h1}>Create your patient account</Text>
-        <Text style={styles.sub}>
-          This phone app is for patients. Physiotherapists and admins should use the Stride web app
-          to register and manage clinics.
-        </Text>
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
+      <View style={styles.logoRow}>
+        <StrideLogo size={48} />
+      </View>
+
+      <Text style={styles.h1}>Sign Up For Free</Text>
+      <Text style={styles.sub}>Sign up in 1 minute for free!</Text>
+
+      <View style={styles.form}>
+        <AccountTypeCards value={role} onChange={setRole} disabled={busy} />
+
+        <IconField
+          label="Email Address"
+          leftIcon={<MailFieldIcon />}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
           editable={!busy}
-          placeholderTextColor={C.muted}
+          placeholder="Enter your email..."
+          textContentType="emailAddress"
+          autoComplete="email"
         />
 
-        <Text style={styles.label}>Password</Text>
-        <PasswordField value={password} onChangeText={setPassword} editable={!busy} />
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>Password</Text>
+          <PasswordField
+            value={password}
+            onChangeText={setPassword}
+            editable={!busy}
+          />
+        </View>
+
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>Password Confirmation</Text>
+          <PasswordField
+            value={confirm}
+            onChangeText={setConfirm}
+            editable={!busy}
+            error={confirm.length > 0 && password !== confirm}
+            placeholder="Confirm your password..."
+          />
+        </View>
+
         <View style={styles.rules}>
           {rules.map((rule) => (
             <Text key={rule.id} style={[styles.rule, rule.ok && styles.ruleOk]}>
@@ -87,24 +120,37 @@ export function SignUpScreen({ onBack, onRegistered, onGoLogin }: Props) {
           ))}
         </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {confirm.length > 0 && password !== confirm ? (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorBannerText}>
+              ERROR: Passwords do not match!
+            </Text>
+          </View>
+        ) : error ? (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorBannerText}>ERROR: {error}</Text>
+          </View>
+        ) : null}
 
         <Pressable
-          style={[styles.btnPrimary, busy && styles.btnDisabled]}
+          style={[
+            styles.btnPrimary,
+            (busy || !canSubmit) && styles.btnDisabled,
+          ]}
           onPress={handleSubmit}
-          disabled={busy}
+          disabled={busy || !canSubmit}
         >
           {busy ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text style={styles.btnPrimaryText}>Continue</Text>
+            <Text style={styles.btnPrimaryText}>Sign Up →</Text>
           )}
         </Pressable>
 
         <View style={styles.footerRow}>
           <Text style={styles.footerMuted}>Already have an account? </Text>
           <Pressable onPress={onGoLogin} disabled={busy}>
-            <Text style={styles.footerLink}>Sign in</Text>
+            <Text style={styles.footerLink}>Sign In</Text>
           </Pressable>
         </View>
       </View>
@@ -113,51 +159,67 @@ export function SignUpScreen({ onBack, onRegistered, onGoLogin }: Props) {
 }
 
 const styles = StyleSheet.create({
-  page: { flexGrow: 1, padding: 20, justifyContent: "center" },
-  back: { marginBottom: 12 },
+  page: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 32,
+    backgroundColor: colors.surface.page,
+  },
+  back: { marginBottom: 8, alignSelf: "flex-start" },
   backText: { color: C.primary, fontWeight: "700", fontSize: 16 },
-  card: {
-    backgroundColor: C.surface,
-    borderRadius: 28,
-    padding: 28,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 4,
-  },
   logoRow: {
-    flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    marginBottom: 24,
-    justifyContent: "center",
+    marginBottom: 20,
+    marginTop: 4,
   },
-  logoText: { fontSize: 24, fontWeight: "800", color: C.primary },
-  h1: { fontSize: 26, fontWeight: "800", color: C.text, marginBottom: 8 },
-  sub: { fontSize: 15, color: C.muted, marginBottom: 20, lineHeight: 22 },
-  label: { fontSize: 14, fontWeight: "600", color: C.text, marginBottom: 8, marginTop: 8 },
-  input: {
-    minHeight: 52,
-    borderWidth: 1.5,
-    borderColor: C.border,
-    borderRadius: 14,
-    backgroundColor: "#F8FAFC",
-    paddingHorizontal: 16,
-    fontSize: 17,
-    color: C.text,
-    marginBottom: 4,
+  h1: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.text.primary,
+    textAlign: "center",
+    fontFamily: typography.fontFamilyExtraBold,
+    letterSpacing: -0.4,
   },
-  rules: { marginTop: 10, gap: 4 },
-  rule: { fontSize: 13, color: C.muted },
+  sub: {
+    fontSize: 15,
+    color: colors.text.muted,
+    textAlign: "center",
+    marginTop: 8,
+    marginBottom: 28,
+    lineHeight: 22,
+  },
+  form: { gap: 18 },
+  fieldBlock: { gap: 8 },
+  label: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.text.primary,
+    fontFamily: typography.fontFamilyBold,
+  },
+  rules: { gap: 4, marginTop: -4 },
+  rule: { fontSize: 13, color: colors.text.muted },
   ruleOk: { color: C.success, fontWeight: "600" },
-  error: { color: C.danger, fontWeight: "600", marginTop: 10, lineHeight: 20 },
+  errorBanner: {
+    backgroundColor: colors.semantic.errorSoft,
+    borderWidth: 1,
+    borderColor: colors.semantic.error,
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  errorBannerText: {
+    color: colors.semantic.error,
+    fontWeight: "700",
+    fontSize: 14,
+  },
   btnPrimary: {
-    minHeight: 54,
-    borderRadius: 16,
+    minHeight: 56,
+    borderRadius: 999,
     backgroundColor: C.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 8,
   },
   btnDisabled: { opacity: 0.6 },
   btnPrimaryText: { color: "#fff", fontWeight: "800", fontSize: 17 },
@@ -165,10 +227,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 18,
+    marginTop: 8,
     flexWrap: "wrap",
     gap: 4,
   },
-  footerMuted: { color: C.muted, fontSize: 14 },
+  footerMuted: { color: colors.text.muted, fontSize: 14 },
   footerLink: { color: C.primary, fontWeight: "700", fontSize: 14 },
 });

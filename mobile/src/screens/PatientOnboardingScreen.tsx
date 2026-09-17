@@ -1,107 +1,169 @@
 import { useState } from "react";
 import {
-  ActivityIndicator,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
-import { completePatientOnboarding } from "../api";
-import { StrideLogo } from "../components/StrideLogo";
+import { Camera, X } from "lucide-react-native";
+import { completePatientOnboarding, validateTherapistInvite } from "../api";
+import {
+  ContinueButton,
+  OnboardingShell,
+  O,
+} from "../components/onboarding/OnboardingShell";
+import { AgeWheel } from "../components/onboarding/AgeWheel";
+import {
+  GenderStep,
+  type GenderChoice,
+} from "../components/onboarding/GenderStep";
+import {
+  WeightScaleStep,
+  type WeightUnit,
+} from "../components/onboarding/WeightScaleStep";
+import {
+  FitnessLevelStep,
+  FITNESS_LEVELS,
+} from "../components/onboarding/FitnessLevelStep";
+import {
+  TherapistCodeStep,
+  THERAPIST_CODE_LEN,
+} from "../components/onboarding/TherapistCodeStep";
+import { IconField } from "../components/ui/IconField";
+import {
+  LocationFieldIcon,
+  NameFieldIcon,
+  PhoneFieldIcon,
+} from "../components/icons/AuthFieldIcons";
 import type { AuthSession } from "../types";
-import { C } from "../theme";
+import { C, type as typography } from "../theme";
 
 type Props = {
   accessToken: string;
   onComplete: (session: AuthSession) => void;
 };
 
-type BodyRegion =
-  | "knee"
-  | "hip"
-  | "shoulder"
-  | "ankle"
-  | "back"
-  | "neck"
-  | "wrist_hand"
-  | "pelvic_floor"
-  | "general";
+const TOTAL = 7;
 
-const STEPS = ["Profile", "Recovery", "Therapist", "Consent"] as const;
+function ageToDob(age: number): string {
+  const year = new Date().getFullYear() - age;
+  return `${year}-01-01`;
+}
 
-const BODY_REGIONS: { id: BodyRegion; label: string }[] = [
-  { id: "knee", label: "Knee" },
-  { id: "hip", label: "Hip" },
-  { id: "shoulder", label: "Shoulder" },
-  { id: "ankle", label: "Ankle / foot" },
-  { id: "back", label: "Back" },
-  { id: "neck", label: "Neck" },
-  { id: "wrist_hand", label: "Wrist / hand" },
-  { id: "pelvic_floor", label: "Pelvic floor" },
-  { id: "general", label: "General mobility" },
-];
-
-const GOAL_HINTS = [
-  "Walk more comfortably day to day",
-  "Return to work or daily tasks",
-  "Rebuild strength after assessment",
-  "Move with less stiffness",
-];
+function genderLabel(g: GenderChoice | ""): string {
+  if (g === "male") return "Male";
+  if (g === "female") return "Female";
+  if (g === "prefer_not_to_say") return "Prefer not to say";
+  return "—";
+}
 
 export function PatientOnboardingScreen({ accessToken, onComplete }: Props) {
   const [step, setStep] = useState(0);
   const [fullName, setFullName] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [phone, setPhone] = useState("");
-  const [bodyRegion, setBodyRegion] = useState<BodyRegion | "">("");
-  const [notes, setNotes] = useState("");
-  const [rehabGoal, setRehabGoal] = useState("");
+  const [location, setLocation] = useState("");
   const [invite, setInvite] = useState("");
-  const [cameraConsent, setCameraConsent] = useState(false);
+  const [inviteVerified, setInviteVerified] = useState(false);
+  const [linkedTherapist, setLinkedTherapist] = useState("");
+  const [gender, setGender] = useState<GenderChoice | "">("male");
+  const [age, setAge] = useState(25);
+  const [weight, setWeight] = useState(65);
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
+  const [fitnessLevel, setFitnessLevel] = useState(2);
+  const [exerciseVenue, setExerciseVenue] = useState<
+    "home" | "gym" | "clinic" | ""
+  >("");
+  const [cameraPromptOpen, setCameraPromptOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  const profileStepReady =
+    fullName.trim().length > 0 &&
+    phone.trim().length > 0 &&
+    location.trim().length > 0;
+
+  const inviteReady = invite.trim().length >= THERAPIST_CODE_LEN;
+  const fit = FITNESS_LEVELS[fitnessLevel];
+  const venueLabel = exerciseVenue
+    ? `${exerciseVenue.charAt(0).toUpperCase()}${exerciseVenue.slice(1)}`
+    : "—";
+
   function validateStep(current: number): string {
-    if (current === 0 && !fullName.trim()) return "Enter your full name.";
-    if (current === 1) {
-      if (!bodyRegion) return "Choose the body area you are recovering.";
-      if (!rehabGoal.trim()) return "Share a short recovery goal.";
+    if (current === 0 && !profileStepReady) return "profile";
+    if (current === 1 && !inviteReady) {
+      return "Your therapist code doesn't match the expected length.";
     }
-    if (current === 2 && invite.trim().length < 4) {
-      return "Enter the invite code from your physiotherapist.";
+    if (current === 1 && !inviteVerified) {
+      return "Confirm a valid therapist code to continue.";
     }
-    if (current === 3 && !cameraConsent) {
-      return "Camera consent is required so guided movement sessions can run safely.";
-    }
+    if (current === 2 && !gender) return "Select a gender option to continue.";
+    if (current === 5 && !exerciseVenue)
+      return "Choose where you usually exercise.";
     return "";
   }
 
-  function goNext() {
+  async function goNext() {
+    if (step === 0 && !profileStepReady) return;
+    if (step === 1) {
+      if (!inviteReady) {
+        setError("Your therapist code doesn't match the expected length.");
+        return;
+      }
+      setBusy(true);
+      setError("");
+      try {
+        const result = await validateTherapistInvite(accessToken, invite);
+        setInviteVerified(true);
+        setLinkedTherapist(result.therapist_name);
+        setStep(2);
+      } catch (err) {
+        setInviteVerified(false);
+        setLinkedTherapist("");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "That invite code was not found.",
+        );
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     const issue = validateStep(step);
     if (issue) {
-      setError(issue);
+      if (step !== 0) setError(issue);
       return;
     }
     setError("");
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    if (step >= TOTAL - 1) {
+      setCameraPromptOpen(true);
+      return;
+    }
+    setStep((s) => s + 1);
   }
 
   function goBack() {
     setError("");
+    setCameraPromptOpen(false);
     setStep((s) => Math.max(s - 1, 0));
   }
 
-  async function handleSubmit() {
+  async function finalizeWithCameraConsent(allowed: boolean) {
     if (busy) return;
-    if (step < STEPS.length - 1) {
-      goNext();
+    if (!allowed) {
+      setCameraPromptOpen(false);
+      setError(
+        "Camera access is needed for guided movement sessions. Tap Finalize to allow.",
+      );
       return;
     }
-    const issue = validateStep(step);
-    if (issue) {
-      setError(issue);
+    if (!inviteVerified) {
+      setCameraPromptOpen(false);
+      setError("Confirm a valid therapist code to continue.");
+      setStep(1);
       return;
     }
     setBusy(true);
@@ -109,428 +171,456 @@ export function PatientOnboardingScreen({ accessToken, onComplete }: Props) {
     try {
       const session = await completePatientOnboarding(accessToken, {
         full_name: fullName,
-        date_of_birth: dateOfBirth.trim() || null,
-        phone: phone || null,
-        body_region: bodyRegion,
-        rehab_goal: rehabGoal,
-        notes: notes || null,
+        date_of_birth: ageToDob(age),
+        phone: phone.trim(),
+        gender: gender || null,
+        body_region: "general",
+        rehab_goal: "Improve mobility and recovery",
+        notes:
+          [
+            location.trim() ? `Location: ${location.trim()}` : "",
+            `Weight: ${weight} ${weightUnit}`,
+            fit ? `Fitness: ${fit.label} (${fit.detail})` : "",
+            exerciseVenue ? `Venue: ${venueLabel}` : "",
+          ]
+            .filter(Boolean)
+            .join("\n") || null,
         therapist_invite_code: invite,
-        camera_analysis_consent: cameraConsent,
+        camera_analysis_consent: true,
       });
+      setCameraPromptOpen(false);
       onComplete(session);
     } catch (err) {
+      setCameraPromptOpen(false);
       setError(err instanceof Error ? err.message : "Could not finish setup.");
       setBusy(false);
     }
   }
 
-  return (
-    <ScrollView
-      contentContainerStyle={styles.page}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.card}>
-        <View style={styles.logoRow}>
-          <StrideLogo size={44} />
-          <Text style={styles.logoText}>Stride</Text>
-        </View>
-        <Text style={styles.eyebrow}>Patient setup</Text>
-        <Text style={styles.h1}>Set up your rehabilitation</Text>
-        <Text style={styles.sub}>
-          A few short steps so your physiotherapist can personalise your home
-          rehabilitation plan.
-        </Text>
+  const titles = [
+    "Complete your profile",
+    "Enter therapist code!",
+    "Select your gender",
+    "What's your age?",
+    "What's your weight?",
+    "Fitness Level",
+    "Review & finalize",
+  ];
 
-        <View style={styles.steps}>
-          {STEPS.map((label, index) => {
-            const current = index === step;
-            const done = index < step;
-            return (
-              <View key={label} style={styles.stepItem}>
-                <View
-                  style={[
-                    styles.stepDot,
-                    current && styles.stepDotCurrent,
-                    done && styles.stepDotDone,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.stepDotText,
-                      done && styles.stepDotTextDone,
-                      current && styles.stepDotTextCurrent,
-                    ]}
-                  >
-                    {index + 1}
-                  </Text>
-                </View>
-                <Text
-                  style={[
-                    styles.stepLabel,
-                    (current || done) && styles.stepLabelActive,
-                  ]}
-                >
-                  {label}
-                </Text>
-              </View>
-            );
-          })}
-        </View>
+  const subtitles = [
+    "Tell us who you are so we can set up your care.",
+    linkedTherapist
+      ? `Linked to ${linkedTherapist}. You can continue.`
+      : "Type the 8-character code from your physiotherapist.",
+    "Helps tailor guidance and form cues.",
+    "Used to personalize your rehab plan.",
+    "Helps set safe session intensity.",
+    "How often do you usually exercise?",
+    "Check your details, then finalize to open your dashboard.",
+  ];
+
+  const reviewRows = [
+    { label: "Name", value: fullName.trim() || "—" },
+    { label: "Phone", value: phone.trim() || "—" },
+    { label: "Location", value: location.trim() || "—" },
+    { label: "Therapist", value: linkedTherapist || invite || "—" },
+    { label: "Gender", value: genderLabel(gender) },
+    { label: "Age", value: String(age) },
+    { label: "Weight", value: `${weight} ${weightUnit}` },
+    {
+      label: "Fitness",
+      value: fit ? `${fit.label} · ${fit.detail}` : "—",
+    },
+    { label: "Exercises at", value: venueLabel },
+  ];
+
+  const bodyAlign = step === 3 ? "center" : "top";
+  const isCodeStep = step === 1;
+
+  const venuePills =
+    step === 5 ? (
+      <View style={styles.pillRow}>
+        {(
+          [
+            { id: "home" as const, label: "Home" },
+            { id: "gym" as const, label: "Gym" },
+            { id: "clinic" as const, label: "Clinic" },
+          ] as const
+        ).map((pill) => {
+          const on = exerciseVenue === pill.id;
+          return (
+            <Pressable
+              key={pill.id}
+              style={[styles.pill, on && styles.pillOn]}
+              onPress={() => setExerciseVenue(pill.id)}
+              disabled={busy}
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+            >
+              <Text style={[styles.pillText, on && styles.pillTextOn]}>
+                {pill.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    ) : null;
+
+  return (
+    <>
+      <OnboardingShell
+        step={step}
+        total={TOTAL}
+        onBack={step > 0 ? goBack : undefined}
+        title={titles[step]}
+        subtitle={subtitles[step]}
+        bodyAlign={bodyAlign}
+        layout={isCodeStep ? "centered" : "default"}
+        copyExtra={venuePills}
+        copyStyle={
+          step === 4
+            ? { paddingTop: 28, paddingBottom: 12 }
+            : step === 5
+              ? { paddingBottom: 10 }
+              : undefined
+        }
+        footerStyle={
+          step === 2
+            ? { paddingTop: 0 }
+            : step === 5
+              ? { paddingTop: 32 }
+              : undefined
+        }
+        footer={
+          step === 2 ? (
+            <ContinueButton
+              label="Continue"
+              onPress={() => void goNext()}
+              busy={busy}
+              disabled={!gender}
+            />
+          ) : (
+            <ContinueButton
+              label={step === TOTAL - 1 ? "Finalize" : "Continue"}
+              onPress={() => void goNext()}
+              busy={busy}
+              disabled={
+                (step === 0 && !profileStepReady) ||
+                (step === 1 && !inviteReady) ||
+                (step === 5 && !exerciseVenue)
+              }
+            />
+          )
+        }
+      >
+        {error && step !== 0 && step !== 1 ? (
+          <Text style={styles.error}>{error}</Text>
+        ) : null}
 
         {step === 0 ? (
-          <View>
-            <Text style={styles.sectionTitle}>Basic profile</Text>
-            <Text style={styles.label}>
-              Full name <Text style={styles.req}>Required</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.profileForm}
+            keyboardShouldPersistTaps="handled"
+          >
+            <IconField
+              label="Full Name"
+              leftIcon={<NameFieldIcon />}
               value={fullName}
               onChangeText={setFullName}
               autoCapitalize="words"
               editable={!busy}
+              placeholder="Your full name"
             />
-            <Text style={styles.label}>
-              Date of birth <Text style={styles.opt}>Optional</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={dateOfBirth}
-              onChangeText={setDateOfBirth}
-              placeholder="YYYY-MM-DD"
-              placeholderTextColor={C.muted}
-              editable={!busy}
-            />
-            <Text style={styles.label}>
-              Phone <Text style={styles.opt}>Optional</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
+            <IconField
+              label="Phone Number"
+              leftIcon={<PhoneFieldIcon />}
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
               editable={!busy}
+              placeholder="+91 90000 00000"
             />
-          </View>
+            <IconField
+              label="Location"
+              leftIcon={<LocationFieldIcon />}
+              value={location}
+              onChangeText={setLocation}
+              editable={!busy}
+              placeholder="City, Country"
+            />
+          </ScrollView>
         ) : null}
 
         {step === 1 ? (
-          <View>
-            <Text style={styles.sectionTitle}>Rehabilitation context</Text>
-            <Text style={styles.help}>
-              Choose the focus area and a short goal. Your physiotherapist
-              confirms the clinical plan.
-            </Text>
-            <Text style={styles.label}>
-              Body region <Text style={styles.req}>Required</Text>
-            </Text>
-            <View style={styles.chipWrap}>
-              {BODY_REGIONS.map((region) => {
-                const selected = bodyRegion === region.id;
-                return (
-                  <Pressable
-                    key={region.id}
-                    style={[styles.chip, selected && styles.chipSelected]}
-                    onPress={() => setBodyRegion(region.id)}
-                    disabled={busy}
-                  >
-                    <Text
-                      style={[
-                        styles.chipText,
-                        selected && styles.chipTextSelected,
-                      ]}
-                    >
-                      {region.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-            <Text style={styles.label}>
-              Reason for therapy <Text style={styles.opt}>Optional</Text>
-            </Text>
-            <TextInput
-              style={[styles.input, styles.textarea]}
-              value={notes}
-              onChangeText={setNotes}
-              multiline
-              editable={!busy}
-              placeholder="e.g. Following my clinic assessment"
-              placeholderTextColor={C.muted}
-            />
-            <Text style={styles.label}>
-              Rehabilitation goal <Text style={styles.req}>Required</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={rehabGoal}
-              onChangeText={setRehabGoal}
-              editable={!busy}
-              placeholder="What would better movement help you do?"
-              placeholderTextColor={C.muted}
-            />
-            <View style={styles.chipWrap}>
-              {GOAL_HINTS.map((hint) => (
-                <Pressable
-                  key={hint}
-                  style={styles.hintChip}
-                  onPress={() => setRehabGoal(hint)}
-                  disabled={busy}
-                >
-                  <Text style={styles.hintText}>{hint}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </View>
+          <TherapistCodeStep
+            value={invite}
+            onChange={(code) => {
+              setInvite(code);
+              setInviteVerified(false);
+              setLinkedTherapist("");
+              if (error) setError("");
+            }}
+            error={error}
+            disabled={busy}
+          />
         ) : null}
 
         {step === 2 ? (
-          <View>
-            <Text style={styles.sectionTitle}>
-              Connect with your physiotherapist
-            </Text>
-            <Text style={styles.help}>
-              Enter the invite code they gave you. Without a valid code you
-              cannot finish setup.
-            </Text>
-            <Text style={styles.label}>
-              Therapist invite code <Text style={styles.req}>Required</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={invite}
-              onChangeText={(value) => setInvite(value.toUpperCase())}
-              autoCapitalize="characters"
-              editable={!busy}
-              placeholder="8-character code"
-              placeholderTextColor={C.muted}
-            />
-          </View>
-        ) : null}
-
-        {step === 3 ? (
-          <View>
-            <Text style={styles.sectionTitle}>Movement session consent</Text>
-            <Text style={styles.help}>
-              Some home exercises can use your device camera to count
-              repetitions on your device. Video is not uploaded for clinic
-              review unless your therapist asks you to share a session summary.
-            </Text>
+          <View style={styles.genderStep}>
+            <GenderStep value={gender} onChange={setGender} disabled={busy} />
             <Pressable
-              style={styles.consentRow}
-              onPress={() => !busy && setCameraConsent((v) => !v)}
+              style={[
+                styles.preferNot,
+                gender === "prefer_not_to_say" && styles.preferNotOn,
+              ]}
+              onPress={() => setGender("prefer_not_to_say")}
               disabled={busy}
+              accessibilityRole="button"
+              accessibilityState={{
+                selected: gender === "prefer_not_to_say",
+              }}
             >
-              <View
-                style={[styles.checkbox, cameraConsent && styles.checkboxOn]}
-              >
-                {cameraConsent ? (
-                  <Text style={styles.checkboxMark}>✓</Text>
-                ) : null}
-              </View>
-              <Text style={styles.consentText}>
-                I agree to camera-assisted movement analysis for my
-                rehabilitation exercises.{" "}
-                <Text style={styles.req}>Required</Text>
-              </Text>
+              <Text style={styles.preferNotText}>Prefer not to answer</Text>
+              <X size={20} color={O.green} strokeWidth={2.5} />
             </Pressable>
           </View>
         ) : null}
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {step === 3 ? <AgeWheel value={age} onChange={setAge} /> : null}
 
-        <View style={styles.actions}>
-          {step > 0 ? (
-            <Pressable style={styles.btnGhost} onPress={goBack} disabled={busy}>
-              <Text style={styles.btnGhostText}>Back</Text>
-            </Pressable>
-          ) : (
-            <View style={styles.btnGhostSpacer} />
-          )}
-          <Pressable
-            style={[styles.btnPrimary, busy && styles.btnDisabled]}
-            onPress={handleSubmit}
+        {step === 4 ? (
+          <WeightScaleStep
+            value={weight}
+            unit={weightUnit}
+            onChange={setWeight}
+            onUnitChange={setWeightUnit}
             disabled={busy}
+          />
+        ) : null}
+
+        {step === 5 ? (
+          <FitnessLevelStep
+            value={fitnessLevel}
+            onChange={setFitnessLevel}
+            disabled={busy}
+          />
+        ) : null}
+
+        {step === 6 ? (
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.reviewList}
           >
-            {busy ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text style={styles.btnPrimaryText}>
-                {step === STEPS.length - 1
-                  ? "Finish and open my plan"
-                  : "Continue"}
-              </Text>
-            )}
-          </Pressable>
+            {reviewRows.map((row) => (
+              <View key={row.label} style={styles.reviewRow}>
+                <Text style={styles.reviewLabel}>{row.label}</Text>
+                <Text style={styles.reviewValue}>{row.value}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        ) : null}
+      </OnboardingShell>
+
+      <Modal
+        visible={cameraPromptOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          if (!busy) setCameraPromptOpen(false);
+        }}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard} accessibilityRole="alert">
+            <View style={styles.modalIconWrap}>
+              <Camera size={28} color={O.green} strokeWidth={2.2} />
+            </View>
+            <Text style={styles.modalTitle}>Allow Camera Access?</Text>
+            <Text style={styles.modalBody}>
+              Stride uses your camera for guided movement feedback. Video stays
+              on your device unless you choose to share a summary.
+            </Text>
+            <View style={styles.modalActions}>
+              <Pressable
+                style={styles.modalBtnGhost}
+                onPress={() => void finalizeWithCameraConsent(false)}
+                disabled={busy}
+                accessibilityRole="button"
+              >
+                <Text style={styles.modalBtnGhostText}>Don't Allow</Text>
+              </Pressable>
+              <Pressable
+                style={styles.modalBtnPrimary}
+                onPress={() => void finalizeWithCameraConsent(true)}
+                disabled={busy}
+                accessibilityRole="button"
+              >
+                <Text style={styles.modalBtnPrimaryText}>
+                  {busy ? "Saving…" : "Allow"}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </Modal>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flexGrow: 1, padding: 20, justifyContent: "center" },
-  card: {
-    backgroundColor: C.surface,
-    borderRadius: 28,
-    padding: 28,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 4,
-  },
-  logoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 16,
-    justifyContent: "center",
-  },
-  logoText: { fontSize: 24, fontWeight: "800", color: C.primary },
-  eyebrow: {
-    fontSize: 12,
+  error: {
+    color: C.danger,
     fontWeight: "700",
-    color: C.teal,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-    marginBottom: 6,
+    textAlign: "center",
+    marginBottom: 10,
+    fontSize: 14,
   },
-  h1: { fontSize: 26, fontWeight: "800", color: C.text, marginBottom: 8 },
-  sub: { fontSize: 15, color: C.muted, marginBottom: 18, lineHeight: 22 },
-  steps: {
+  profileForm: { gap: 18, paddingTop: 20, paddingBottom: 12 },
+  pillRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 14,
+  },
+  pill: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: O.gray20,
+  },
+  pillOn: {
+    backgroundColor: O.green,
+  },
+  pillText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: O.gray60,
+  },
+  pillTextOn: {
+    color: O.white,
+  },
+  reviewList: {
+    gap: 8,
+    paddingBottom: 12,
+  },
+  reviewRow: {
+    backgroundColor: O.white,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: O.gray20,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     gap: 4,
   },
-  stepItem: { flex: 1, alignItems: "center", gap: 6 },
-  stepDot: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: C.border,
-    backgroundColor: "#F8FAFC",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepDotCurrent: { backgroundColor: C.teal, borderColor: C.teal },
-  stepDotDone: { backgroundColor: "#CCFBF1", borderColor: C.teal },
-  stepDotText: { fontSize: 12, fontWeight: "700", color: C.muted },
-  stepDotTextDone: { color: "#0F766E" },
-  stepDotTextCurrent: { color: "white" },
-  stepLabel: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: C.muted,
-    textAlign: "center",
-  },
-  stepLabelActive: { color: C.text },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: C.text,
-    marginBottom: 8,
-  },
-  help: { fontSize: 14, color: C.muted, lineHeight: 20, marginBottom: 12 },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: C.text,
-    marginBottom: 8,
-    marginTop: 8,
-  },
-  req: {
-    fontSize: 11,
+  reviewLabel: {
+    fontSize: 12,
     fontWeight: "700",
-    color: C.teal,
+    color: O.gray60,
+    letterSpacing: 0.2,
     textTransform: "uppercase",
   },
-  opt: { fontSize: 11, fontWeight: "600", color: C.muted },
-  input: {
-    minHeight: 52,
-    borderWidth: 1.5,
-    borderColor: C.border,
-    borderRadius: 14,
-    backgroundColor: "#F8FAFC",
-    paddingHorizontal: 16,
-    fontSize: 17,
-    marginBottom: 4,
-    color: C.text,
-  },
-  textarea: { minHeight: 80, paddingTop: 12, textAlignVertical: "top" },
-  chipWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 8 },
-  chip: {
-    borderWidth: 1.5,
-    borderColor: C.border,
-    backgroundColor: "#F8FAFC",
-    borderRadius: 999,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  chipSelected: { borderColor: C.teal, backgroundColor: "#CCFBF1" },
-  chipText: { fontSize: 14, fontWeight: "600", color: C.text },
-  chipTextSelected: { color: "#0F766E" },
-  hintChip: {
-    backgroundColor: "#F1F5F9",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  hintText: { fontSize: 12, fontWeight: "600", color: C.muted },
-  consentRow: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-    padding: 14,
-    borderWidth: 1,
-    borderColor: C.border,
-    borderRadius: 14,
-    backgroundColor: "#F8FAFC",
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: C.border,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 2,
-  },
-  checkboxOn: { backgroundColor: C.teal, borderColor: C.teal },
-  checkboxMark: { color: "white", fontWeight: "800", fontSize: 14 },
-  consentText: { flex: 1, fontSize: 15, lineHeight: 22, color: C.text },
-  error: { color: C.danger, fontWeight: "600", marginTop: 10, lineHeight: 20 },
-  actions: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-    marginTop: 20,
-  },
-  btnGhost: {
-    minHeight: 48,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  btnGhostSpacer: { width: 64 },
-  btnGhostText: { color: C.primary, fontSize: 16, fontWeight: "700" },
-  btnPrimary: {
-    flex: 1,
-    minHeight: 54,
-    backgroundColor: C.primary,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 16,
-  },
-  btnDisabled: { opacity: 0.85 },
-  btnPrimaryText: {
-    color: "white",
+  reviewValue: {
     fontSize: 16,
     fontWeight: "700",
+    color: O.gray80,
+    fontFamily: typography.fontFamilyBold,
+  },
+  genderStep: {
+    flex: 1,
+  },
+  preferNot: {
+    minHeight: 44,
+    borderRadius: 14,
+    backgroundColor: O.greenSoft,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    alignSelf: "center",
+    marginTop: 14,
+    marginBottom: 14,
+  },
+  preferNotOn: {
+    borderWidth: 1.5,
+    borderColor: O.green,
+  },
+  preferNotText: {
+    fontSize: 14,
+    fontWeight: "800",
+    letterSpacing: -0.2,
+    color: O.green,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(15, 23, 42, 0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 28,
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 340,
+    backgroundColor: O.white,
+    borderRadius: 20,
+    paddingHorizontal: 22,
+    paddingTop: 24,
+    paddingBottom: 18,
+    alignItems: "center",
+  },
+  modalIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: O.greenSoft,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 14,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: O.gray80,
     textAlign: "center",
+    marginBottom: 8,
+    fontFamily: typography.fontFamilyExtraBold,
+  },
+  modalBody: {
+    fontSize: 14,
+    lineHeight: 21,
+    color: O.gray60,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalActions: {
+    flexDirection: "row",
+    gap: 10,
+    width: "100%",
+  },
+  modalBtnGhost: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: O.gray20,
+  },
+  modalBtnGhostText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: O.gray80,
+  },
+  modalBtnPrimary: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: O.green,
+  },
+  modalBtnPrimaryText: {
+    fontSize: 15,
+    fontWeight: "800",
+    color: O.white,
   },
 });

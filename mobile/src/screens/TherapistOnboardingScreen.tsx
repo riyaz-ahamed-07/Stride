@@ -1,24 +1,23 @@
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { completeTherapistOnboarding } from "../api";
-import { StrideLogo } from "../components/StrideLogo";
+import {
+  ContinueButton,
+  OnboardingShell,
+  O,
+} from "../components/onboarding/OnboardingShell";
 import type { AuthSession } from "../types";
-import { C } from "../theme";
+import { colors } from "../theme";
 
 type Props = {
   accessToken: string;
   onComplete: (session: AuthSession) => void;
 };
 
+const TOTAL = 3;
+
 export function TherapistOnboardingScreen({ accessToken, onComplete }: Props) {
+  const [step, setStep] = useState(0);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [license, setLicense] = useState("");
@@ -27,20 +26,29 @@ export function TherapistOnboardingScreen({ accessToken, onComplete }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  function validate(current: number): string {
+    if (current === 0 && !fullName.trim()) return "Enter your full name.";
+    if (current === 1 && !license.trim()) return "Enter your license number.";
+    if (current === 2 && !clinic.trim()) return "Enter your clinic name.";
+    return "";
+  }
+
+  function goNext() {
+    const issue = validate(step);
+    if (issue) {
+      setError(issue);
+      return;
+    }
+    setError("");
+    if (step >= TOTAL - 1) {
+      void handleSubmit();
+      return;
+    }
+    setStep((s) => s + 1);
+  }
+
   async function handleSubmit() {
     if (busy) return;
-    if (!fullName.trim()) {
-      setError("Enter your full name.");
-      return;
-    }
-    if (!license.trim()) {
-      setError("Enter your license number.");
-      return;
-    }
-    if (!clinic.trim()) {
-      setError("Enter your clinic name.");
-      return;
-    }
     setBusy(true);
     setError("");
     try {
@@ -54,129 +62,127 @@ export function TherapistOnboardingScreen({ accessToken, onComplete }: Props) {
       onComplete(session);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not finish setup.");
-    } finally {
       setBusy(false);
     }
   }
 
+  const titles = [
+    "What should we call you?",
+    "Your professional license",
+    "Where do you practise?",
+  ];
+
   return (
-    <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
-      <View style={styles.card}>
-        <View style={styles.logoRow}>
-          <StrideLogo size={44} />
-          <Text style={styles.logoText}>Stride</Text>
+    <OnboardingShell
+      step={step}
+      total={TOTAL}
+      onBack={step > 0 ? () => setStep((s) => s - 1) : undefined}
+      title={titles[step]}
+      subtitle={
+        step === 2
+          ? "An administrator reviews your account before patients can link to you."
+          : undefined
+      }
+      footer={
+        <ContinueButton
+          label={step === TOTAL - 1 ? "Submit for approval" : "Continue"}
+          onPress={goNext}
+          busy={busy}
+        />
+      }
+    >
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
+      {step === 0 ? (
+        <View style={styles.stack}>
+          <Text style={styles.label}>Full name</Text>
+          <TextInput
+            style={styles.input}
+            value={fullName}
+            onChangeText={setFullName}
+            autoCapitalize="words"
+            editable={!busy}
+            placeholderTextColor={O.gray40}
+          />
+          <Text style={styles.label}>Phone (optional)</Text>
+          <TextInput
+            style={styles.input}
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            editable={!busy}
+            placeholderTextColor={O.gray40}
+          />
         </View>
-        <Text style={styles.h1}>Physiotherapist profile</Text>
-        <Text style={styles.sub}>
-          Tell us about your practice. An administrator will review your account before patients can
-          link to you.
-        </Text>
+      ) : null}
 
-        <Text style={styles.label}>Full name</Text>
-        <TextInput
-          style={styles.input}
-          value={fullName}
-          onChangeText={setFullName}
-          autoCapitalize="words"
-          editable={!busy}
-        />
+      {step === 1 ? (
+        <View style={styles.stack}>
+          <Text style={styles.label}>License number</Text>
+          <TextInput
+            style={styles.input}
+            value={license}
+            onChangeText={setLicense}
+            editable={!busy}
+            placeholderTextColor={O.gray40}
+          />
+          <Text style={styles.label}>Specialty (optional)</Text>
+          <TextInput
+            style={styles.input}
+            value={specialty}
+            onChangeText={setSpecialty}
+            editable={!busy}
+            placeholder="e.g. Orthopaedics"
+            placeholderTextColor={O.gray40}
+          />
+        </View>
+      ) : null}
 
-        <Text style={styles.label}>Phone (optional)</Text>
-        <TextInput
-          style={styles.input}
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          editable={!busy}
-        />
-
-        <Text style={styles.label}>License number</Text>
-        <TextInput
-          style={styles.input}
-          value={license}
-          onChangeText={setLicense}
-          editable={!busy}
-        />
-
-        <Text style={styles.label}>Clinic name</Text>
-        <TextInput
-          style={styles.input}
-          value={clinic}
-          onChangeText={setClinic}
-          autoCapitalize="words"
-          editable={!busy}
-        />
-
-        <Text style={styles.label}>Specialty (optional)</Text>
-        <TextInput
-          style={styles.input}
-          value={specialty}
-          onChangeText={setSpecialty}
-          editable={!busy}
-          placeholder="e.g. Orthopaedics"
-          placeholderTextColor={C.muted}
-        />
-
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-
-        <Pressable
-          style={[styles.btnPrimary, busy && styles.btnDisabled]}
-          onPress={handleSubmit}
-          disabled={busy}
-        >
-          {busy ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.btnPrimaryText}>Submit for approval</Text>
-          )}
-        </Pressable>
-      </View>
-    </ScrollView>
+      {step === 2 ? (
+        <View style={styles.stack}>
+          <Text style={styles.label}>Clinic name</Text>
+          <TextInput
+            style={styles.input}
+            value={clinic}
+            onChangeText={setClinic}
+            autoCapitalize="words"
+            editable={!busy}
+            placeholderTextColor={O.gray40}
+          />
+        </View>
+      ) : null}
+    </OnboardingShell>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flexGrow: 1, padding: 20, justifyContent: "center" },
-  card: {
-    backgroundColor: C.surface,
-    borderRadius: 28,
-    padding: 28,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 4,
+  error: {
+    color: colors.semantic.error,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 12,
   },
-  logoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 24,
-    justifyContent: "center",
+  stack: { gap: 10 },
+  label: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: O.gray60,
+    marginTop: 4,
   },
-  logoText: { fontSize: 24, fontWeight: "800", color: C.primary },
-  h1: { fontSize: 26, fontWeight: "800", color: C.text, marginBottom: 8 },
-  sub: { fontSize: 15, color: C.muted, marginBottom: 20, lineHeight: 22 },
-  label: { fontSize: 14, fontWeight: "600", color: C.text, marginBottom: 8, marginTop: 8 },
   input: {
-    minHeight: 52,
-    borderWidth: 1.5,
-    borderColor: C.border,
-    borderRadius: 14,
-    backgroundColor: "#F8FAFC",
-    paddingHorizontal: 16,
+    minHeight: 56,
+    borderRadius: 21,
+    backgroundColor: O.white,
+    paddingHorizontal: 18,
     fontSize: 17,
-    color: C.text,
-    marginBottom: 4,
+    fontWeight: "600",
+    color: O.gray80,
+    borderWidth: 1,
+    borderColor: O.gray20,
+    shadowColor: "#2F3C33",
+    shadowOpacity: 0.05,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 1,
   },
-  error: { color: C.danger, fontWeight: "600", marginTop: 10, lineHeight: 20 },
-  btnPrimary: {
-    minHeight: 54,
-    backgroundColor: C.primary,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  btnDisabled: { opacity: 0.85 },
-  btnPrimaryText: { color: "white", fontSize: 17, fontWeight: "700" },
 });
