@@ -50,6 +50,7 @@ def ensure_schema(engine: Engine) -> None:
             _add(conn, "users", cols, "invite_code", "VARCHAR(16)")
             _add(conn, "users", cols, "body_region", "VARCHAR(40)")
             _add(conn, "users", cols, "rehab_goal", "VARCHAR(280)")
+            _add(conn, "users", cols, "gender", "VARCHAR(32)")
 
         if "appointments" in tables:
             cols = {c["name"] for c in inspector.get_columns("appointments")}
