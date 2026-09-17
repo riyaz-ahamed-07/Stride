@@ -1,21 +1,56 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { C } from "../theme";
+import {
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+  type TextInputProps,
+} from "react-native";
+import {
+  EyeHiddenIcon,
+  EyeShownIcon,
+  LockFieldIcon,
+} from "./icons/AuthFieldIcons";
+import { C, colors } from "../theme";
 
-type Props = {
-  value: string;
-  onChangeText: (value: string) => void;
-  editable?: boolean;
-  style?: object;
+type Props = Omit<TextInputProps, "secureTextEntry"> & {
+  error?: boolean;
+  showLock?: boolean;
 };
 
-export function PasswordField({ value, onChangeText, editable = true, style }: Props) {
+export function PasswordField({
+  value,
+  onChangeText,
+  editable = true,
+  style,
+  error,
+  showLock = true,
+  placeholder = "Enter your password...",
+  onFocus,
+  onBlur,
+  ...rest
+}: Props) {
   const [visible, setVisible] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   return (
-    <View style={[styles.wrap, style]}>
+    <View
+      style={[
+        styles.wrap,
+        focused && styles.wrapFocused,
+        error && styles.wrapError,
+        !editable && styles.disabled,
+        style,
+      ]}
+    >
+      {showLock ? (
+        <View style={styles.leftIcon}>
+          <LockFieldIcon />
+        </View>
+      ) : null}
       <TextInput
-        style={[styles.input, !editable && styles.disabled]}
+        {...rest}
+        style={styles.input}
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={!visible}
@@ -23,8 +58,17 @@ export function PasswordField({ value, onChangeText, editable = true, style }: P
         autoCapitalize="none"
         autoCorrect={false}
         textContentType="password"
-        placeholderTextColor={C.muted}
+        placeholder={placeholder}
+        placeholderTextColor={colors.text.disabled}
         selectionColor={C.primary}
+        onFocus={(e) => {
+          setFocused(true);
+          onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          onBlur?.(e);
+        }}
       />
       <Pressable
         style={styles.eyeBtn}
@@ -33,7 +77,7 @@ export function PasswordField({ value, onChangeText, editable = true, style }: P
         accessibilityRole="button"
         accessibilityLabel={visible ? "Hide password" : "Show password"}
       >
-        <Text style={styles.eyeIcon}>{visible ? "🙈" : "👁"}</Text>
+        {visible ? <EyeShownIcon /> : <EyeHiddenIcon />}
       </Pressable>
     </View>
   );
@@ -41,29 +85,43 @@ export function PasswordField({ value, onChangeText, editable = true, style }: P
 
 const styles = StyleSheet.create({
   wrap: {
-    position: "relative",
-    marginBottom: 4,
-  },
-  input: {
-    minHeight: 52,
+    minHeight: 56,
+    borderRadius: 18,
+    backgroundColor: colors.surface.card,
     borderWidth: 1.5,
-    borderColor: C.border,
-    borderRadius: 14,
-    backgroundColor: "#F8FAFC",
-    paddingHorizontal: 16,
-    paddingRight: 52,
-    fontSize: 17,
-    color: C.text,
+    borderColor: "transparent",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    gap: 10,
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+  wrapFocused: { borderColor: C.primary },
+  wrapError: {
+    borderColor: colors.semantic.error,
+    backgroundColor: colors.semantic.errorSoft,
   },
   disabled: { opacity: 0.7 },
-  eyeBtn: {
-    position: "absolute",
-    right: 8,
-    top: 0,
-    bottom: 0,
-    width: 44,
+  leftIcon: {
+    width: 24,
     alignItems: "center",
     justifyContent: "center",
   },
-  eyeIcon: { fontSize: 18 },
+  input: {
+    flex: 1,
+    minHeight: 56,
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text.primary,
+    paddingVertical: 0,
+  },
+  eyeBtn: {
+    width: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

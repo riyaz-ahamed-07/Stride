@@ -5,9 +5,13 @@ import { C } from "../theme";
 export function SplashScreenView() {
   return (
     <View style={styles.page}>
-      <StrideLogo size={72} style={{ marginBottom: 16 }} />
+      <StrideLogo size={72} variant="icon" style={{ marginBottom: 16 }} />
       <Text style={styles.brand}>Stride</Text>
-      <ActivityIndicator size="large" color="white" style={styles.spinner} />
+      <ActivityIndicator
+        size="large"
+        color={C.primary}
+        style={styles.spinner}
+      />
     </View>
   );
 }
@@ -15,10 +19,15 @@ export function SplashScreenView() {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: C.primary,
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
   },
-  brand: { color: "white", fontSize: 34, fontWeight: "800", marginBottom: 28 },
+  brand: {
+    color: "#0F172A",
+    fontSize: 34,
+    fontWeight: "800",
+    marginBottom: 28,
+  },
   spinner: { marginTop: 8 },
 });
