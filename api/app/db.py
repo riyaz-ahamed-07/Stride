@@ -10,12 +10,22 @@ engine: Engine | None = None
 SessionLocal: sessionmaker[Session] | None = None
 
 
+def _sqlalchemy_url(database_url: str) -> str:
+    # requirements ship psycopg3; bare postgresql:// still defaults to psycopg2.
+    if database_url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + database_url.removeprefix("postgresql://")
+    if database_url.startswith("postgres://"):
+        return "postgresql+psycopg://" + database_url.removeprefix("postgres://")
+    return database_url
+
+
 def configure_engine(database_url: str) -> Engine:
     global engine, SessionLocal
     if engine is not None:
         engine.dispose()
-    connect_args = {"check_same_thread": False} if database_url.startswith("sqlite") else {}
-    engine = create_engine(database_url, connect_args=connect_args, future=True)
+    url = _sqlalchemy_url(database_url)
+    connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
+    engine = create_engine(url, connect_args=connect_args, future=True)
     SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
     return engine
 
