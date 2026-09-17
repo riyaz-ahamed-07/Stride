@@ -1,25 +1,24 @@
 package clinic.stride.app
+import clinic.stride.app.poselandmarker.PoseLandmarkerFrameProcessorPlugin
+import com.mrousavy.camera.frameprocessors.FrameProcessorPluginRegistry
 
 import android.app.Application
 import android.content.res.Configuration
 
-import clinic.stride.app.poselandmarker.PoseLandmarkerFrameProcessorPlugin
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
-import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
+import com.facebook.react.ReactHost
 import com.facebook.react.common.ReleaseLevel
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint
 import com.facebook.react.defaults.DefaultReactNativeHost
-import com.mrousavy.camera.frameprocessors.FrameProcessorPluginRegistry
 
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
 class MainApplication : Application(), ReactApplication {
-
   companion object {
     init {
       FrameProcessorPluginRegistry.addFrameProcessorPlugin("poseLandmarker") { proxy, options ->
@@ -27,6 +26,7 @@ class MainApplication : Application(), ReactApplication {
       }
     }
   }
+
 
   override val reactNativeHost: ReactNativeHost = ReactNativeHostWrapper(
       this,
