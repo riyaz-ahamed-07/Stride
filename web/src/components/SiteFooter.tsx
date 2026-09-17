@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StrideLogoMark } from "@/components/StrideLogo";
 
 export function SiteFooter() {
   return (
@@ -6,11 +7,12 @@ export function SiteFooter() {
       <div className="container footer-grid">
         <div className="footer-brand">
           <Link className="logo" href="/">
-            <span className="logo-mark">S</span>
+            <StrideLogoMark size={36} variant="icon" />
             Stride
           </Link>
           <p className="footer-tagline">
-            Therapist-led tele-physiotherapy with home exercises, appointments, and secure video visits.
+            Therapist-led tele-physiotherapy with home exercises, appointments,
+            and secure video visits.
           </p>
         </div>
         <div>
