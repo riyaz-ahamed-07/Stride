@@ -10,7 +10,10 @@ router = APIRouter(prefix="/patients", tags=["Patients"])
 
 
 def _visible_patients(db: Db, user: User) -> list[User]:
-    query = select(User).where(User.role == UserRole.patient)
+    query = select(User).where(
+        User.role == UserRole.patient,
+        User.status != AccountStatus.inactive,
+    )
     if user.role == UserRole.physiotherapist:
         query = query.where(User.therapist_id == user.id)
     return list(db.scalars(query.order_by(User.full_name)))
