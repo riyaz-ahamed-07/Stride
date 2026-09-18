@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 
 from app.auth_utils import generate_otp, otp_expires_at
-from app.config import IS_DEV
+from app.config import IS_DEV, SMTP_CONFIGURED
+from app.email_service import send_otp_email
 from app.models import EmailOtp, PasswordResetToken, User
 
 logger = logging.getLogger("stride.auth")
@@ -43,9 +44,10 @@ def issue_otp(db: Session, email: str, purpose: str) -> str:
         )
     )
     db.commit()
-    # Always print to stdout so it shows next to uvicorn access logs in local/dev.
-    print(f"\n>>> OTP for {email} ({purpose}): {code}\n", flush=True)
-    logger.info("OTP for %s (%s): %s (dev only — configure email in production)", email, purpose, code)
+    send_otp_email(to=email, code=code, purpose=purpose)
+    if IS_DEV and not SMTP_CONFIGURED:
+        print(f"\n>>> OTP for {email} ({purpose}): {code}\n", flush=True)
+        logger.info("OTP for %s (%s): %s (dev fallback — SMTP not configured)", email, purpose, code)
     return code
 
 
