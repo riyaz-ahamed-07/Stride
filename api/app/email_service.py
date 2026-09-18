@@ -1,4 +1,4 @@
-"""Outbound email. SMTP is optional; local demo logs codes/links instead of sending."""
+"""Outbound email. Prefer Resend HTTPS on hosts that block SMTP (e.g. Render)."""
 
 from __future__ import annotations
 
@@ -7,9 +7,14 @@ import smtplib
 from email.message import EmailMessage
 from urllib.parse import quote
 
+import httpx
+
 from app.config import (
     IS_DEV,
+    MAIL_CONFIGURED,
     PUBLIC_APP_URL,
+    RESEND_API_KEY,
+    RESEND_FROM,
     SMTP_CONFIGURED,
     SMTP_FROM,
     SMTP_HOST,
@@ -24,15 +29,19 @@ logger = logging.getLogger("stride.email")
 
 
 class EmailDeliveryError(RuntimeError):
-    """Raised when SMTP is configured but delivery fails."""
+    """Raised when mail is configured but delivery fails."""
 
 
 def expose_dev_reset_token() -> bool:
-    return IS_DEV and not SMTP_CONFIGURED
+    return IS_DEV and not MAIL_CONFIGURED
 
 
 def mail_status() -> dict[str, object]:
     return {
+        "mail_configured": MAIL_CONFIGURED,
+        "provider": "resend" if RESEND_API_KEY else ("smtp" if SMTP_CONFIGURED else None),
+        "resend_key_set": bool(RESEND_API_KEY),
+        "resend_from": RESEND_FROM if RESEND_API_KEY else None,
         "smtp_configured": SMTP_CONFIGURED,
         "smtp_host": SMTP_HOST or None,
         "smtp_port": SMTP_PORT if SMTP_CONFIGURED else None,
@@ -54,28 +63,65 @@ def send_password_reset_email(*, to: str, token: str) -> None:
 
 
 def _dispatch(*, to: str, subject: str, plain: str, html: str, kind: str) -> None:
+    if RESEND_API_KEY:
+        try:
+            _deliver_resend(to=to, subject=subject, plain=plain, html=html)
+            logger.info("%s email dispatched via Resend to %s", kind, to)
+            print(f">>> EMAIL OK ({kind}/resend) → {to}", flush=True)
+            return
+        except Exception as exc:
+            logger.exception("Failed to send %s email via Resend to %s", kind, to)
+            print(f">>> EMAIL FAIL ({kind}/resend) → {to}: {exc}", flush=True)
+            raise EmailDeliveryError(f"Could not send email via Resend: {exc}") from exc
+
     if SMTP_CONFIGURED:
         try:
             _deliver_smtp(to=to, subject=subject, plain=plain, html=html)
-            logger.info("%s email dispatched to %s", kind, to)
-            print(f">>> EMAIL OK ({kind}) → {to}", flush=True)
+            logger.info("%s email dispatched via SMTP to %s", kind, to)
+            print(f">>> EMAIL OK ({kind}/smtp) → {to}", flush=True)
             return
         except Exception as exc:
-            logger.exception("Failed to send %s email to %s", kind, to)
-            print(f">>> EMAIL FAIL ({kind}) → {to}: {exc}", flush=True)
-            raise EmailDeliveryError(f"Could not send email via SMTP: {exc}") from exc
+            logger.exception("Failed to send %s email via SMTP to %s", kind, to)
+            print(f">>> EMAIL FAIL ({kind}/smtp) → {to}: {exc}", flush=True)
+            raise EmailDeliveryError(
+                f"Could not send email via SMTP: {exc}. "
+                "Render often blocks Gmail SMTP — set STRIDE_RESEND_API_KEY instead."
+            ) from exc
+
     if IS_DEV:
         print(
-            f"\n>>> {kind} email (local demo, SMTP not configured)\nTo: {to}\n{subject}\n{plain}\n",
+            f"\n>>> {kind} email (local demo, mail not configured)\nTo: {to}\n{subject}\n{plain}\n",
             flush=True,
         )
-        logger.info("%s content logged for local demo (SMTP not configured)", kind)
+        logger.info("%s content logged for local demo (mail not configured)", kind)
         return
-    logger.warning("%s email not sent; SMTP is not configured.", kind)
-    print(f">>> EMAIL SKIP ({kind}) — STRIDE_SMTP_HOST not set", flush=True)
+
+    logger.warning("%s email not sent; no Resend/SMTP configured.", kind)
+    print(f">>> EMAIL SKIP ({kind}) — set STRIDE_RESEND_API_KEY (recommended on Render)", flush=True)
     raise EmailDeliveryError(
-        "Email is not configured on the server (STRIDE_SMTP_HOST missing)."
+        "Email is not configured. On Render set STRIDE_RESEND_API_KEY (Gmail SMTP is usually blocked)."
     )
+
+
+def _deliver_resend(*, to: str, subject: str, plain: str, html: str) -> None:
+    payload = {
+        "from": RESEND_FROM,
+        "to": [to],
+        "subject": subject,
+        "text": plain,
+        "html": html,
+    }
+    response = httpx.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json=payload,
+        timeout=30.0,
+    )
+    if response.status_code >= 400:
+        raise RuntimeError(f"Resend HTTP {response.status_code}: {response.text[:400]}")
 
 
 def _deliver_smtp(*, to: str, subject: str, plain: str, html: str) -> None:

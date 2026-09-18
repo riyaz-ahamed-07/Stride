@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 
 from app.auth_utils import generate_otp, otp_expires_at
-from app.config import IS_DEV, SMTP_CONFIGURED
+from app.config import IS_DEV, MAIL_CONFIGURED
 from app.email_service import EmailDeliveryError, send_otp_email
 from app.models import EmailOtp, PasswordResetToken, User
 
@@ -47,15 +47,14 @@ def issue_otp(db: Session, email: str, purpose: str) -> str:
     try:
         send_otp_email(to=email, code=code, purpose=purpose)
     except EmailDeliveryError:
-        # Always leave the code in Render/server logs so demos can continue.
         print(f"\n>>> OTP FALLBACK for {email} ({purpose}): {code}\n", flush=True)
         logger.exception("OTP email delivery failed for %s — code logged to stdout", email)
-        if IS_DEV and not SMTP_CONFIGURED:
+        if IS_DEV and not MAIL_CONFIGURED:
             return code
         raise
-    if IS_DEV and not SMTP_CONFIGURED:
+    if IS_DEV and not MAIL_CONFIGURED:
         print(f"\n>>> OTP for {email} ({purpose}): {code}\n", flush=True)
-        logger.info("OTP for %s (%s): %s (dev fallback — SMTP not configured)", email, purpose, code)
+        logger.info("OTP for %s (%s): %s (dev fallback — mail not configured)", email, purpose, code)
     return code
 
 

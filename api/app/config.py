@@ -30,6 +30,10 @@ SMTP_PASSWORD = os.getenv("STRIDE_SMTP_PASSWORD", "")
 SMTP_FROM = os.getenv("STRIDE_SMTP_FROM", "").strip()
 SMTP_USE_TLS = os.getenv("STRIDE_SMTP_TLS", "1") == "1"
 SMTP_CONFIGURED = bool(SMTP_HOST)
+# Prefer Resend HTTPS API on hosts that block outbound SMTP (e.g. Render).
+RESEND_API_KEY = os.getenv("STRIDE_RESEND_API_KEY", "").strip()
+RESEND_FROM = os.getenv("STRIDE_RESEND_FROM", "").strip() or SMTP_FROM or "Stride <onboarding@resend.dev>"
+MAIL_CONFIGURED = bool(RESEND_API_KEY) or SMTP_CONFIGURED
 CORS_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
