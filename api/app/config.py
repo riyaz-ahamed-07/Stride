@@ -6,12 +6,12 @@ ROOT = Path(__file__).resolve().parents[1]
 # Load api/.env if present (gitignored). SQLite remains the default without it.
 _env_file = ROOT / ".env"
 if _env_file.exists():
-    for raw in _env_file.read_text(encoding="utf-8").splitlines():
-        line = raw.strip()
+    for raw in _env_file.read_text(encoding="utf-8-sig").splitlines():
+        line = raw.strip().lstrip("\ufeff")
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, _, value = line.partition("=")
-        key = key.strip()
+        key = key.strip().lstrip("\ufeff")
         value = value.strip().strip('"').strip("'")
         os.environ.setdefault(key, value)
 
