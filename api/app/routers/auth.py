@@ -3,10 +3,15 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.auth_utils import validate_password_strength
-from app.config import IS_DEV
+from app.config import IS_DEV, STRIDE_ENV
 from app.db import get_db
 from app.deps import AuthenticatedUser, CurrentUser
-from app.email_service import expose_dev_reset_token, send_password_reset_email
+from app.email_service import (
+    EmailDeliveryError,
+    expose_dev_reset_token,
+    mail_status,
+    send_password_reset_email,
+)
 from app.models import AccountStatus, ConsentRecord, ConsentStatus, User, UserRole
 from app.otp_service import (
     ResetTokenError,
@@ -37,6 +42,14 @@ from app.schemas import (
 from app.security import create_access_token, hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+
+@router.get("/mail-status")
+def get_mail_status() -> dict[str, object]:
+    """Safe SMTP diagnostics for deploy checks (no secrets)."""
+    status = mail_status()
+    status["env"] = STRIDE_ENV
+    return status
 
 
 def _token_for(user: User, *, dev_code: str | None = None) -> TokenOut:
@@ -78,7 +91,17 @@ def register(payload: RegisterIn, db: Session = Depends(get_db)) -> TokenOut:
     db.add(user)
     db.commit()
     db.refresh(user)
-    otp = issue_otp(db, email, "verify_email")
+    try:
+        otp = issue_otp(db, email, "verify_email")
+    except EmailDeliveryError as exc:
+        # Account exists; OTP is in DB + server logs as "OTP FALLBACK".
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Account created, but the verification email could not be sent. "
+                f"{exc} Check Render logs for 'OTP FALLBACK', or fix STRIDE_SMTP_* env vars."
+            ),
+        ) from exc
     return _token_for(user, dev_code=otp)
 
 
@@ -103,7 +126,16 @@ def resend_otp(payload: ResendOtpIn, db: Session = Depends(get_db)) -> dict[str,
     user = db.query(User).filter(User.email == email).first()
     if user is None or user.status != AccountStatus.pending_email:
         raise HTTPException(status_code=400, detail="No pending verification for this email.")
-    otp = issue_otp(db, email, "verify_email")
+    try:
+        otp = issue_otp(db, email, "verify_email")
+    except EmailDeliveryError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"Could not send verification email. {exc} "
+                "Check Render logs for 'OTP FALLBACK' or fix STRIDE_SMTP_*."
+            ),
+        ) from exc
     out: dict[str, str | None] = {"detail": "Verification code sent."}
     if IS_DEV:
         out["dev_code"] = otp
@@ -117,7 +149,11 @@ def forgot_password(payload: ForgotPasswordIn, db: Session = Depends(get_db)) ->
     token: str | None = None
     if user and user.password_hash:
         token = issue_password_reset(db, user)
-        send_password_reset_email(to=user.email, token=token)
+        try:
+            send_password_reset_email(to=user.email, token=token)
+        except EmailDeliveryError:
+            # Do not reveal whether the account exists; log for ops.
+            print(f">>> Password reset email failed for {user.email}", flush=True)
     return ForgotPasswordOut(
         detail="If that email exists, reset instructions were sent.",
         dev_reset_token=token if token and expose_dev_reset_token() else None,

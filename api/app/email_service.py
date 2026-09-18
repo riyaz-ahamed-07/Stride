@@ -23,8 +23,23 @@ from app.email_templates import otp_email, password_reset_email
 logger = logging.getLogger("stride.email")
 
 
+class EmailDeliveryError(RuntimeError):
+    """Raised when SMTP is configured but delivery fails."""
+
+
 def expose_dev_reset_token() -> bool:
     return IS_DEV and not SMTP_CONFIGURED
+
+
+def mail_status() -> dict[str, object]:
+    return {
+        "smtp_configured": SMTP_CONFIGURED,
+        "smtp_host": SMTP_HOST or None,
+        "smtp_port": SMTP_PORT if SMTP_CONFIGURED else None,
+        "smtp_user_set": bool(SMTP_USER),
+        "smtp_password_set": bool(SMTP_PASSWORD),
+        "smtp_from": SMTP_FROM or None,
+    }
 
 
 def send_otp_email(*, to: str, code: str, purpose: str = "verify_email") -> None:
@@ -35,33 +50,32 @@ def send_otp_email(*, to: str, code: str, purpose: str = "verify_email") -> None
 def send_password_reset_email(*, to: str, token: str) -> None:
     reset_url = f"{PUBLIC_APP_URL}/reset-password?token={quote(token, safe='')}"
     subject, plain, html = password_reset_email(reset_url=reset_url)
-    if SMTP_CONFIGURED:
-        try:
-            _deliver_smtp(to=to, subject=subject, plain=plain, html=html)
-            logger.info("Password reset email dispatched")
-        except Exception:
-            logger.exception("Failed to send password reset email")
-        return
-    if IS_DEV:
-        print(f"\n>>> Password reset (local demo, email not configured)\n    {reset_url}\n", flush=True)
-        logger.info("Password reset link logged for local demo (SMTP not configured)")
-        return
-    logger.warning("Password reset email not sent; SMTP is not configured.")
+    _dispatch(to=to, subject=subject, plain=plain, html=html, kind="password_reset")
 
 
 def _dispatch(*, to: str, subject: str, plain: str, html: str, kind: str) -> None:
     if SMTP_CONFIGURED:
         try:
             _deliver_smtp(to=to, subject=subject, plain=plain, html=html)
-            logger.info("%s email dispatched", kind)
-        except Exception:
-            logger.exception("Failed to send %s email", kind)
-        return
+            logger.info("%s email dispatched to %s", kind, to)
+            print(f">>> EMAIL OK ({kind}) → {to}", flush=True)
+            return
+        except Exception as exc:
+            logger.exception("Failed to send %s email to %s", kind, to)
+            print(f">>> EMAIL FAIL ({kind}) → {to}: {exc}", flush=True)
+            raise EmailDeliveryError(f"Could not send email via SMTP: {exc}") from exc
     if IS_DEV:
-        print(f"\n>>> {kind} email (local demo, SMTP not configured)\nTo: {to}\n{subject}\n{plain}\n", flush=True)
+        print(
+            f"\n>>> {kind} email (local demo, SMTP not configured)\nTo: {to}\n{subject}\n{plain}\n",
+            flush=True,
+        )
         logger.info("%s content logged for local demo (SMTP not configured)", kind)
         return
     logger.warning("%s email not sent; SMTP is not configured.", kind)
+    print(f">>> EMAIL SKIP ({kind}) — STRIDE_SMTP_HOST not set", flush=True)
+    raise EmailDeliveryError(
+        "Email is not configured on the server (STRIDE_SMTP_HOST missing)."
+    )
 
 
 def _deliver_smtp(*, to: str, subject: str, plain: str, html: str) -> None:
